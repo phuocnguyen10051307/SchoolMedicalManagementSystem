@@ -1,4 +1,5 @@
 // Để tải dự án và làm việc bạn cần làm các bước sau 
+
 git clone https://github.com/phuocnguyen10051307/SchoolMedicalManagementSystem.git  (nó dùng để clone dự án code về)
 git pull origin main (cập nhập code mới nhất từ nhánh main )
 git chechout -b <--tên nhánh của bạn chỗ này nên đặt tên hợp lí -->   (câu lệnh này vừa tạo một nhánh mới từ nhánh chính và nó tự chuyển qua nhánh bạn vừa  tạo )
