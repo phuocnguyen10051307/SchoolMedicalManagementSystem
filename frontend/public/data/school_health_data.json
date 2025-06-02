@@ -1,0 +1,878 @@
+{
+  "Admins": [
+    {
+      "AdminID": 1,
+      "Username": "admin.one",
+      "PasswordHash": "admin.one123",
+      "Email": "admin1@school.com",
+      "ImageUrl": "https://example.com/images/admin1.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-28T10:00:00Z",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "Managers": [
+    {
+      "ManagerID": 1,
+      "FullName": "John Manager",
+      "PhoneNumber": "+1234567890",
+      "Email": "manager1@school.com",
+      "Username": "john.mngr",
+      "PasswordHash": "john.mngr123",
+      "ImageUrl": "https://example.com/images/manager1.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-27T08:30:00Z",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "SchoolNurses": [
+    {
+      "NurseID": 1,
+      "FullName": "Alice Johnson",
+      "PhoneNumber": "+1234567891",
+      "Email": "nurse1@school.com",
+      "Username": "alice.j",
+      "PasswordHash": "alice.j123",
+      "WorkShift": "Morning",
+      "ImageUrl": null,
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NurseID": 2,
+      "FullName": "Betty Smith",
+      "PhoneNumber": "+1234567892",
+      "Email": "nurse2@school.com",
+      "Username": "betty.s",
+      "PasswordHash": "betty.s123",
+      "WorkShift": "Afternoon",
+      "ImageUrl": "https://example.com/images/nurse2.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-28T14:00:00Z",
+      "CreatedAt": "2025-01-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NurseID": 3,
+      "FullName": "Clara Wilson",
+      "PhoneNumber": "+1234567893",
+      "Email": "nurse3@school.com",
+      "Username": "clara.w",
+      "PasswordHash": "clara.w123",
+      "WorkShift": "Night",
+      "ImageUrl": null,
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NurseID": 4,
+      "FullName": "Diana Brown",
+      "PhoneNumber": "+1234567894",
+      "Email": "nurse4@school.com",
+      "Username": "diana.b",
+      "PasswordHash": "diana.b123",
+      "WorkShift": "Morning",
+      "ImageUrl": "https://example.com/images/nurse4.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-29T08:00:00Z",
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NurseID": 5,
+      "FullName": "Emma Davis",
+      "PhoneNumber": "+1234567895",
+      "Email": "nurse5@school.com",
+      "Username": "emma.d",
+      "PasswordHash": "emma.d123",
+      "WorkShift": "Afternoon",
+      "ImageUrl": null,
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "Parents": [
+    {
+      "ParentID": 1,
+      "FullName": "Robert Johnson",
+      "PhoneNumber": "+1234567901",
+      "Address": "123 Main St, Springfield, IL 62701, USA",
+      "Email": "parent1@school.com",
+      "Username": "robert.j",
+      "PasswordHash": "robert.j123",
+      "ImageUrl": "https://example.com/images/parent1.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-28T09:00:00Z",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ParentID": 2,
+      "FullName": "Susan Smith",
+      "PhoneNumber": "+1234567902",
+      "Address": "456 Oak Ave, Springfield, IL 62702, USA",
+      "Email": "parent2@school.com",
+      "Username": "susan.s",
+      "PasswordHash": "susan.s123",
+      "ImageUrl": null,
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ParentID": 3,
+      "FullName": "Michael Brown",
+      "PhoneNumber": "+1234567903",
+      "Address": "789 Pine Rd, Springfield, IL 62703, USA",
+      "Email": "parent3@school.com",
+      "Username": "michael.b",
+      "PasswordHash": "michael.b123",
+      "ImageUrl": "https://example.com/images/parent3.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-27T10:00:00Z",
+      "CreatedAt": "2025-01-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ParentID": 4,
+      "FullName": "Linda Wilson",
+      "PhoneNumber": "+1234567904",
+      "Address": "101 Maple Dr, Springfield, IL 62704, USA",
+      "Email": "parent4@school.com",
+      "Username": "linda.w",
+      "PasswordHash": "linda.w123",
+      "ImageUrl": null,
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ParentID": 5,
+      "FullName": "James Davis",
+      "PhoneNumber": "+1234567905",
+      "Address": "202 Cedar Ln, Springfield, IL 62705, USA",
+      "Email": "parent5@school.com",
+      "Username": "james.d",
+      "PasswordHash": "james.d123",
+      "ImageUrl": "https://example.com/images/parent5.jpg",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-29T07:00:00Z",
+      "CreatedAt": "2025-01-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "Students": [
+    {
+      "StudentID": 1,
+      "FullName": "Emma Johnson",
+      "DateOfBirth": "2015-03-15",
+      "Gender": "Female",
+      "Class": "Grade 5A",
+      "Address": "123 Main St, Springfield, IL 62701, USA",
+      "PhotoUrl": "https://example.com/images/student1.jpg",
+      "ParentID": 1,
+      "Username": "emma.j1",
+      "PasswordHash": "emma.j120150315",
+      "Email": "student1@school.com",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-28T08:00:00Z",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "StudentID": 2,
+      "FullName": "Liam Smith",
+      "DateOfBirth": "2014-06-20",
+      "Gender": "Male",
+      "Class": "Grade 6B",
+      "Address": "456 Oak Ave, Springfield, IL 62702, USA",
+      "PhotoUrl": null,
+      "ParentID": 2,
+      "Username": "liam.s2",
+      "PasswordHash": "liam.s220140620",
+      "Email": "student2@school.com",
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "StudentID": 3,
+      "FullName": "Olivia Brown",
+      "DateOfBirth": "2016-01-10",
+      "Gender": "Female",
+      "Class": "Grade 4C",
+      "Address": "789 Pine Rd, Springfield, IL 62703, USA",
+      "PhotoUrl": "https://example.com/images/student3.jpg",
+      "ParentID": 3,
+      "Username": "olivia.b3",
+      "PasswordHash": "olivia.b320160110",
+      "Email": "student3@school.com",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-27T09:00:00Z",
+      "CreatedAt": "2025-01-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "StudentID": 4,
+      "FullName": "Noah Wilson",
+      "DateOfBirth": "2015-09-05",
+      "Gender": "Male",
+      "Class": "Grade 5B",
+      "Address": "101 Maple Dr, Springfield, IL 62704, USA",
+      "PhotoUrl": null,
+      "ParentID": 4,
+      "Username": "noah.w4",
+      "PasswordHash": "noah.w420150905",
+      "Email": "student4@school.com",
+      "IsActive": true,
+      "LastLoginAt": null,
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "StudentID": 5,
+      "FullName": "Sophia Davis",
+      "DateOfBirth": "2014-12-12",
+      "Gender": "Female",
+      "Class": "Grade 6A",
+      "Address": "202 Cedar Ln, Springfield, IL 62705, USA",
+      "PhotoUrl": "https://example.com/images/student5.jpg",
+      "ParentID": 5,
+      "Username": "sophia.d5",
+      "PasswordHash": "sophia.d520141212",
+      "Email": "student5@school.com",
+      "IsActive": true,
+      "LastLoginAt": "2025-05-29T08:30:00Z",
+      "CreatedAt": "2025-01-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "HealthRecords": [
+    {
+      "RecordID": 1,
+      "StudentID": 1,
+      "Allergies": "Peanuts",
+      "ChronicDiseases": null,
+      "TreatmentHistory": "Epinephrine prescribed",
+      "Vision": "20/20",
+      "Hearing": "Normal",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "RecordID": 2,
+      "StudentID": 2,
+      "Allergies": null,
+      "ChronicDiseases": "Asthma",
+      "TreatmentHistory": "Inhaler used as needed",
+      "Vision": "20/25",
+      "Hearing": "Normal",
+      "CreatedAt": "2025-01-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "RecordID": 3,
+      "StudentID": 3,
+      "Allergies": "Shellfish",
+      "ChronicDiseases": null,
+      "TreatmentHistory": null,
+      "Vision": "20/30",
+      "Hearing": "Normal",
+      "CreatedAt": "2025-01-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "RecordID": 4,
+      "StudentID": 4,
+      "Allergies": null,
+      "ChronicDiseases": null,
+      "TreatmentHistory": null,
+      "Vision": "20/20",
+      "Hearing": "Normal",
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "RecordID": 5,
+      "StudentID": 5,
+      "Allergies": "Dust mites",
+      "ChronicDiseases": null,
+      "TreatmentHistory": "Antihistamines prescribed",
+      "Vision": "20/25",
+      "Hearing": "Normal",
+      "CreatedAt": "2025-01-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "ParentHealthUpdates": [
+    {
+      "UpdateID": 1,
+      "StudentID": 1,
+      "ParentID": 1,
+      "UpdateDate": "2025-05-01T09:00:00Z",
+      "Allergies": "Peanuts",
+      "ChronicDiseases": null,
+      "TreatmentHistory": "Updated epinephrine prescription",
+      "Vision": "20/20",
+      "Hearing": "Normal",
+      "Notes": "Parent confirmed allergy details",
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "UpdateID": 2,
+      "StudentID": 2,
+      "ParentID": 2,
+      "UpdateDate": "2025-05-02T09:00:00Z",
+      "Allergies": null,
+      "ChronicDiseases": "Asthma",
+      "TreatmentHistory": "New inhaler prescribed",
+      "Vision": "20/25",
+      "Hearing": "Normal",
+      "Notes": "Asthma symptoms stable",
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "UpdateID": 3,
+      "StudentID": 3,
+      "ParentID": 3,
+      "UpdateDate": "2025-05-03T09:00:00Z",
+      "Allergies": "Shellfish",
+      "ChronicDiseases": null,
+      "TreatmentHistory": null,
+      "Vision": "20/30",
+      "Hearing": "Normal",
+      "Notes": "No new updates",
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "UpdateID": 4,
+      "StudentID": 4,
+      "ParentID": 4,
+      "UpdateDate": "2025-05-04T09:00:00Z",
+      "Allergies": null,
+      "ChronicDiseases": null,
+      "TreatmentHistory": null,
+      "Vision": "20/20",
+      "Hearing": "Normal",
+      "Notes": "Healthy, no issues",
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "UpdateID": 5,
+      "StudentID": 5,
+      "ParentID": 5,
+      "UpdateDate": "2025-05-05T09:00:00Z",
+      "Allergies": "Dust mites",
+      "ChronicDiseases": null,
+      "TreatmentHistory": "Antihistamines continued",
+      "Vision": "20/25",
+      "Hearing": "Normal",
+      "Notes": "Allergy symptoms managed",
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "Vaccinations": [
+    {
+      "VaccinationID": 1,
+      "StudentID": 1,
+      "VaccineName": "MMR",
+      "DateScheduled": "2025-04-01",
+      "DateAdministered": "2025-04-01",
+      " DoseNumber": 1,
+      "SideEffects": null,
+      "ConfirmedByParent": true,
+      "CreatedAt": "2025-04-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "VaccinationID": 2,
+      "StudentID": 2,
+      "VaccineName": "Hepatitis B",
+      "DateScheduled": "2025-04-02",
+      "DateAdministered": "2025-04-02",
+      "DoseNumber": 2,
+      "SideEffects": "Mild fever",
+      "ConfirmedByParent": true,
+      "CreatedAt": "2025-04-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "VaccinationID": 3,
+      "StudentID": 3,
+      "VaccineName": "Varicella",
+      "DateScheduled": "2025-04-03",
+      "DateAdministered": null,
+      "DoseNumber": 1,
+      "SideEffects": null,
+      "ConfirmedByParent": false,
+      "CreatedAt": "2025-04-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "VaccinationID": 4,
+      "StudentID": 4,
+      "VaccineName": "DTaP",
+      "DateScheduled": "2025-04-04",
+      "DateAdministered": "2025-04-04",
+      "DoseNumber": 1,
+      "SideEffects": null,
+      "ConfirmedByParent": true,
+      "CreatedAt": "2025-04-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "VaccinationID": 5,
+      "StudentID": 5,
+      "VaccineName": "Influenza",
+      "DateScheduled": "2025-04-05",
+      "DateAdministered": "2025-04-05",
+      "DoseNumber": 1,
+      "SideEffects": "Sore arm",
+      "ConfirmedByParent": true,
+      "CreatedAt": "2025-04-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "VaccinationNotices": [
+    {
+      "NoticeID": 1,
+      "VaccinationID": 1,
+      "NoticeDate": "2025-03-25T09:00:00Z",
+      "SentToParent": true,
+      "ParentConfirmed": true,
+      "ConfirmationDate": "2025-03-26T09:00:00Z",
+      "CreatedAt": "2025-03-25T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NoticeID": 2,
+      "VaccinationID": 2,
+      "NoticeDate": "2025-03-26T09:00:00Z",
+      "SentToParent": true,
+      "ParentConfirmed": true,
+      "ConfirmationDate": "2025-03-27T09:00:00Z",
+      "CreatedAt": "2025-03-26T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NoticeID": 3,
+      "VaccinationID": 3,
+      "NoticeDate": "2025-03-27T09:00:00Z",
+      "SentToParent": true,
+      "ParentConfirmed": false,
+      "ConfirmationDate": null,
+      "CreatedAt": "2025-03-27T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NoticeID": 4,
+      "VaccinationID": 4,
+      "NoticeDate": "2025-03-28T09:00:00Z",
+      "SentToParent": true,
+      "ParentConfirmed": true,
+      "ConfirmationDate": "2025-03-29T09:00:00Z",
+      "CreatedAt": "2025-03-28T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "NoticeID": 5,
+      "VaccinationID": 5,
+      "NoticeDate": "2025-03-29T09:00:00Z",
+      "SentToParent": true,
+      "ParentConfirmed": true,
+      "ConfirmationDate": "2025-03-30T09:00:00Z",
+      "CreatedAt": "2025-03-29T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "MedicalEvents": [
+    {
+      "EventID": 1,
+      "StudentID": 1,
+      "NurseID": 1,
+      "EventType": "Injury",
+      "Description": "Sprained ankle during sports",
+      "EventDate": "2025-05-01T10:00:00Z",
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "EventID": 2,
+      "StudentID": 2,
+      "NurseID": 2,
+      "EventType": "Fever",
+      "Description": "High fever, sent home",
+      "EventDate": "2025-05-02T09:00:00Z",
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "EventID": 3,
+      "StudentID": 3,
+      "NurseID": 3,
+      "EventType": "Allergic Reaction",
+      "Description": "Mild allergic reaction to food",
+      "EventDate": "2025-05-03T09:00:00Z",
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "EventID": 4,
+      "StudentID": 4,
+      "NurseID": 4,
+      "EventType": "Headache",
+      "Description": "Persistent headache, sent to nurse",
+      "EventDate": "2025-05-04T09:00:00Z",
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "EventID": 5,
+      "StudentID": 5,
+      "NurseID": 5,
+      "EventType": "Injury",
+      "Description": "Cut on arm, bandaged",
+      "EventDate": "2025-05-05T09:00:00Z",
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "MedicalSupplies": [
+    {
+      "SupplyID": 1,
+      "Name": "Bandages",
+      "Quantity": 100,
+      "Unit": "Piece",
+      "ExpirationDate": "2026-05-01",
+      "CreatedAt": "2025-01-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "SupplyID": 2,
+      "Name": "Antiseptic Wipes",
+      "Quantity": 200,
+      "Unit": "Piece",
+      "ExpirationDate": "2026-06-01",
+      "CreatedAt": "2025-01-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "SupplyID": 3,
+      "Name": "Ibuprofen",
+      "Quantity": 50,
+      "Unit": "Tablet",
+      "ExpirationDate": "2027-01-01",
+      "CreatedAt": "2025-01-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "SupplyID": 4,
+      "Name": "Thermometers",
+      "Quantity": 10,
+      "Unit": "Piece",
+      "ExpirationDate": null,
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "SupplyID": 5,
+      "Name": "Epinephrine Auto-Injector",
+      "Quantity": 5,
+      "Unit": "Piece",
+      "ExpirationDate": "2026-12-01",
+      "CreatedAt": "2025-01-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "MedicalEventSupplies": [
+    {
+      "ID": 1,
+      "EventID": 1,
+      "SupplyID": 1,
+      "QuantityUsed": 2,
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ID": 2,
+      "EventID": 2,
+      "SupplyID": 3,
+      "QuantityUsed": 1,
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ID": 3,
+      "EventID": 3,
+      "SupplyID": 5,
+      "QuantityUsed": 1,
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ID": 4,
+      "EventID": 4,
+      "SupplyID": 3,
+      "QuantityUsed": 1,
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ID": 5,
+      "EventID": 5,
+      "SupplyID": 1,
+      "QuantityUsed": 1,
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "PeriodicHealthChecks": [
+    {
+      "CheckID": 1,
+      "StudentID": 1,
+      "DateScheduled": "2025-04-01",
+      "DateChecked": "2025-04-01",
+      "CheckResults": "Normal",
+      "Notes": "Healthy",
+      "ParentConfirmed": true,
+      "CreatedAt": "2025-04-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "CheckID": 2,
+      "StudentID": 2,
+      "DateScheduled": "2025-04-02",
+      "DateChecked": "2025-04-02",
+      "CheckResults": "Normal",
+      "Notes": "Asthma monitored",
+      "ParentConfirmed": true,
+      "CreatedAt": "2025-04-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "CheckID": 3,
+      "StudentID": 3,
+      "DateScheduled": "2025-04-03",
+      "DateChecked": "2025-04-03",
+      "CheckResults": "Slight vision issue",
+      "Notes": "Recommend eye exam",
+      "ParentConfirmed": true,
+      "CreatedAt": "2025-04-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "CheckID": 4,
+      "StudentID": 4,
+      "DateScheduled": "2025-04-04",
+      "DateChecked": "2025-04-04",
+      "CheckResults": "Normal",
+      "Notes": "No issues",
+      "ParentConfirmed": true,
+      "CreatedAt": "2025-01-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "CheckID": 5,
+      "StudentID": 5,
+      "DateScheduled": "2025-04-05",
+      "DateChecked": "2025-04-05",
+      "CheckResults": "Normal",
+      "Notes": "Allergies monitored",
+      "ParentConfirmed": true,
+      "CreatedAt": "2025-04-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "MedicineDeliveries": [
+    {
+      "DeliveryID": 1,
+      "StudentID": 1,
+      "ParentID": 1,
+      "MedicineName": "Epinephrine",
+      "Dosage": "0.3 mg",
+      "Quantity": 1,
+      "DeliveryDate": "2025-05-01T09:00:00Z",
+      "NurseID": 1,
+      "Notes": "For emergency use",
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "DeliveryID": 2,
+      "StudentID": 2,
+      "ParentID": 2,
+      "MedicineName": "Albuterol",
+      "Dosage": "90 mcg",
+      "Quantity": 1,
+      "DeliveryDate": "2025-05-02T09:00:00Z",
+      "NurseID": 2,
+      "Notes": "For asthma",
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "DeliveryID": 3,
+      "StudentID": 3,
+      "ParentID": 3,
+      "MedicineName": "Antihistamine",
+      "Dosage": "10 mg",
+      "Quantity": 10,
+      "DeliveryDate": "2025-05-03T09:00:00Z",
+      "NurseID": 3,
+      "Notes": "For allergies",
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "DeliveryID": 4,
+      "StudentID": 4,
+      "ParentID": 4,
+      "MedicineName": "Ibuprofen",
+      "Dosage": "200 mg",
+      "Quantity": 5,
+      "DeliveryDate": "2025-05-04T09:00:00Z",
+      "NurseID": 4,
+      "Notes": "For headache",
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "DeliveryID": 5,
+      "StudentID": 5,
+      "ParentID": 5,
+      "MedicineName": "Antihistamine",
+      "Dosage": "10 mg",
+      "Quantity": 10,
+      "DeliveryDate": "2025-05-05T09:00:00Z",
+      "NurseID": 5,
+      "Notes": "For allergies",
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "Articles": [
+    {
+      "ArticleID": 1,
+      "Title": "Health Tips for Students",
+      "Content": "Tips for maintaining student health...",
+      "AuthorID": 1,
+      "ImageUrl": "https://example.com/images/article1.jpg",
+      "PublishedDate": "2025-05-01T09:00:00Z",
+      "IsPublished": true,
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ArticleID": 2,
+      "Title": "Importance of Vaccinations",
+      "Content": "Why vaccinations are crucial...",
+      "AuthorID": 1,
+      "ImageUrl": null,
+      "PublishedDate": "2025-05-02T09:00:00Z",
+      "IsPublished": true,
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ArticleID": 3,
+      "Title": "Managing Allergies in School",
+      "Content": "How to handle allergies in school...",
+      "AuthorID": 1,
+      "ImageUrl": "https://example.com/images/article3.jpg",
+      "PublishedDate": "2025-05-03T09:00:00Z",
+      "IsPublished": true,
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ArticleID": 4,
+      "Title": "Healthy Eating for Kids",
+      "Content": "Nutritional advice for students...",
+      "AuthorID": 1,
+      "ImageUrl": null,
+      "PublishedDate": "2025-05-04T09:00:00Z",
+      "IsPublished": true,
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ArticleID": 5,
+      "Title": "Mental Health Awareness",
+      "Content": "Supporting student mental health...",
+      "AuthorID": 1,
+      "ImageUrl": "https://example.com/images/article5.jpg",
+      "PublishedDate": "2025-05-05T09:00:00Z",
+      "IsPublished": true,
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ],
+  "HealthConsultations": [
+    {
+      "ConsultationID": 1,
+      "StudentID": 1,
+      "NurseID": 1,
+      "ScheduledDate": "2025-05-01T10:00:00Z",
+      "Notes": "Allergy consultation",
+      "Completed": true,
+      "CreatedAt": "2025-05-01T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ConsultationID": 2,
+      "StudentID": 2,
+      "NurseID": 2,
+      "ScheduledDate": "2025-05-02T10:00:00Z",
+      "Notes": "Asthma follow-up",
+      "Completed": true,
+      "CreatedAt": "2025-05-02T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ConsultationID": 3,
+      "StudentID": 3,
+      "NurseID": 3,
+      "ScheduledDate": "2025-05-03T10:00:00Z",
+      "Notes": "Vision concerns",
+      "Completed": false,
+      "CreatedAt": "2025-05-03T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ConsultationID": 4,
+      "StudentID": 4,
+      "NurseID": 4,
+      "ScheduledDate": "2025-05-04T10:00:00Z",
+      "Notes": "General check-up",
+      "Completed": true,
+      "CreatedAt": "2025-05-04T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    },
+    {
+      "ConsultationID": 5,
+      "StudentID": 5,
+      "NurseID": 5,
+      "ScheduledDate": "2025-05-05T10:00:00Z",
+      "Notes": "Allergy management",
+      "Completed": true,
+      "CreatedAt": "2025-05-05T09:00:00Z",
+      "UpdatedAt": "2025-05-29T09:00:00Z"
+    }
+  ]
+}
