@@ -9,7 +9,7 @@ const Navbar = () => {
       </div>
       <ul className="navbar_links">
         <li>Home</li>
-        <li>Services</li>
+        <li>Service</li>
         <li>Blogs</li>
       </ul>
       <div className="navbar_auth">
