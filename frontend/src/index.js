@@ -10,6 +10,7 @@ import Admin from "./components/Admin/Admin";
 import Parent from "./components/Parent/Parent";
 import {AuthProvider} from "./context/AuthContext";
 import Student from "./components/Student/Student";
+import Login from "./components/HomePage/Login";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -17,6 +18,7 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" index element={<App />}></Route>
+          <Route path="login" element={<Login></Login>}></Route>
           <Route path="admin" element={<Admin></Admin>}></Route>
           <Route path="parent" element={<Parent></Parent>}></Route>
           <Route path="student" element={<Student></Student>}></Route>

@@ -1,11 +1,22 @@
-import "./App.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchData } from "./service/service";
+import { fetchData } from "../../service/service";
 import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
+import "./login.scss";
 
-function App() {
+
+// function App() {
+//   const [adminData, setAdminData] = useState(null);
+//   const [parentData, setParentData] = useState(null);
+//   const [studentData, setStudentData] = useState(null);
+//   const { setUser } = useContext(AuthContext);
+//   const [username, setUsername] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [errorMsg, setErrorMsg] = useState("");
+//   const navigate = useNavigate();
+
+const Login = () => {
   const [adminData, setAdminData] = useState(null);
   const [parentData, setParentData] = useState(null);
   const [studentData, setStudentData] = useState(null);
@@ -14,6 +25,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchData()
@@ -67,39 +79,44 @@ function App() {
 
   return (
     <>
-      {/* <div
-        className="login-container"
-        style={{ maxWidth: 400, margin: "auto", padding: 20 }}
-      >
-        <h2>Login Admin</h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 12 }}>
-            <label>Username:</label>
-            <br />
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <label>Password:</label>
-            <br />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">Login</button>
-        </form>
-        {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
-      </div> */}
+    <div className="background">
+      <div className="card">
+        <div
+          className="login-container"
+        // style={{ maxWidth: 400, margin: "auto", padding: 20 }}
+        >
+          <h2 className="title">Login Admin</h2>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: 12 }}>
+              <label>Username:</label>
+              <br />
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label>Password:</label>
+              <br />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit">Login</button>
+          </form>
+          {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
+        </div>
+      </div>
+      </div>
     </>
+
   );
 }
 
-export default App;
+export default Login;
