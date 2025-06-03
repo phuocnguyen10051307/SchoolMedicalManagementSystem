@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchData } from "./service/service";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import HomePage from "./components/HomePage/HomePage";
 
 function App() {
   const [adminData, setAdminData] = useState(null);
@@ -67,37 +68,7 @@ function App() {
 
   return (
     <>
-      <div
-        className="login-container"
-        style={{ maxWidth: 400, margin: "auto", padding: 20 }}
-      >
-        <h2>Login Admin</h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 12 }}>
-            <label>Username:</label>
-            <br />
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <label>Password:</label>
-            <br />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit">Login</button>
-        </form>
-        {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
-      </div>
+    <HomePage></HomePage>
     </>
   );
 }
