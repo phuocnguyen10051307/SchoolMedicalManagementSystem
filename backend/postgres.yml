@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  db-postgres:
+    image:  postgres:14
+    restart: always
+    environment:
+      - POSTGRES_DB=SchoolMedicalManagementSystem
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+    ports:
+      - "5436:5432"
