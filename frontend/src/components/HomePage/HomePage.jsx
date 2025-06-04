@@ -6,6 +6,7 @@ const HomePage = () => {
       <Navbar />
       <div className="main">
         {
+          
         }
 
       </div>
