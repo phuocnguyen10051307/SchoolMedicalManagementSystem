@@ -19,7 +19,7 @@ const Student = () => {
             <button
               key={t.key}
               className={`student-tab${tab === t.key ? " active" : ""}`}
-              onClick={() => setTab(t.key)}
+              onClick={() => setTab(t.key)}//chuyen tab
             >
               {t.label}
             </button>

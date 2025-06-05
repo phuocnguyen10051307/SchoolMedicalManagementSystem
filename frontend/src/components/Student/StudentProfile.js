@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 const StudentProfile = ({ data }) => {
-  const studentData = data && data.Parents && data.Parents.length > 0 ? data.Students[1] : null;
+  const studentData = data && data.Students && data.Students.length > 0 ? data.Students[1] : null;
   const [student, setStudent] = useState(studentData);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState(studentData);
@@ -26,8 +26,6 @@ const StudentProfile = ({ data }) => {
         <div className="profile-row"><span>Email</span>: {student.Email}</div>
         {edit && <div className="profile-save-btn"><button onClick={handleSave}>Save</button></div>}
       </div>
-    
   );
 };
-
 export default StudentProfile;
