@@ -1,84 +1,41 @@
 import React, { useState } from "react";
 import "./Parent.css";
 
-const initialParent = {
-    fullName: "Robert Johnson",
-    phone: "0123 456 789",
-    address: "123 Main St, City",
-    email: "robert.johnson@gmail.com",
-    student: "Emma Johnson",
-    studentClass: "5A"
-};
+const ParentProfile = ({ data }) => {
+  // Đặt hook ở đầu hàm, KHÔNG return sớm!
+  const parentData = data && data.Parents && data.Parents.length > 0 ? data.Parents[1] : null;
+  const [parent, setParent] = useState(parentData);
+  const [edit, setEdit] = useState(false);
+  const [form, setForm] = useState(parentData);
 
-const ParentProfile = () => {
-    const [parent, setParent] = useState(initialParent);
-    const [edit, setEdit] = useState(false);
-    const [form, setForm] = useState(initialParent);
-    const [success, setSuccess] = useState(false);
+  if (!parent) return <div>No parent data</div>;
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
-        setSuccess(false);
-    };
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleUpdate = () => setEdit(true);
+  const handleSave = () => {
+    setParent({ ...parent, ...form });
+    setEdit(false);
+  };
 
-    const handleUpdate = () => setEdit(true);
-
-    const handleSave = () => {
-        setParent({
-            ...parent,
-            fullName: form.fullName,
-            phone: form.phone,
-            address: form.address,
-            email: form.email
-        });
-        setEdit(false);
-        setSuccess(true);
-    };
-
-    return (
-        <div className="profile-container">
-            <div className="profile-avatar">
-                <img
-                    src="https://randomuser.me/api/portraits/men/32.jpg"
-                    alt="avatar"
-                />
-            </div>
-            <div className="profile-info">
-                <div className="profile-update-btn">
-                    {!edit && (
-                        <button onClick={handleUpdate}>
-                            <span role="img" aria-label="update">👤</span> Update Profile
-                        </button>
-                    )}
-                </div>
-                <div className="profile-row"><span>Full Name</span>: {edit ? (
-                    <input name="fullName" value={form.fullName} onChange={handleChange} />
-                ) : parent.fullName}</div>
-                <div className="profile-row"><span>Phone Number</span>: {edit ? (
-                    <input name="phone" value={form.phone} onChange={handleChange} />
-                ) : parent.phone}</div>
-                <div className="profile-row"><span>Address</span>: {edit ? (
-                    <input name="address" value={form.address} onChange={handleChange} />
-                ) : parent.address}</div>
-                <div className="profile-row"><span>Email</span>: {edit ? (
-                    <input name="email" value={form.email} onChange={handleChange} />
-                ) : parent.email}</div>
-                <div className="profile-row"><span>Parent of student</span>: {parent.student}</div>
-                <div className="profile-row"><span>Class of student</span>: {parent.studentClass}</div>
-                {edit && (
-                    <div className="profile-save-btn">
-                        <button onClick={handleSave}>Save</button>
-                    </div>
-                )}
-                {success && (
-                    <div className="success-text" style={{ color: "green", marginTop: 12 }}>
-                        Profile updated successfully!
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="profile-container">
+      <div className="profile-avatar">
+        <img src={parent.ImageUrl || "https://randomuser.me/api/portraits/men/32.jpg"} alt="avatar" />
+      </div>
+      <div className="profile-info">
+        <div className="profile-update-btn">
+          {!edit && <button onClick={handleUpdate}>Update Profile</button>}
         </div>
-    );
+        <div className="profile-row"><span>Full Name</span>: {edit ? <input name="FullName" value={form.FullName} onChange={handleChange} /> : parent.FullName}</div>
+        <div className="profile-row"><span>Phone Number</span>: {edit ? <input name="PhoneNumber" value={form.PhoneNumber} onChange={handleChange} /> : parent.PhoneNumber}</div>
+        <div className="profile-row"><span>Address</span>: {edit ? <input name="Address" value={form.Address} onChange={handleChange} /> : parent.Address}</div>
+        <div className="profile-row"><span>Email</span>: {edit ? <input name="Email" value={form.Email} onChange={handleChange} /> : parent.Email}</div>
+        <div className="profile-row"><span>Username</span>: {parent.Username}</div>
+        <div className="profile-row"><span>Last Login</span>: {parent.LastLoginAt}</div>
+        {edit && <div className="profile-save-btn"><button onClick={handleSave}>Save</button></div>}
+      </div>
+    </div>
+  );
 };
 
 export default ParentProfile;
