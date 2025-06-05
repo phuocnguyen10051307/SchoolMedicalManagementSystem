@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchData } from "../../service/service";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import "./login.scss";
+import "./login.css";
 
 
 // function App() {
@@ -78,9 +78,10 @@ const Login = () => {
   };
 
   return (
-    <>
-    <div className="background">
-      <div className="card">
+
+      <div className="login-page">
+
+
         <div
           className="login-container"
         // style={{ maxWidth: 400, margin: "auto", padding: 20 }}
@@ -108,13 +109,13 @@ const Login = () => {
                 required
               />
             </div>
-            <button type="submit">Login</button>
+            <button type="submit">Sing In</button>
           </form>
           {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
         </div>
+
       </div>
-      </div>
-    </>
+
 
   );
 }
