@@ -1,0 +1,63 @@
+.healthrecord-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 80px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.healthrecord-left {
+  flex: 1;
+  max-width: 600px;
+}
+
+.healthrecord-left h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.healthrecord-left p {
+  color: #777;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.healthrecord-benefits {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+
+.healthrecord-benefits li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.healthrecord-benefits li span {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #67aeb6;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  margin-right: 12px;
+  font-weight: bold;
+}
+
+.healthrecord-button {
+  background-color: #67aeb6 ;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+

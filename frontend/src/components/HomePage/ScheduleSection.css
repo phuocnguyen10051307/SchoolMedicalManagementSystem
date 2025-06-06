@@ -1,0 +1,66 @@
+.schedule-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 60px 80px;
+  background-color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  flex-wrap: wrap;
+}
+
+
+.schedule-content {
+  max-width: 550px;
+  align-items: right;
+}
+
+.schedule-content h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.schedule-content p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.schedule-content ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.schedule-content li {
+  font-size: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.check-icon {
+  font-size: 20px;
+  color: #60c1c5;
+  margin-right: 10px;
+}
+
+.schedule-button {
+  background-color: #60c1c5;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.schedule-button:hover {
+  background-color: #4a9ca0;
+}

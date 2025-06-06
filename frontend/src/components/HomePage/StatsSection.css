@@ -1,0 +1,43 @@
+.stats-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 60px 0;
+  background-color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.stat-card {
+  width: 240px;
+  height: 160px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding-top: 20px;
+  position: relative;
+}
+
+.stat-top-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background-color: #60c1c5;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #000;
+  margin-top: 20px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+}

@@ -11,6 +11,7 @@ const Navbar = () => {
         <li>Home</li>
         <li>Services</li>
         <li>Blogs</li>
+        
       </ul>
       <div className="navbar_auth">
         <span className="navbar_signin">Sign In</span>
