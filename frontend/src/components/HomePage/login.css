@@ -17,7 +17,7 @@
     justify-content: center; /* căn giữa ngang */
     align-items: center; /* căn giữa dọc */
     height: 100vh;
-    background-color: aqua; /* Màu nền của trang đăng nhập */
+    background-color: #6DB2B9; /* Màu nền của trang đăng nhập */
 }
 
 
@@ -52,4 +52,10 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+label {
+  display: block;
+  text-align: left;
+    margin-top: 10px;
+    font-size: 18px;
 }

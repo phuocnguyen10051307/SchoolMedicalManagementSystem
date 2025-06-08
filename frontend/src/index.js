@@ -8,9 +8,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Admin from "./components/Admin/Admin";
 import Parent from "./components/Parent/Parent";
-import {AuthProvider} from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import Student from "./components/Student/Student";
 import Login from "./components/HomePage/Login";
+import ShcoolNurse from "./components/SchoolNurse/SchoolNurse";
+import Manager from "./components/Manager/Manager";
+import { Toast } from "bootstrap";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -22,9 +28,12 @@ root.render(
           <Route path="admin" element={<Admin></Admin>}></Route>
           <Route path="parent" element={<Parent></Parent>}></Route>
           <Route path="student" element={<Student></Student>}></Route>
+          <Route path="schoolnurse" element={<ShcoolNurse></ShcoolNurse>}></Route>
+          <Route path="manager" element={<Manager></Manager>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    <ToastContainer/>
   </Provider>
 );
 
