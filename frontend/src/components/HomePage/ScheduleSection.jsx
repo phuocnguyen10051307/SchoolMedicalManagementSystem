@@ -16,15 +16,9 @@ const ScheduleSection = () => {
           medication for their children. The system ensures safe and timely medication
           management, giving you peace of mind while your child is at school.
         </p>
-        <ul>
-          <li>
-            <span className="check-icon">✔</span>
-            Quick and convenient online scheduling
-          </li>
-          <li>
-            <span className="check-icon">✔</span>
-            Ensure students take medication safely and on time
-          </li>
+        <ul className="check-icon">
+          <li><span >✔</span><strong>Quick and convenient online scheduling</strong></li>
+          <li><span>✔</span><strong> Ensure students take medication safely and on time</strong></li>
         </ul>
         <button className="schedule-button">Make Schedule Now!</button>
       </div>

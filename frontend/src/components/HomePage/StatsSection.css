@@ -12,13 +12,19 @@
   height: 160px;
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   text-align: center;
   padding-top: 20px;
   position: relative;
+    border-top: 4px solid #2aa2af;
+
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.2s ease;
 }
 
-.stat-top-border {
+/* .stat-top-border {
   position: absolute;
   top: 0;
   left: 0;
@@ -27,7 +33,7 @@
   background-color: #60c1c5;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-}
+} */
 
 .stat-value {
   font-size: 28px;

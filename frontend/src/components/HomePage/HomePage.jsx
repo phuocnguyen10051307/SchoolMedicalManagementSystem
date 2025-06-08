@@ -3,9 +3,10 @@ import Navbar from './Navbar';
 import HeroSection from './HeroSection';
 import Introduction from './Introduction';
 import HealthRecordSection from './HealthRecordSection';
-// import ScheduleSection from './ScheduleSection';
+import ScheduleSection from './ScheduleSection';
 import StatsSection from './StatsSection';
 import Footer from './Footer';
+import PreventionTip from './PreventionTip';
 
 const HomePage = () => {
   return (
@@ -14,8 +15,9 @@ const HomePage = () => {
       <HeroSection />
       <Introduction />
       <HealthRecordSection />
-      {/* <ScheduleSection /> */}
+      <ScheduleSection />
       <StatsSection />
+      <PreventionTip />
       <Footer />
 
     </>

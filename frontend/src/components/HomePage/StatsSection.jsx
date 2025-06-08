@@ -21,7 +21,7 @@ const StatsSection = () => {
     <div className="stats-section">
       {stats.map((stat, index) => (
         <div className="stat-card" key={index}>
-          <div className="stat-top-border" />
+          {/* <div className="stat-top-border" /> */}
           <div className="stat-value">{stat.value}</div>
           <div className="stat-label">{stat.label}</div>
         </div>

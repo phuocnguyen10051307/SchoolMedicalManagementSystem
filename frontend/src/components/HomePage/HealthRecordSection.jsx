@@ -6,7 +6,7 @@ const HealthRecordSection = () => {
   return (
     <div className="healthrecord-container">
       <div className="healthrecord-left">
-        <h1>Comprehensive school health care</h1>
+        <h2>Comprehensive school health care</h2>
         <p>
           The school health management software helps parents declare health records, send medication, and receive
           medical check-up notifications. Medical staff can easily manage medical events, vaccinations, and periodic

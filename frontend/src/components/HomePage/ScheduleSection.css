@@ -1,12 +1,10 @@
 .schedule-section {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
   padding: 60px 80px;
-  background-color: #fff;
+  background-color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
-  flex-wrap: wrap;
 }
 
 
@@ -30,7 +28,7 @@
   line-height: 1.6;
 }
 
-.schedule-content ul {
+/* .schedule-content ul {
   list-style: none;
   padding: 0;
   margin-bottom: 24px;
@@ -42,25 +40,42 @@
   display: flex;
   align-items: center;
   font-weight: 500;
-}
+} */
 
 .check-icon {
-  font-size: 20px;
-  color: #60c1c5;
-  margin-right: 10px;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+.check-icon li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+.check-icon li span {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #60c1c5;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  margin-right: 12px;
+  font-weight: bold;
 }
 
 .schedule-button {
-  background-color: #60c1c5;
-  color: #fff;
+  background-color: #67aeb6 ;
+  color: white;
   border: none;
-  padding: 12px 28px;
-  border-radius: 10px;
+  padding: 14px 28px;
   font-size: 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s ease;
 }
 
-.schedule-button:hover {
+/* .schedule-button:hover {
   background-color: #4a9ca0;
-}
+} */
