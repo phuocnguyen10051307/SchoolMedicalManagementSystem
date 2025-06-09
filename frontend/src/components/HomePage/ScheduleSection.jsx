@@ -5,7 +5,7 @@ const ScheduleSection = () => {
   return (
     <div className="schedule-section">
       <div className="schedule-image">
-        
+        <img src="https://slchc.edu/wp-content/uploads/2023/10/geriatric-care-SLCHC-scaled-2560x1280.jpeg" alt="Nurse" />
       </div>
       <div className="schedule-content">
         <h2>

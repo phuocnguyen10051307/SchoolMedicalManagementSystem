@@ -1,6 +1,6 @@
 import React from 'react';
 import './HealthRecordSection.css';
-
+import nurse2 from '../../images/nurse2.png';
 
 const HealthRecordSection = () => {
   return (
@@ -20,7 +20,24 @@ const HealthRecordSection = () => {
         <button className="healthrecord-button">Health record declaration</button>
       </div>
 
-      
+      <div className="healthrecord-right">
+        <div className="nurse-card">
+          <h4>Available Nurse</h4>
+          <p>Select Nurse</p>
+          <div className="nurse-profile">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Nurse Adinda" />
+            <span>Nurse Adinda</span>
+          </div>
+          <div className="nurse-profile">
+            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Nurse Jackson" />
+            <span>Nurse Jackson</span>
+          </div>
+          <button className="find-nurse-btn">Find Nurse</button>
+        </div>
+        <div className="nurse2-image">
+        <img src={nurse2} alt="Nurse" />
+        </div>
+      </div>
     </div>
   );
 };

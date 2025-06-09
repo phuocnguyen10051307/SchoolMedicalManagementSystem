@@ -1,5 +1,6 @@
 import React from 'react';
 import './HeroSection.css'; 
+import nurse2 from '../../images/nurse2.png';
 
 const HeroSection = () => {
   return (
@@ -15,8 +16,17 @@ const HeroSection = () => {
         </p>
         <button className="hero-button">Contact Us</button>
       </div>
-      <div className="hero-right">
-        
+       <div className="hero-right">
+        <div className="nurse-section">
+
+          <div className="nurse-card">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Nurse" className="nurse-avatar" />
+            <h3 className="nurse-name">Nurse Shimanta</h3>
+            <p className="nurse-title">Head of School Health Department</p>
+            <button className="schedule-button">Make Schedule</button>
+          </div>
+          <img src={nurse2} alt="Nurse" className="nurse-image" />
+        </div>
       </div>
     </section>
   );

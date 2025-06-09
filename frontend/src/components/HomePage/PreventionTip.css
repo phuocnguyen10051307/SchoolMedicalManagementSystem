@@ -30,7 +30,7 @@
 }
 
 .prevention-image img {
-  width: 250px;
+  width: 300px;
   height: auto;
   border: 2px solid #90cfd2;
   border-radius: 4px;
@@ -64,7 +64,7 @@
     text-align: left;
     /* flex: 1; */
     max-width: 500px;
-    padding-left: 320px;
+    padding-left: 370px;
 }
 
 .prevention-staff strong {
