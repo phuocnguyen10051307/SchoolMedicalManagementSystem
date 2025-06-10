@@ -1,6 +1,6 @@
 import React from 'react';
 import './PreventionTip.css';
-import nurseImage from '../../images/nurse1.png';
+import nurseImage from '../../../images/nurse1.png';
 
 const PreventionTip = () => {
   return (

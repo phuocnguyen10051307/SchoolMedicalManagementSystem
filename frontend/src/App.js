@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchData } from "./service/service";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
-import HomePage from "./components/HomePage/HomePage";
+import HomePage from "./components/HomePage/Home/HomePage";
 
 function App() {
   const [adminData, setAdminData] = useState(null);
