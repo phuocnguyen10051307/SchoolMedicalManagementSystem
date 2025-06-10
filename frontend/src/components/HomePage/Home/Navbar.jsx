@@ -11,8 +11,8 @@ const Navbar = () => {
       <ul className="navbar_links">
         <Link to= {'/home'}>Home</Link>
         {/* <Link to={`/parent`}>aaa</Link> */}
-        <li>Services</li>
-        <li>Blogs</li>
+        <Link to= {'/service'}>Services</Link>
+        <Link to= {'blog'}>Blogs</Link>
    
 
       </ul>
