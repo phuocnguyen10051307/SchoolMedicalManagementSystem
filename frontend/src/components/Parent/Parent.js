@@ -22,7 +22,7 @@ const Parent = () => {
           <NavLink to="profile" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Parent Profile</NavLink>
           <NavLink to="health" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Student Health Record Declaration</NavLink>
           <NavLink to="medicine" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Register medicine to be sent to school</NavLink>
-          <NavLink to="history" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Health History</NavLink> {/* Thêm dòng này */}
+          <NavLink to="history" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Health History</NavLink> 
           <div className="parent-tab blank"></div>
         </div>
         <div className="parent-notify">
@@ -36,7 +36,7 @@ const Parent = () => {
           <Route path="profile" element={data ? <ParentProfile data={data} /> : null} />
           <Route path="health" element={data ? <StudentHealthRecordDeclaration data={data} /> : null} />
           <Route path="medicine" element={data ? <RegisterMedicine data={data} /> : null} />
-          <Route path="history" element={data ? <HealthHistory data={data} /> : null} /> {/* Thêm dòng này */}
+          <Route path="history" element={data ? <HealthHistory data={data} /> : null} /> 
         </Routes>
       </div>
     </div>
