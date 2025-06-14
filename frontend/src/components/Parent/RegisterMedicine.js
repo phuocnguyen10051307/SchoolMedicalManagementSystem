@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 import "./Parent.css";
 
-const initialForm = { medicineName: "", dosage: "", note: "" };
-
 const RegisterMedicine = () => {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState({ medicineName: "", dosage: "", note: "" });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
-
-  const validate = () => {
-    const e = {};
-    if (!form.medicineName) e.medicineName = "Required";
-    if (!form.dosage) e.dosage = "Required";
-    return e;
-  };
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,10 +14,11 @@ const RegisterMedicine = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const e2 = validate();
-    if (Object.keys(e2).length) { setErrors(e2); setSuccess(false); return; }
-    setErrors({});
-    setSuccess(true);
+    const e2 = {};
+    if (!form.medicineName) e2.medicineName = "Required";
+    if (!form.dosage) e2.dosage = "Required";
+    setErrors(e2);
+    setSuccess(Object.keys(e2).length === 0);
   };
 
   return (

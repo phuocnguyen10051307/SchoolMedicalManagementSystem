@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./Parent.css";
 
-const initialForm = {
+const UpdateHealthyStudent = {
+  
   allergies: "",
   chronicDiseases: "",
   treatmentHistory: "",
@@ -10,13 +11,13 @@ const initialForm = {
   note: ""
 };
 
-const StudentHealthRecordDeclaration = ({ studentName = "Emma Johnson" }) => {
-  const [form, setForm] = useState(initialForm);
+const StudentHealthRecordDeclaration = ({ studentName = "Hung" }) => {
+  const [form, setForm] = useState(UpdateHealthyStudent);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
   const validate = () => {
-    const e = {};
+    const e = {};//TAO MOT OBJECT RONG DE LUU CAC LOI, BỊ BỎ TRỐNG SẼ BÁO LỖI
     if (!form.allergies) e.allergies = "Required";
     if (!form.chronicDiseases) e.chronicDiseases = "Required";
     if (!form.treatmentHistory) e.treatmentHistory = "Required";
@@ -33,7 +34,7 @@ const StudentHealthRecordDeclaration = ({ studentName = "Emma Johnson" }) => {
   };
 
   const handleSubmit = e => {
-    e.preventDefault();
+    e.preventDefault();//Ngăn trình duyệt reload trang khi submit form.
     const e2 = validate();
     if (Object.keys(e2).length) { setErrors(e2); setSuccess(false); return; }
     setErrors({});
