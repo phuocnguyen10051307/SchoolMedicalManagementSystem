@@ -1,5 +1,5 @@
 import React from 'react';
-import './ScheduleSection.css';
+import './ScheduleSection.scss';
 
 const ScheduleSection = () => {
   return (

@@ -5,6 +5,7 @@ import { fetchData } from "./service/service";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import HomePage from "./components/HomePage/Home/HomePage";
+import SchoolNurse from "./components/SchoolNurse/SchoolNurse";
 
 function App() {
   const [adminData, setAdminData] = useState(null);
@@ -68,7 +69,8 @@ function App() {
 
   return (
     <>
-    <HomePage></HomePage>
+    {/* <HomePage></HomePage> */}
+    <SchoolNurse></SchoolNurse>
     </>
   );
 }

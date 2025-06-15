@@ -1,5 +1,5 @@
 import React from 'react';
-import './PreventionTip.css';
+import './PreventionTip.scss';
 import nurseImage from '../../../images/nurse1.png';
 
 const PreventionTip = () => {

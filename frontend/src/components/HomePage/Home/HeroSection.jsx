@@ -1,5 +1,5 @@
 import React from 'react';
-import './HeroSection.css'; 
+import './HeroSection.scss'; 
 import nurse2 from '../../../images/nurse2.png';
 
 const HeroSection = () => {
