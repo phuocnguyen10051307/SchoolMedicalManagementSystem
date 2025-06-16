@@ -1,0 +1,189 @@
+.medical-event-container {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  margin-top: -30px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.medical-event-form {
+  background-color: #90caf9;
+  padding: 20px;
+  border-radius: 50px;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.medical-event-title {
+  text-align: center;
+  font-size: 42px;
+  color: #0d47a1;
+  margin-bottom: 15px;
+}
+
+.medical-form-content {
+  display: flex;
+  gap: 20px;
+}
+
+input::placeholder {
+  font-size: 15px;      
+  color: #000;          
+  font-family: 'Segoe UI', sans-serif; 
+}
+textarea::placeholder {
+  font-size: 15px;      
+  color: #000;          
+  font-family: 'Segoe UI', sans-serif; 
+}
+
+
+.form-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.form-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.separator {
+  width: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  
+}
+
+.floating-label label {
+  position: absolute;
+  top: -20px;
+  left: 10px;
+  padding: 0 6px;
+  font-size: 25px;
+  font-weight: 600;
+  z-index: 2;
+  text-shadow:
+    -1px -1px 0 white,
+     1px -1px 0 white,
+    -1px  1px 0 white,
+     1px  1px 0 white,
+     0px  0px 5px white;
+
+}
+
+.floating-label select,
+.floating-label input,
+.floating-label textarea {
+  padding: 12px 16px;
+  border: 2px solid black;
+  border-radius: 30px;
+  font-size: 15px;
+  outline: none;
+  background-color: white;
+  z-index: 1;
+}
+
+textarea {
+  resize: none;
+  height: 100px;
+}
+
+.upload-button {
+  background-color: #e0f7fa;
+  border: 2px solid #000;
+  border-radius: 30px;
+  padding: 10px 16px;
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+}
+
+
+.plus-icon {
+  width: 34px; 
+  height:34px;
+}
+
+
+
+    .image-preview .image-box {
+    height: 220px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 16px;
+    
+    }
+
+.submit-button {
+  
+  background-color: #a5d6a7;
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  padding: 12px;
+  font-size: 16px;
+  /* font-weight: bold; */
+  margin-top: 10px;
+  cursor: pointer;
+  width: 40%;
+  display:block;
+  margin: 10px auto 0 auto;
+}
+
+.recent-events {
+  flex: 1;
+  background-color: #81d4fa;
+  border-radius: 50px;
+  padding: 20px;
+}
+
+    .recent-events h3 {
+    font-size: 55px;
+    color: #000;
+    margin-bottom: 20px;
+    text-align: center;
+    }
+
+.event-card {
+  background-color: #e0f2f1;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.event-card p {
+  margin: 4px 0;
+}
+
+.view-button {
+  margin-top: 10px;
+  padding: 6px 16px;
+  background-color: #a5d6a7;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  /* font-weight: bold; */
+  width: 40%;
+}

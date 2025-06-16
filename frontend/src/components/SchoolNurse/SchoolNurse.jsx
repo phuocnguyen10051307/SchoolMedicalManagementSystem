@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './SchoolNurse.css';
+import MedicalEvent from './MedicalEvent';
 
 const SchoolNurse = () => {
   const [active, setActive] = useState('dashboard');
@@ -39,8 +40,10 @@ const SchoolNurse = () => {
           ))}
         </ul>
       </div>
+      <div className="main-content">
+        {active === 'events' && <MedicalEvent />}
+      </div>
 
-  
     </div>
   );
 };
