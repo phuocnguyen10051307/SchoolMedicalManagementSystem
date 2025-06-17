@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, Routes, Route, Navigate } from "react-router-dom";
-import ParentProfile from "./ParentProfile";
-import StudentHealthRecordDeclaration from "./StudentHealthRecordDeclaration";
-import RegisterMedicine from "./RegisterMedicine";
-import HealthHistory from "./HealthHistory";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import "./Parent.css";
 
 const Parent = () => {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     fetch("/data/school_health_data.json")
-      .then(res => res.json())
-      .then(setData);
+      .then(res => {
+        if (!res.ok) throw new Error("Network error");
+        return res.json();
+      })
+      .then(json => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
+
+  const isActive = (path) => location.pathname.endsWith(path);
 
   return (
     <div className="parent-bg">
       <div className="parent-header">
         <div className="parent-tabs">
-          <NavLink to="profile" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Parent Profile</NavLink>
-          <NavLink to="health" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Student Health Record Declaration</NavLink>
-          <NavLink to="medicine" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Register medicine to be sent to school</NavLink>
-          <NavLink to="history" className={({isActive}) => isActive ? "parent-tab active" : "parent-tab"}>Health History</NavLink> 
+          <Link to="profile" className={isActive("profile") ? "parent-tab active" : "parent-tab"}>Parent Profile</Link>
+          <Link to="health" className={isActive("health") ? "parent-tab active" : "parent-tab"}>Student Health Record Declaration</Link>
+          <Link to="medicine" className={isActive("medicine") ? "parent-tab active" : "parent-tab"}>Register medicine to be sent to school</Link>
+          <Link to="history" className={isActive("history") ? "parent-tab active" : "parent-tab"}>Health History</Link>
           <div className="parent-tab blank"></div>
         </div>
         <div className="parent-notify">
@@ -31,13 +42,13 @@ const Parent = () => {
         </div>
       </div>
       <div className="parent-content">
-        <Routes>
-          <Route path="/" element={<Navigate to="profile" replace />} />
-          <Route path="profile" element={data ? <ParentProfile data={data} /> : null} />
-          <Route path="health" element={data ? <StudentHealthRecordDeclaration data={data} /> : null} />
-          <Route path="medicine" element={data ? <RegisterMedicine data={data} /> : null} />
-          <Route path="history" element={data ? <HealthHistory data={data} /> : null} /> 
-        </Routes>
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div style={{ color: "red" }}>Error: {error}</div>
+        ) : (
+          <Outlet context={{ data }} />
+        )}
       </div>
     </div>
   );

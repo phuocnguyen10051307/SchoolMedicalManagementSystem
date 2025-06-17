@@ -1,36 +1,67 @@
 import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import "./Parent.css";
 
-const ParentProfile = ({ data }) => {
+const ParentProfile = () => {
+  const { data } = useOutletContext(); // Lấy data từ context
+
   const parentData = data && data.Parents && data.Parents.length > 0 ? data.Parents[0] : null;
   const [parent, setParent] = useState(parentData);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState(parentData);
+  const [imagePreview, setImagePreview] = useState(parentData?.ImageUrl || "https://randomuser.me/api/portraits/men/32.jpg");
 
   if (!parent) return <div>No parent data</div>;
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
   const handleUpdate = () => setEdit(true);
+
   const handleSave = () => {
-    setParent({ ...parent, ...form });
+    setParent({ ...parent, ...form, ImageUrl: imagePreview });
     setEdit(false);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setForm({ ...form, ImageUrl: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <div className="profile-container">
-      {/* Nút Update Profile ở góc phải */}
       {!edit && (
         <button className="profile-update-btn" onClick={handleUpdate}>
-  <span className="profile-update-icon">
-    <span className="icon-user"></span>
-    <span className="icon-plus">+</span>
-  </span>
-  Update Profile
-</button>
+          <span className="profile-update-icon">
+            <span className="icon-user"></span>
+            <span className="icon-plus">+</span>
+          </span>
+          Update Profile
+        </button>
       )}
       <div className="profile-left">
-        <div className="profile-avatar">
-          <img src={parent.ImageUrl || "https://randomuser.me/api/portraits/men/32.jpg"} alt="avatar" />
+        <div className="profile-avatar" style={{ position: "relative" }}>
+          <img src={imagePreview} alt="avatar" />
+          {edit && (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                id="avatar-upload"
+                style={{ display: "none" }}
+                onChange={handleImageChange}
+              />
+              <label htmlFor="avatar-upload" className="avatar-upload-btn">
+                Update Image
+              </label>
+            </>
+          )}
         </div>
         <div className="profile-info-block">
           <div className="profile-row">
@@ -105,4 +136,5 @@ const ParentProfile = ({ data }) => {
     </div>
   );
 };
+
 export default ParentProfile;
