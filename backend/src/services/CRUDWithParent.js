@@ -128,16 +128,5 @@ const getAccount = async (req, res) => {
   }
 };
 
-const getAllStudents = async () => {
-  const client = await connection.connect();
-  try {
-    const { rows } = await client.query("SELECT * FROM students");
-    return rows;
-  } catch (err) {
-    throw err;
-  } finally {
-    client.release();
-  }
-};
 
 module.exports = {handleParentAccountRequest,getAccount,getAllStudents };
