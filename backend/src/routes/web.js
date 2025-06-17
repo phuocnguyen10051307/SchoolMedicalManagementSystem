@@ -1,14 +1,16 @@
 const express = require('express')
 const router = express.Router();
-const {homePage, sendConfirmInfor,account ,postDataParentSend}= require('../controllers/homeControllers')
+const {homePage, sendConfirmInfor,account ,postDataParentSend, getStudents}= require('../controllers/homeControllers')
 
 // khai báo route
 // router.METHOD('/route',handler)
 // file route chỉ định nghĩa route 
+// route là những đường dẫn này sẽ truyền cho frontend nhận dữ liệu 
 
 router.get('/',homePage)
-router.post('/parent-request/send', postDataParentSend);  // this must match your request
-router.post('/parent-request/confirm', sendConfirmInfor); // if used
+router.post('/parent-request/send', postDataParentSend);  
+router.post('/parent-request/confirm', sendConfirmInfor); 
 router.post('/account', account);
+router.get('/students', getStudents);
 
 module.exports = router
