@@ -9,10 +9,10 @@ const Admin = () => {
       {user ? (
         <div>
           <p>
-            <strong>Username:</strong> {user.Username}
+            <strong>Username:</strong> {user.username}
           </p>
           <p>
-            <strong>Email:</strong> {user.Email}
+            <strong>Email:</strong> {user.email}
           </p>
         </div>
       ) : (
