@@ -140,4 +140,15 @@ const getAllStudents = async () => {
   }
 };
 
-module.exports = {handleParentAccountRequest,getAccount,getAllStudents };
+const getHeathProfiles = async () => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query("select * from health_profiles");
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+module.exports = {handleParentAccountRequest,getAccount,getAllStudents, getHeathProfiles};
