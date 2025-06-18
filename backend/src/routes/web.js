@@ -10,7 +10,7 @@ const {homePage, sendConfirmInfor,account ,postDataParentSend, getStudents}= req
 router.get('/',homePage)
 router.post('/parent-request/send', postDataParentSend);  
 router.post('/parent-request/confirm', sendConfirmInfor); 
-router.post('/account', account);
+router.post('/account/login', account);
 router.get('/students', getStudents);
 
 module.exports = router
