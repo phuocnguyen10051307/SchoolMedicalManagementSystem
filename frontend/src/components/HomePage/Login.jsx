@@ -127,14 +127,11 @@ const Login = () => {
       <div className="login-page">
 
 
-        <div
-          className="login-container"
-        // style={{ maxWidth: 400, margin: "auto", padding: 20 }}
-        >
+        <div className="login-container">
           <h2 className="title">Login Admin</h2>
           <form onSubmit={handleSubmit}>
             <div 
-            // style={{ marginBottom: 12 }}
+            
             >
               <label>Username:</label>
               {/* <br /> */}
@@ -147,9 +144,7 @@ const Login = () => {
                 placeholder="Enter your username or email"
               />
             </div>
-            <div 
-            // style={{ marginBottom: 12 }}
-            >
+            <div>
               <label>Password:</label>
               {/* <br /> */}
               <input
@@ -161,6 +156,7 @@ const Login = () => {
               />
             </div>
             <button type="submit">Sign In</button>
+            
           </form>
           {toast.error && <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>}
         </div>
