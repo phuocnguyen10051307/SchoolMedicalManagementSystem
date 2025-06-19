@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { fetchData, loginAccount } from "./service/service";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import HomePage from "./components/HomePage/Home/HomePage";
+import SchoolNurse from "./components/SchoolNurse/SchoolNurse";
 
 function App() {
   const [username, setUsername]   = useState("");
@@ -34,35 +36,8 @@ function App() {
   };
   return (
     <>
-      {/* <div
-        className="login-container"
-        style={{ maxWidth: 400, margin: "auto", padding: 20 }}
-      >
-        <h2>Login Admin</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>User Name</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            ></input>
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            ></input>
-          </div>
-          {errorMess && <p style={{ color: "red" }}>{errorMess}</p>}
-          <button type="submit"> Sign in</button>
-        </form>
-        {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
-      </div> */}
+    {/* <HomePage></HomePage> */}
+    <SchoolNurse></SchoolNurse>
     </>
   );
 }
