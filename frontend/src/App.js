@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchData, loginAccount } from "./service/service";
@@ -34,8 +34,11 @@ function App() {
   };
   return (
     <>
-      <div style={{ padding: "20px" }}>
-        <h2>Login</h2>
+      {/* <div
+        className="login-container"
+        style={{ maxWidth: 400, margin: "auto", padding: 20 }}
+      >
+        <h2>Login Admin</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>User Name</label>
@@ -58,7 +61,8 @@ function App() {
           {errorMess && <p style={{ color: "red" }}>{errorMess}</p>}
           <button type="submit"> Sign in</button>
         </form>
-      </div>
+        {errorMsg && <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>}
+      </div> */}
     </>
   );
 }
