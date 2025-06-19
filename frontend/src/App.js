@@ -18,9 +18,7 @@ function App() {
   useEffect(() => {
     fetchData()
       .then((data) => {
-        setAdminData(data.Admins);
-        setParentData(data.Parents);
-        setStudentData(data.Students);
+        setAdminData(data.accounts);
       })
       .catch((error) => {
         console.log(error);

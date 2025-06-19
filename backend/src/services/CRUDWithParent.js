@@ -1,6 +1,13 @@
 const connection = require("../../config/db");
+const { sendEmail } = require("../utils/mailer");
 
-const handleParentAccountRequest = async ({ student_code, cccd, phone, email, relationship }) => {
+const handleParentAccountRequest = async ({
+  student_code,
+  cccd,
+  phone,
+  email,
+  relationship,
+}) => {
   const client = await connection.connect();
   try {
     await client.query("BEGIN");
@@ -17,20 +24,23 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
     const match = (() => {
       if (relationship === "Father") {
         return (
-          student.father_cccd === cccd &&
-          (student.father_phone === phone || student.father_email === email)
+          student.father_identity_number === cccd &&
+          (student.father_phone_number === phone ||
+            student.father_email === email)
         );
       }
       if (relationship === "Mother") {
         return (
-          student.mother_cccd === cccd &&
-          (student.mother_phone === phone || student.mother_email === email)
+          student.mother_identity_number === cccd &&
+          (student.mother_phone_number === phone ||
+            student.mother_email === email)
         );
       }
       if (relationship === "Guardian") {
         return (
-          student.guardian_cccd === cccd &&
-          (student.guardian_phone === phone || student.guardian_email === email)
+          student.guardian_identity_number === cccd &&
+          (student.guardian_phone_number === phone ||
+            student.guardian_email === email)
         );
       }
       return false;
@@ -40,15 +50,23 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
 
     const { rows: pendingRows } = await client.query(
       `INSERT INTO pending_account_requests
-        (id, student_code, cccd, phone, email, relationship, status, requested_at, reviewed_by, reviewed_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW(), NULL, NULL)
-        RETURNING *`,
+    (request_id, student_code, identity_number, phone_number, email, relationship_type, request_status, requested_at, reviewed_by_id, reviewed_at)
+    VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW(), NULL, NULL)
+    RETURNING *`,
       [student_code, cccd, phone, email, relationship, status]
     );
 
     const request = pendingRows[0];
 
     if (!match) {
+      await client.query(
+        `INSERT INTO logs (log_id, account_id, action_type, target_table, target_record_id, description, created_at)
+         VALUES (gen_random_uuid(), NULL, 'REJECT_REQUEST', 'pending_account_requests', $1, $2, NOW())`,
+        [
+          request.request_id,
+          `Request rejected for relationship ${relationship} on student_code ${student_code}`,
+        ]
+      );
       await client.query("COMMIT");
       return {
         status: "REJECTED",
@@ -68,8 +86,8 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
 
     const { rows: accountRows } = await client.query(
       `INSERT INTO accounts 
-        (id, username, password, email, phone, dateOfBirth, full_name, image, role, status, created_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, NULL, $5, NULL, 'PARENT', 'ACTIVE', NOW())
+        (account_id, username, password, email, phone_number, date_of_birth, full_name, avatar_url, role_id, created_at)
+        VALUES (gen_random_uuid(), $1, $2, $3, $4, NULL, $5, NULL, 'PARENT', NOW())
         RETURNING *`,
       [username, password, email, phone, full_name]
     );
@@ -77,9 +95,18 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
     const account = accountRows[0];
 
     await client.query(
-      `INSERT INTO parents (id, user_id, student_id, relationship)
+      `INSERT INTO parents (parent_id, account_id, student_id, relationship_type)
        VALUES (gen_random_uuid(), $1, $2, $3)`,
       [account.id, student.id, relationship]
+    );
+    await sendEmail(
+      email,
+      "Tài khoản phụ huynh đã được tạo",
+      `<h2>Chào ${full_name},</h2>
+   <p>Tài khoản của bạn đã được phê duyệt.</p>
+   <p><strong>Username:</strong> ${username}</p>
+   <p><strong>Password:</strong> ${password}</p>
+   <p>Vui lòng đăng nhập vào hệ thống để sử dụng các tính năng dành cho phụ huynh.</p>`
     );
 
     await client.query("COMMIT");
@@ -89,7 +116,6 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
       account,
       request,
     };
-
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
@@ -97,7 +123,6 @@ const handleParentAccountRequest = async ({ student_code, cccd, phone, email, re
     client.release();
   }
 };
-
 
 const getAccount = async (req, res) => {
   const { username, password } = req.body;
@@ -111,13 +136,17 @@ const getAccount = async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: "Sai tên đăng nhập hoặc mật khẩu" });
+      return res
+        .status(401)
+        .json({ message: "Sai tên đăng nhập hoặc mật khẩu" });
     }
 
     const account = rows[0];
 
     if (account.status !== "ACTIVE") {
-      return res.status(403).json({ message: `Tài khoản đang ở trạng thái ${account.status}` });
+      return res
+        .status(403)
+        .json({ message: `Tài khoản đang ở trạng thái ${account.status}` });
     }
 
     res.status(200).json({ message: "Đăng nhập thành công", account });
@@ -128,5 +157,4 @@ const getAccount = async (req, res) => {
   }
 };
 
-
-module.exports = {handleParentAccountRequest,getAccount,getAllStudents };
+module.exports = { handleParentAccountRequest, getAccount };
