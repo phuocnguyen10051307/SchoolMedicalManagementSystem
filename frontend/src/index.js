@@ -21,6 +21,12 @@ import HealthCheckup from "./components/SchoolNurse/HealthCheckup";
 import HealthRecord from "./components/SchoolNurse/HealthRecord";
 import Report from "./components/SchoolNurse/Report";
 import Profile from "./components/SchoolNurse/Profile";
+import Login from "./components/HomePage/Login";
+import ShcoolNurse from "./components/SchoolNurse/SchoolNurse";
+import Manager from "./components/Manager/Manager";
+import { Toast } from "bootstrap";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -44,12 +50,19 @@ root.render(
             <Route path="profile" element={<Profile />} />
             <Route index element={<DashBoard />} />
           </Route>
+          <Route path="login" element={<Login></Login>}></Route>
+          <Route path="admin" element={<Admin></Admin>}></Route>
+          <Route path="parent" element={<Parent></Parent>}></Route>
+          <Route path="student" element={<Student></Student>}></Route>
+          <Route
+            path="schoolnurse"
+            element={<ShcoolNurse></ShcoolNurse>}
+          ></Route>
+          <Route path="manager" element={<Manager></Manager>}></Route>
         </Routes>
-
-
-
       </BrowserRouter>
     </AuthProvider>
+    <ToastContainer />
   </Provider>
 );
 
