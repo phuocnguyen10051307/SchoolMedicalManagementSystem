@@ -10,11 +10,8 @@ const Navbar = () => {
       </div>
       <ul className="navbar_links">
         <li><Link to= {'/home'}>Home</Link></li>
-        {/* <Link to={`/parent`}>aaa</Link> */}
         <li><Link to="/service">Services</Link></li>
         <li><Link to="/blog">Blogs</Link></li>
-   
-
       </ul>
       <div className="navbar_auth">
         <span className="navbar_signin">Sign In</span>

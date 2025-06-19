@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './SchoolNurse.css';
-import MedicalEvent from './MedicalEvent';
+import { FaClipboardList, FaHeartbeat, FaSyringe, FaNotesMedical, FaFolderOpen, FaFileMedicalAlt, FaInfoCircle } from 'react-icons/fa';
+import { NavLink, Outlet } from 'react-router-dom';
+
+const menuItems = [
+  { id: 'dashboard', icon: <FaClipboardList />, label: 'Dashboard', path: 'dashboard' },
+  { id: 'events', icon: <FaHeartbeat />, label: 'Medical Events', path: 'event' },
+  { id: 'vaccination', icon: <FaSyringe />, label: 'Vaccination', path: 'vaccination' },
+  { id: 'checkup', icon: <FaNotesMedical />, label: 'Health Checkup', path: 'checkup' },
+  { id: 'records', icon: <FaFolderOpen />, label: 'Student Health Records', path: 'records' },
+  { id: 'reports', icon: <FaFileMedicalAlt />, label: 'Reports', path: 'reports' },
+  { id: 'profile', icon: <FaInfoCircle />, label: 'My Profile', path: 'profile' },
+];
 
 const SchoolNurse = () => {
-  const [active, setActive] = useState('dashboard');
-
-  const menuItems = [
-    { id: 'dashboard', icon: '📋', label: 'DashBoard' },
-    { id: 'events', icon: '📈', label: 'Medical Events' },
-    { id: 'vaccination', icon: '🧬', label: 'Vaccination' },
-    { id: 'checkup', icon: '🩺', label: 'Health Checkup' },
-    { id: 'records', icon: '📁', label: 'Student Health Records' },
-    { id: 'reports', icon: '📄', label: 'Reports' },
-    { id: 'profile', icon: 'ℹ️', label: 'My Profile' },
-  ];
-
   return (
     <div className="nurse-container">
       <div className="sidebar">
@@ -29,21 +28,22 @@ const SchoolNurse = () => {
 
         <ul className="menu">
           {menuItems.map((item) => (
-            <li
-              key={item.id}
-              className={`menu-item ${active === item.id ? 'active' : ''}`}
-              onClick={() => setActive(item.id)}
-            >
-              <span className="icon">{item.icon}</span>
-              <span className="label">{item.label}</span>
+            <li key={item.id}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}
+              >
+                <span className="icon">{item.icon}</span>
+                <span className="label">{item.label}</span>
+              </NavLink>
             </li>
           ))}
         </ul>
       </div>
-      <div className="main-content">
-        {active === 'events' && <MedicalEvent />}
-      </div>
 
+      <div className="main-content">
+        <Outlet />
+      </div>
     </div>
   );
 };
