@@ -28,7 +28,8 @@ const account = async (req,res)=>{
 
 const getStudents = async (req, res) => {
   try {
-    const students = await getAllStudents();
+    const { user_id } = req.params;
+    const students = await getAllStudents(user_id);
     res.status(200).json(students);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -37,7 +38,8 @@ const getStudents = async (req, res) => {
 
 const healthprofiles = async (req, res) => {
   try {
-    const heath = await getHeathProfiles();
+    const { user_id } = req.params;
+    const heath = await getHeathProfiles(user_id);
     res.status(200).json(heath);
   } catch (err) {
     res.status(500).json({ error: err.message });

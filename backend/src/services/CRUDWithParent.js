@@ -128,10 +128,10 @@ const getAccount = async (req, res) => {
   }
 };
 
-const getAllStudents = async () => {
+const getAllStudents = async (userid) => {
   const client = await connection.connect();
   try {
-    const { rows } = await client.query("SELECT * FROM students");
+    const { rows } = await client.query(`SELECT s.* FROM students s JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
     return rows;
   } catch (err) {
     throw err;
@@ -140,10 +140,10 @@ const getAllStudents = async () => {
   }
 };
 
-const getHeathProfiles = async () => {
+const getHeathProfiles = async (userid) => {
   const client = await connection.connect();
   try {
-    const { rows } = await client.query("select * from health_profiles");
+    const { rows } = await client.query(`SELECT h.*, s.full_name AS student_name, s.class_name  FROM health_profiles h JOIN students s ON h.student_id = s.student_id JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
     return rows;
   } catch (err) {
     throw err;

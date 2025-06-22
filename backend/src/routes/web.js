@@ -11,7 +11,7 @@ router.get('/',homePage)
 router.post('/parent-request/send', postDataParentSend);  
 router.post('/parent-request/confirm', sendConfirmInfor); 
 router.post('/account/login', account);
-router.get('/students', getStudents);
-router.get('/healthprofiles', healthprofiles);
+router.get('/students/:user_id', getStudents);
+router.get('/healthprofiles/:user_id', healthprofiles);
 
 module.exports = router
