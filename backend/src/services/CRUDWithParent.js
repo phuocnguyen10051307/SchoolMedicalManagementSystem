@@ -151,4 +151,27 @@ const getHeathProfiles = async (userid) => {
     client.release();
   }
 };
-module.exports = {handleParentAccountRequest,getAccount,getAllStudents, getHeathProfiles};
+
+const getParentByStudentId = async (accountid) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(`SELECT * FROM parents WHERE account_id = $1`, [accountid]);
+    const parent = rows[0];
+    if (!parent) return null;
+    if (parent.relationship_type === "father") {
+      const { rows: info } = await client.query(`select s.father_email, s.father_full_name, s.father_identity_number, s.father_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    } else if (parent.relationship_type === "mother") {
+      const { rows: info } = await client.query(`select s.mother_email, s.mother_full_name, s.mother_identity_number, s.mother_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    } else if (parent.relationship_type === "guardian") {
+      const { rows: info } = await client.query(`select s.guardian_email, s.guardian_full_name, s.guardian_identity_number , s.guardian_phone_number  from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+module.exports = { handleParentAccountRequest, getAccount, getAllStudents, getHeathProfiles, getParentByStudentId };
