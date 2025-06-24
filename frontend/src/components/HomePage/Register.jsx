@@ -1,42 +1,41 @@
 import React, { useState } from "react";
-import axios from "axios";
+import "./register.scss";
+import { createAccount } from "../../service/service";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [form, setForm] = useState({
-    studentcode: "",
-    cccd: "",
-    email: "",
-    phone: ""
-  });
-
+  const [studentCode, setStudentCode] = useState("");
+  const [cccd, setCccd] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [relationship, setRelationship] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
     try {
-      const checkRes = await axios.get(
-        `http://localhost:8080/api/v1/school/check?studentcode=${form.studentcode}`
+      const checkRes = await createAccount(
+        studentCode,
+        cccd,
+        phone,
+        email,
+        relationship
       );
-      if (checkRes.data.exists) {
-        setErrorMsg("Student code or CCCD already exists.");
+      const status = checkRes.status;
+      if (status === "APPROVED") {
+        setSuccessMsg(
+          "Tạo tài khoản thành công! Vui lòng kiểm tra email hoặc liên hệ nhà trường."
+        );
+        navigate("/")
         return;
+      } else if (status === "REJECTED") {
+        setErrorMsg("Thông tin không khớp. Vui lòng kiểm tra lại.");
       }
 
-      await axios.post("/api/parents/register", form);
       setSuccessMsg("Đăng ký thành công!");
-      setForm({
-        studentcode: "",
-        cccd: "",
-        email: "",
-        phone: ""
-      });
     } catch (error) {
       setErrorMsg("Đăng ký thất bại!");
       console.error(error);
@@ -44,53 +43,59 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="register-page">
+      <div className="register-container">
+        <h2 className="register-title">Register</h2>
+        <form onSubmit={handleSubmit}>
           <label>Student code</label>
           <input
             type="text"
             name="studentcode"
-            value={form.studentcode}
-            onChange={handleChange}
+            value={studentCode}
+            onChange={(e) => setStudentCode(e.target.value)}
             placeholder="Enter your student code"
           />
-        </div>
-        <div>
           <label>Identify</label>
           <input
             type="text"
             name="cccd"
-            value={form.cccd}
-            onChange={handleChange}
+            value={cccd}
+            onChange={(e) => setCccd(e.target.value)}
             placeholder="Enter your identify card number"
           />
-        </div>
-        <div>
           <label>Email</label>
           <input
             type="email"
             name="email"
-            value={form.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
           />
-        </div>
-        <div>
           <label>Phone</label>
           <input
-            type="text"
+            type="number"
             name="phone"
-            value={form.phone}
-            onChange={handleChange}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             placeholder="Enter your phone number"
           />
-        </div>
-        <button type="submit">Đăng ký</button>
-      </form>
-      {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+          <label>Relationship</label>
+          <select
+            name="relationship"
+            value={relationship}
+            onChange={(e) => setRelationship(e.target.value)}
+          >
+            <option value="">-- Select Relationship --</option>
+            <option value="Mother">Mother</option>
+            <option value="Father">Father</option>
+            <option value="Guardian">Guardian</option>
+          </select>
+          <button type="submit">Đăng ký</button>
+        </form>
+
+        {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
+        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+      </div>
     </div>
   );
 };

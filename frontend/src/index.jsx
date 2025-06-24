@@ -22,23 +22,21 @@ import HealthRecord from "./components/SchoolNurse/HealthRecord";
 import Report from "./components/SchoolNurse/Report";
 import Profile from "./components/SchoolNurse/Profile";
 import Login from "./components/HomePage/Login";
-import ShcoolNurse from "./components/SchoolNurse/SchoolNurse";
 import Manager from "./components/Manager/Manager";
-import { Toast } from "bootstrap";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Register from "./components/HomePage/Register";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" index element={<App />}></Route>
-          <Route path="home" element={<HomePage></HomePage>}></Route>
+          <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="service" element={<Service></Service>}></Route>
           <Route path="blog" element={<Blog></Blog>}></Route>
-          <Route path="admin" element={<Admin></Admin>}></Route>
-          <Route path="parent" element={<Parent></Parent>}></Route>
+          <Route path="admin" element={<Admin/>}></Route>
+          <Route path="parent" element={<Parent></Parent>}></Route>``
           <Route path="student" element={<Student></Student>}></Route>
           <Route path="nurse" element={<SchoolNurse />}>
             <Route path="dashboard" element={<DashBoard />} />
@@ -50,14 +48,8 @@ root.render(
             <Route path="profile" element={<Profile />} />
             <Route index element={<DashBoard />} />
           </Route>
+          <Route path="register" element={<Register/>}></Route>
           <Route path="login" element={<Login></Login>}></Route>
-          <Route path="admin" element={<Admin></Admin>}></Route>
-          <Route path="parent" element={<Parent></Parent>}></Route>
-          <Route path="student" element={<Student></Student>}></Route>
-          <Route
-            path="schoolnurse"
-            element={<ShcoolNurse></ShcoolNurse>}
-          ></Route>
           <Route path="manager" element={<Manager></Manager>}></Route>
         </Routes>
       </BrowserRouter>

@@ -36,8 +36,8 @@ function App() {
   };
   return (
     <>
-    {/* <HomePage></HomePage> */}
-    <SchoolNurse></SchoolNurse>
+    <HomePage></HomePage>
+    {/* <SchoolNurse></SchoolNurse> */}
     </>
   );
 }

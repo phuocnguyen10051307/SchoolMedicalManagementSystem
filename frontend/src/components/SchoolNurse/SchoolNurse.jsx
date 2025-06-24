@@ -3,6 +3,7 @@ import './SchoolNurse.css';
 import { FaClipboardList, FaHeartbeat, FaSyringe, FaNotesMedical, FaFolderOpen, FaFileMedicalAlt, FaInfoCircle } from 'react-icons/fa';
 import { NavLink, Outlet } from 'react-router-dom';
 
+
 const menuItems = [
   { id: 'dashboard', icon: <FaClipboardList />, label: 'Dashboard', path: 'dashboard' },
   { id: 'events', icon: <FaHeartbeat />, label: 'Medical Events', path: 'event' },

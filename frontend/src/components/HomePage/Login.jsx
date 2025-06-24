@@ -19,71 +19,74 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
-    const rows = await loginAccount(username,password)
-    const account = rows.account;
-    setUser(account)
-    switch(account.role){
-      case "ADMIN":
-        navigate("/admin")
-        break;
-      case "MANAGER":
-        navigate("/manager")
-        break;
-      case "PARENT":
-        navigate("/parent")
-        break;
-      default:
-        setErrorMsg("Failed username or password")
+    try {
+      const rows = await loginAccount(username, password);
+      const account = rows.account;
+      console.log(account)
+      setUser(account);
+
+      switch (account.role_id) {
+        case "ADMIN":
+          navigate("/");
+          break;
+        case "MANAGER":
+          navigate("/");
+          break;
+        case "PARENT":
+          navigate("/");
+          break;
+        case "NURSE":
+          navigate("/")
+          break;
+        default:
+          toast.error("Không xác định được vai trò người dùng.");
+      }
+    } catch (err) {
+      const msg = err?.message || "Lỗi không xác định";
+      setErrorMsg(msg);
+      toast.error(msg);
     }
   };
 
-
   return (
-
-      <div className="login-page">
-
-        <div className="login-container">
-
-          <h2 className="title">Login Admin</h2>
-          <form onSubmit={handleSubmit}>
-            <div 
-            
-            >
-              <label>Username:</label>
-              {/* <br /> */}
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                autoFocus
-                placeholder="Enter your username or email"
-              />
-            </div>
-            <div>
-              <label>Password:</label>
-              {/* <br /> */}
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Enter your password"
-              />
-            </div>
-            <button type="submit">Sign In</button>
-            
-          </form>
-          {toast.error && <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>}
-        </div>
-
+    <div className="login-page">
+      <div className="login-container">
+        <h2 className="title">Login Admin</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Username:</label>
+            {/* <br /> */}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoFocus
+              placeholder="Enter your username or email"
+            />
+          </div>
+          <div>
+            <label>Password:</label>
+            {/* <br /> */}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+          <button type="submit">Sign In</button>
+        </form>
+        {toast.error && (
+          <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>
+        )}
       </div>
-
-
+    </div>
   );
-}
+};
 
 export default Login;
