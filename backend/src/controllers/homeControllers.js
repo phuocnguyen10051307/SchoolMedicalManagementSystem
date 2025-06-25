@@ -1,4 +1,4 @@
-const {handleParentAccountRequest,getAccount, getAllStudents, getHeathProfiles, getParentByStudentId} = require('../services/CRUDWithParent')
+const {handleParentAccountRequest,getAccount, getAllStudents, getHeathProfiles, getParentByStudentId, getEventNotificationsByParentId} = require('../services/CRUDWithParent')
 const homePage = (req, res)=>{
     res.send('hello world')
 }
@@ -53,4 +53,15 @@ const parentByStudent = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-module.exports = {homePage,sendConfirmInfor,postDataParentSend,account, getStudents, healthprofiles, parentByStudent}
+
+const getNotifications = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const result = await getEventNotificationsByParentId(user_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {homePage,sendConfirmInfor,postDataParentSend,account, getStudents, healthprofiles, parentByStudent, getNotifications};
