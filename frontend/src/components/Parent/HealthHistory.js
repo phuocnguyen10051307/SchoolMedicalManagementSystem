@@ -1,24 +1,19 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import "./Parent.css";
+import "./HealthHistory.css";
 
 const HealthHistory = ({ parentId = 2 }) => {
   const { data } = useOutletContext();
 
-  // Kiểm tra data và các thuộc tính trước khi dùng
   if (!data || !data.Students || !data.MedicalEvents) {
     return <div className="health-history-container">No health history data.</div>;
   }
 
-  // Lấy danh sách học sinh của phụ huynh này
   const students = data.Students.filter(stu => stu.ParentID === parentId);
-
-  // Lấy các sự kiện y tế liên quan đến các học sinh này
   const events = data.MedicalEvents.filter(ev =>
     students.some(stu => stu.StudentID === ev.StudentID)
   );
 
-  // Lấy tên học sinh theo StudentID
   const getStudentName = (studentId) => {
     const stu = students.find(s => s.StudentID === studentId);
     return stu ? stu.FullName : "";
