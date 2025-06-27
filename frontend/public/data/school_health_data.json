@@ -108,7 +108,7 @@
       "Email": "parent1@school.com",
       "Username": "robert.j",
       "PasswordHash": "robert.j123",
-      "ImageUrl": "https://example.com/images/parent1.jpg",
+      "ImageUrl": null,
       "IsActive": true,
       "LastLoginAt": "2025-05-28T09:00:00Z",
       "CreatedAt": "2025-01-01T09:00:00Z",
