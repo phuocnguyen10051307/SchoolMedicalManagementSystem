@@ -1,9 +1,11 @@
-import "./App.css";
+import "./App.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchData, loginAccount } from "./service/service";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import HomePage from "./components/HomePage/Home/HomePage";
+import SchoolNurse from "./components/SchoolNurse/SchoolNurse";
 
 function App() {
   const [username, setUsername]   = useState("");
@@ -34,31 +36,8 @@ function App() {
   };
   return (
     <>
-      <div style={{ padding: "20px" }}>
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>User Name</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            ></input>
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            ></input>
-          </div>
-          {errorMess && <p style={{ color: "red" }}>{errorMess}</p>}
-          <button type="submit"> Sign in</button>
-        </form>
-      </div>
+    <HomePage></HomePage>
+    {/* <SchoolNurse></SchoolNurse> */}
     </>
   );
 }
