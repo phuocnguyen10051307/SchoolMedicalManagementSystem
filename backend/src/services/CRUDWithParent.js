@@ -144,10 +144,10 @@ const getAccount = async (req, res) => {
   }
 };
 
-const getAllStudents = async () => {
+const getAllStudents = async (userid) => {
   const client = await connection.connect();
   try {
-    const { rows } = await client.query("SELECT * FROM students");
+    const { rows } = await client.query(`SELECT s.* FROM students s JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
     return rows;
   } catch (err) {
     throw err;
@@ -156,4 +156,67 @@ const getAllStudents = async () => {
   }
 };
 
-module.exports = { handleParentAccountRequest, getAccount, getAllStudents };
+const getHeathProfiles = async (userid) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(`SELECT h.*, s.full_name AS student_name, s.class_name  FROM health_profiles h JOIN students s ON h.student_id = s.student_id JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const getParentByStudentId = async (accountid) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(`SELECT * FROM parents WHERE account_id = $1`, [accountid]);
+    const parent = rows[0];
+    if (!parent) return null;
+    if (parent.relationship_type === "father") {
+      const { rows: info } = await client.query(`select s.father_email, s.father_full_name, s.father_identity_number, s.father_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    } else if (parent.relationship_type === "mother") {
+      const { rows: info } = await client.query(`select s.mother_email, s.mother_full_name, s.mother_identity_number, s.mother_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    } else if (parent.relationship_type === "guardian") {
+      const { rows: info } = await client.query(`select s.guardian_email, s.guardian_full_name, s.guardian_identity_number , s.guardian_phone_number  from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
+      return info;
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const getEventNotificationsByParentId = async (accountId) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+         en.notification_id,
+         en.notification_status,
+         en.sent_at,
+         me.event_type,
+         me.event_title,
+         me.event_datetime,
+         me.severity_level,
+         s.full_name AS student_name,
+         s.class_name
+       FROM event_notifications en
+       JOIN medical_events me ON en.event_id = me.event_id
+       JOIN students s ON me.student_id = s.student_id
+       WHERE en.parent_account_id = $1
+       ORDER BY en.sent_at DESC`,
+      [accountId]);
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+module.exports = { handleParentAccountRequest, getAccount, getAllStudents, getHeathProfiles, getParentByStudentId, getEventNotificationsByParentId};
