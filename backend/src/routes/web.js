@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router();
-const {homePage, sendConfirmInfor,account ,postDataParentSend}= require('../controllers/homeControllers')
+const {homePage, sendConfirmInfor,account ,postDataParentSend,updateProfileHeath}= require('../controllers/homeControllers')
 
 // khai báo route
 // router.METHOD('/route',handler)
@@ -11,5 +11,6 @@ router.get('/',homePage)
 router.post('/parent-request/send', postDataParentSend);  
 router.post('/parent-request/confirm', sendConfirmInfor); 
 router.post('/account', account);
+router.post('/account/updateProfile/',updateProfileHeath)
 
 module.exports = router

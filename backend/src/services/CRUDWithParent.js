@@ -20,9 +20,11 @@ const handleParentAccountRequest = async ({
     if (studentRows.length === 0) {
       throw new Error("Student code not found");
     }
+    let occupation = null;
     const student = studentRows[0];
     const match = (() => {
       if (relationship === "Father") {
+        occupation = student.father_occupation;
         return (
           student.father_identity_number === cccd &&
           (student.father_phone_number === phone ||
@@ -30,6 +32,7 @@ const handleParentAccountRequest = async ({
         );
       }
       if (relationship === "Mother") {
+        occupation = student.mother_occupation;
         return (
           student.mother_identity_number === cccd &&
           (student.mother_phone_number === phone ||
@@ -37,6 +40,7 @@ const handleParentAccountRequest = async ({
         );
       }
       if (relationship === "Guardian") {
+        occupation = student.guardian_occupation;
         return (
           student.guardian_identity_number === cccd &&
           (student.guardian_phone_number === phone ||
@@ -93,11 +97,16 @@ const handleParentAccountRequest = async ({
     );
 
     const account = accountRows[0];
+    const { rows: healthyProfile } = await client.query(
+      `INSERT INTO public.health_profiles (profile_id,student_id,submitted_by_id,review_status,created_at,
+        updated_at) VALUES (gen_random_uuid(),$1,$2,'pending',NOW(),NOW());`,
+      [student.student_id, account.account_id]
+    );
 
     await client.query(
-      `INSERT INTO parents (parent_id, account_id, student_id, relationship_type)
-       VALUES (gen_random_uuid(), $1, $2, $3)`,
-      [account.id, student.id, relationship]
+      `INSERT INTO parents (parent_id, account_id, student_id, relationship_type,occupation)
+       VALUES (gen_random_uuid(), $1, $2, $3,$4)`,
+      [account.account_id, student.student_id, relationship, occupation]
     );
     await sendEmail(
       email,
@@ -157,4 +166,75 @@ const getAccount = async (req, res) => {
   }
 };
 
-module.exports = { handleParentAccountRequest, getAccount };
+const putHeathyProfile = async (req, res) => {
+  const {
+    account_id,
+    height,
+    weight,
+    blood_type,
+    chronic_conditions,
+    allergies,
+    regular_medications,
+    additional_notes,
+  } = req.body;
+  const client = await connection.connect();
+  try {
+    const { rows: accountUser } = await client.query(
+      `select * from accounts a where a.account_id = $1`,
+      [account_id]
+    );
+    const account = accountUser[0];
+    if (!account) {
+      return res.status(404).json({ error: "Account not found" });
+    }
+    if (account.role_id === "PARENT") {
+      const { rows: accountParent } = await client.query(
+        `SELECT p.*, s.student_id FROM parents p
+         JOIN students s ON p.student_id = s.student_id WHERE p.account_id = $1`,
+        [account_id]
+      );
+      if (accountParent.length === 0) {
+        return res
+          .status(403)
+          .json({ error: "Not authorized to access any student" });
+      }
+      const student_id = accountParent[0].student_id;
+      const { rows: existingProfiles } = await client.query(
+        `SELECT * FROM health_profiles WHERE student_id = $1`,
+        [student_id]
+      );
+      if (existingProfiles.length === 0) {
+        return res.status(404).json({ error: "Health profile not found" });
+      }
+      await client.query(
+        `UPDATE health_profiles 
+         SET updated_at = NOW(), review_status = 'pending',
+         height_cm=$1, weight_kg=$2, 
+         blood_type=$3, chronic_conditions=$4, allergies=$5, regular_medications=$6,
+         additional_notes=$7
+         WHERE student_id = $8`,
+        [
+          height,
+          weight,
+          blood_type,
+          chronic_conditions,
+          allergies,
+          regular_medications,
+          additional_notes,
+          student_id,
+        ]
+      );
+      return res
+        .status(200)
+        .json({ message: "Health profile updated (pending review)" });
+    }
+    return res
+      .status(403)
+      .json({ error: "Role not permitted to update health profile" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+};
+module.exports = { handleParentAccountRequest, getAccount, putHeathyProfile };
