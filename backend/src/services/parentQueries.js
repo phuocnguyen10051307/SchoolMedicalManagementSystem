@@ -93,7 +93,7 @@ const handleParentAccountRequest = async ({
     await client.query(
       `INSERT INTO parents (parent_id, account_id, student_id, relationship_type,occupation)
        VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
-      [account.id, student.id, relationship,occupation]
+      [account.account_id, student.student_id, relationship, occupation]
     );
 
     await client.query("COMMIT");
@@ -111,78 +111,60 @@ const handleParentAccountRequest = async ({
   }
 };
 
-const getAccount = async (req, res) => {
-  const { username, password } = req.body;
-
-  const client = await connection.connect();
-
-  try {
-    const { rows } = await client.query(
-      `SELECT * FROM accounts WHERE username = $1 AND password = $2 LIMIT 1`,
-      [username, password]
-    );
-
-    if (rows.length === 0) {
-      return res
-        .status(401)
-        .json({ message: "Sai tên đăng nhập hoặc mật khẩu" });
-    }
-
-    const account = rows[0];
-
-    if (account.account_status !== "active") {
-      return res
-        .status(403)
-        .json({ message: `Tài khoản đang ở trạng thái ${account.status}` });
-    }
-
-    res.status(200).json({ message: "Đăng nhập thành công", account });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  } finally {
-    client.release();
-  }
-};
-
-const getAllStudents = async (userid) => {
-  const client = await connection.connect();
-  try {
-    const { rows } = await client.query(`SELECT s.* FROM students s JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
-    return rows;
-  } catch (err) {
-    throw err;
-  } finally {
-    client.release();
-  }
-};
-
-const getHeathProfiles = async (userid) => {
-  const client = await connection.connect();
-  try {
-    const { rows } = await client.query(`SELECT h.*, s.full_name AS student_name, s.class_name  FROM health_profiles h JOIN students s ON h.student_id = s.student_id JOIN parents p ON s.student_id = p.student_id WHERE p.account_id = $1`, [userid]);
-    return rows;
-  } catch (err) {
-    throw err;
-  } finally {
-    client.release();
-  }
-};
-
 const getParentByStudentId = async (accountid) => {
   const client = await connection.connect();
   try {
-    const { rows } = await client.query(`SELECT * FROM parents WHERE account_id = $1`, [accountid]);
+    const { rows } = await client.query(
+      `SELECT * FROM parents WHERE account_id = $1`,
+      [accountid]
+    );
     const parent = rows[0];
     if (!parent) return null;
-    if (parent.relationship_type === "father") {
-      const { rows: info } = await client.query(`select s.father_email, s.father_full_name, s.father_identity_number, s.father_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
-      return info;
-    } else if (parent.relationship_type === "mother") {
-      const { rows: info } = await client.query(`select s.mother_email, s.mother_full_name, s.mother_identity_number, s.mother_phone_number from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
-      return info;
-    } else if (parent.relationship_type === "guardian") {
-      const { rows: info } = await client.query(`select s.guardian_email, s.guardian_full_name, s.guardian_identity_number , s.guardian_phone_number  from parents p join students s on s.student_id = p.student_id where p.account_id = $1`, [accountid])
-      return info;
+    if (parent.relationship_type === "Father") {
+      const { rows: info } = await client.query(
+        `select s.father_email AS email,
+         s.father_full_name AS full_name,
+         s.father_identity_number AS identity_number,
+         s.father_phone_number AS phone_number,
+         s.father_occupation AS occupation,
+         p.relationship_type,
+         s.address AS address,
+         s.class_name AS class,
+         s.full_name AS student_name
+         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+        [accountid]
+      );
+      return info[0] || null;
+    } else if (parent.relationship_type === "Mother") {
+      const { rows: info } = await client.query(
+        `select s.mother_email AS email,
+         s.mother_full_name AS full_name,
+         s.mother_identity_number AS identity_number,
+         s.mother_phone_number AS phone_number,
+         s.mother_occupation AS occupation,
+         p.relationship_type,
+         s.address AS address,
+         s.class_name AS class,
+         s.full_name AS student_name
+         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+        [accountid]
+      );
+      return info[0] || null;
+    } else if (parent.relationship_type === "Guardian") {
+      const { rows: info } = await client.query(
+        `select s.guardian_email AS email,
+         s.guardian_full_name AS full_name, 
+         s.guardian_identity_number AS identity_number, 
+         s.guardian_phone_number AS phone_number, 
+         s.guardian_occupation  AS occupation,
+         p.relationship_type ,
+         s.address AS address,
+         s.class_name AS class,
+         s.full_name AS student_name
+         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+        [accountid]
+      );
+      return info[0] || null;
     }
   } catch (err) {
     throw err;
@@ -191,32 +173,7 @@ const getParentByStudentId = async (accountid) => {
   }
 };
 
-const getEventNotificationsByParentId = async (accountId) => {
-  const client = await connection.connect();
-  try {
-    const { rows } = await client.query(
-      `SELECT 
-         en.notification_id,
-         en.notification_status,
-         en.sent_at,
-         me.event_type,
-         me.event_title,
-         me.event_datetime,
-         me.severity_level,
-         s.full_name AS student_name,
-         s.class_name
-       FROM event_notifications en
-       JOIN medical_events me ON en.event_id = me.event_id
-       JOIN students s ON me.student_id = s.student_id
-       WHERE en.parent_account_id = $1
-       ORDER BY en.sent_at DESC`,
-      [accountId]);
-    return rows;
-  } catch (err) {
-    throw err;
-  } finally {
-    client.release();
-  }
+module.exports = {
+  handleParentAccountRequest,
+  getParentByStudentId,
 };
-
-module.exports = { handleParentAccountRequest, getAccount, getAllStudents, getHeathProfiles, getParentByStudentId, getEventNotificationsByParentId};
