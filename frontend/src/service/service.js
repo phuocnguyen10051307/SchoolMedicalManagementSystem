@@ -44,3 +44,13 @@ export const createAccount = async (
   }
 };
 
+
+export const getInforAccount = async(user_id)=>{
+  try {
+    const inforAccount = await axios.get(`${API_BASE}/parents/${user_id}`)
+    return inforAccount.data;
+  } catch (error) {
+     throw error.response?.data || { message: "get data failed" };
+  }
+}
+

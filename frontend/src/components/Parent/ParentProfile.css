@@ -2,7 +2,9 @@
   display: flex;
   background: #f4f8fa;
   border-radius: 30px;
-  padding: 200px 24px 160px 24px;
+  /* padding: 200px 24px 160px 24px; */
+  padding: 100px 24px;
+
   align-items: flex-start;
   gap: 32px;
   min-height: 600px;
@@ -25,6 +27,7 @@
   min-width: 220px;
   height: 48px;
   box-shadow: 0 2px 8px #0001;
+  width:150px;
 }
 .profile-update-icon {
   position: absolute;

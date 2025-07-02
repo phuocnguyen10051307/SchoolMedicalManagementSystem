@@ -27,6 +27,7 @@ const Login = () => {
       const account = rows.account;
       console.log(account)
       setUser(account);
+      localStorage.setItem("user", JSON.stringify(account));
 
       switch (account.role_id) {
         case "ADMIN":
@@ -58,7 +59,6 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <div>
             <label>Username:</label>
-            {/* <br /> */}
             <input
               type="text"
               value={username}
