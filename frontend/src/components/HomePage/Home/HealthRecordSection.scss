@@ -1,0 +1,134 @@
+.healthrecord-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 70px 80px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+
+  .healthrecord-left {
+    padding: 40px 40px;
+    margin-top: -200px;
+    flex: 1;
+    max-width: 800px;
+
+    h2 {
+      font-size: 40px;
+      font-weight: bold;
+      color: #111;
+      margin-bottom: 19px;
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .healthrecord-benefits {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 30px;
+
+      li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 18px;
+
+        span {
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          background-color: #67aeb6;
+          color: white;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 24px;
+          margin-right: 12px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .healthrecord-button {
+      width:250px;
+      background-color: #67aeb6;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  }
+
+  .healthrecord-right {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .nurse2-image {
+      width: 400px;
+      height: auto;
+      z-index: 0;
+    }
+
+    .nurse-card {
+      position: absolute;
+      top: 10px;
+      left: 100px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 200px;
+      z-index: 2;
+
+      h4 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      p {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 15px;
+      }
+
+      .nurse-profile {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+
+        img {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+
+        span {
+          font-weight: 600;
+          color: #333;
+        }
+      }
+
+      .find-nurse-btn {
+        margin-top: 10px;
+        background-color: #eef0ff;
+        color: #667aff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+    }
+  }
+}
