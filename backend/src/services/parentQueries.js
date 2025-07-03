@@ -1,4 +1,5 @@
 const connection = require("../../config/db");
+const sendEmail = require("../utils/mailer")
 
 const handleParentAccountRequest = async ({
   student_code,
@@ -94,6 +95,15 @@ const handleParentAccountRequest = async ({
       `INSERT INTO parents (parent_id, account_id, student_id, relationship_type,occupation)
        VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
       [account.account_id, student.student_id, relationship, occupation]
+    );
+    await sendEmail(
+      email,
+      "Tài khoản phụ huynh đã được tạo",
+      `<h2>Chào ${full_name},</h2>
+   <p>Tài khoản của bạn đã được phê duyệt.</p>
+   <p><strong>Username:</strong> ${username}</p>
+   <p><strong>Password:</strong> ${password}</p>
+   <p>Vui lòng đăng nhập vào hệ thống để sử dụng các tính năng dành cho phụ huynh.</p>`
     );
 
     await client.query("COMMIT");
