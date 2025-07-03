@@ -1,3 +1,4 @@
+
 const { handleParentAccountRequest, getParentByStudentId } = require("../services/parentQueries");
 const { getAccount } = require("../services/accountQueries");
 const { getInformationOfStudent, getHeathProfiles } = require("../services/studentQueries");
@@ -23,6 +24,16 @@ const sendConfirmInfor = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+const updateProfileHeath=async(req,res)=>{
+  try {
+    const results = await putHeathyProfile(req,res)
+  } catch (error) {
+    res.status(500).json({erorr:err.message})
+    
+  }
+}
 
 const account = async (req, res) => {
   await getAccount(req, res);
@@ -77,4 +88,6 @@ module.exports = {
   healthprofiles,
   parentByStudent,
   getNotifications,
+  updateProfileHeath
 };
+
