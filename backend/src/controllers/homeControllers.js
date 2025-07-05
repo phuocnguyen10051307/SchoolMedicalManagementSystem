@@ -1,6 +1,6 @@
 
 const { handleParentAccountRequest, getParentByStudentId } = require("../services/parentQueries");
-const { getAccount } = require("../services/accountQueries");
+const { getAccount, getLogsByAccountId } = require("../services/accountQueries");
 const { getInformationOfStudent, getHeathProfiles } = require("../services/studentQueries");
 const { getEventNotificationsByParentId, getPeriodicCheckupsByParentId, getVaccinationNotificationsByParent } = require("../services/eventQueries");
 const homePage = (req, res) => {
@@ -100,6 +100,17 @@ const getVaccinationNotifications = async (req, res) => {
   }
 };
 
+const getUserLogs = async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const logs = await getLogsByAccountId(accountId);
+    res.status(200).json({ success: true, data: logs });
+  } catch (err) {
+    console.error("Error getting user logs:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   homePage,
   sendConfirmInfor,
@@ -111,6 +122,7 @@ module.exports = {
   getNotifications,
   updateProfileHeath,
   periodicNotifications,
-  getVaccinationNotifications
+  getVaccinationNotifications,
+  getUserLogs
 };
 

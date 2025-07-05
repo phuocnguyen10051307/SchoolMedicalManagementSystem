@@ -33,7 +33,31 @@ const getAccount = async (req, res) => {
   }
 };
 
+const getLogsByAccountId = async (accountId) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+         log_id,
+         action_type,
+         target_table,
+         target_record_id,
+         description,
+         created_at
+       FROM logs
+       WHERE account_id = $1
+       ORDER BY created_at DESC`,
+      [accountId]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 module.exports = {
   getAccount,
+  getLogsByAccountId,
 };
