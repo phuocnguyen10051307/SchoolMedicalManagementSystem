@@ -10,7 +10,9 @@ const {
   parentByStudent,
   getNotifications,
   updateProfileHeath,
+  putUpdateProfileParent,
 } = require("../controllers/homeControllers");
+const { updateProfileParent } = require("../services/parentQueries");
 
 // khai báo route
 // router.METHOD('/route',handler)
@@ -27,5 +29,9 @@ router.get("/students/:user_id", getStudents);
 router.get("/healthprofiles/:user_id", healthprofiles);
 router.get("/parents/:student_id", parentByStudent);
 router.get("/notifications/:user_id", getNotifications);
+
+
+router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent);
+
 
 module.exports = router;

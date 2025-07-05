@@ -1,5 +1,5 @@
 const connection = require("../../config/db");
-const sendEmail = require("../utils/mailer")
+const sendEmail = require("../utils/mailer");
 
 const handleParentAccountRequest = async ({
   student_code,
@@ -182,8 +182,184 @@ const getParentByStudentId = async (accountid) => {
     client.release();
   }
 };
+const putHeathyProfile = async (req, res) => {
+  const {
+    account_id,
+    height,
+    weight,
+    blood_type,
+    chronic_conditions,
+    allergies,
+    regular_medications,
+    additional_notes,
+  } = req.body;
+  const client = await connection.connect();
+  try {
+    const { rows: accountUser } = await client.query(
+      `select * from accounts a where a.account_id = $1`,
+      [account_id]
+    );
+    const account = accountUser[0];
+    if (!account) {
+      return res.status(404).json({ error: "Account not found" });
+    }
+    if (account.role_id === "PARENT") {
+      const { rows: accountParent } = await client.query(
+        `SELECT p.*, s.student_id FROM parents p
+         JOIN students s ON p.student_id = s.student_id WHERE p.account_id = $1`,
+        [account_id]
+      );
+      if (accountParent.length === 0) {
+        return res
+          .status(403)
+          .json({ error: "Not authorized to access any student" });
+      }
+      const student_id = accountParent[0].student_id;
+      const { rows: existingProfiles } = await client.query(
+        `SELECT * FROM health_profiles WHERE student_id = $1`,
+        [student_id]
+      );
+      if (existingProfiles.length === 0) {
+        return res.status(404).json({ error: "Health profile not found" });
+      }
+      await client.query(
+        `UPDATE health_profiles 
+         SET updated_at = NOW(), review_status = 'pending',
+         height_cm=$1, weight_kg=$2, 
+         blood_type=$3, chronic_conditions=$4, allergies=$5, regular_medications=$6,
+         additional_notes=$7
+         WHERE student_id = $8`,
+        [
+          height,
+          weight,
+          blood_type,
+          chronic_conditions,
+          allergies,
+          regular_medications,
+          additional_notes,
+          student_id,
+        ]
+      );
+      return res
+        .status(200)
+        .json({ message: "Health profile updated (pending review)" });
+    }
+    return res
+      .status(403)
+      .json({ error: "Role not permitted to update health profile" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+};
+const updateProfileParent = async (
+  user_id,
+  full_name,
+  phone_number,
+  email,
+  date_of_birth,
+  occupation,
+  address,
+  identity_number,
+  avatar_url
+) => {
+  const client = await connection.connect();
+  try {
+    // Cập nhật bảng accounts
+    await client.query(
+      `UPDATE public.accounts
+       SET email=$1, phone_number=$2, date_of_birth=$3, address=$4, full_name=$5, avatar_url=$6
+       WHERE account_id=$7`,
+      [
+        email,
+        phone_number,
+        date_of_birth,
+        address,
+        full_name,
+        avatar_url,
+        user_id
+      ]
+    );
+    console.log("parentID:", user_id)
+
+
+    // Lấy thông tin student_id và relationship
+    const { rows: studentRows } = await client.query(
+      `SELECT s.student_id AS student_id, p.relationship_type AS relationship
+       FROM students s
+       JOIN parents p ON p.student_id = s.student_id
+       WHERE p.account_id = $1`,
+      [user_id]
+    );
+
+    if (studentRows.length === 0) {
+      throw new Error("Parent not linked to a student");
+    }
+
+    const student = studentRows[0];
+    const relationship = student.relationship;
+    const student_id = student.student_id;
+
+    let query = "";
+    let values = [];
+
+    if (relationship === "Father") {
+      query = `
+        UPDATE public.students
+        SET address=$1,
+            father_full_name=$2,
+            father_phone_number=$3,
+            father_email=$4,
+            father_identity_number=$5,
+            father_occupation=$6
+        WHERE student_id=$7`;
+    } else if (relationship === "Mother") {
+      query = `
+        UPDATE public.students
+        SET address=$1,
+            mother_full_name=$2,
+            mother_phone_number=$3,
+            mother_email=$4,
+            mother_identity_number=$5,
+            mother_occupation=$6
+        WHERE student_id=$7`;
+    } else if (relationship === "Guardian") {
+      query = `
+        UPDATE public.students
+        SET address=$1,
+            guardian_full_name=$2,
+            guardian_phone_number=$3,
+            guardian_email=$4,
+            guardian_identity_number=$5,
+            guardian_occupation=$6
+        WHERE student_id=$7`;
+    } else {
+      throw new Error("Invalid relationship type");
+    }
+
+    values = [
+      address,
+      full_name,
+      phone_number,
+      email,
+      identity_number,
+      occupation,
+      student_id,
+    ];
+
+    await client.query(query, values);
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
 
 module.exports = {
   handleParentAccountRequest,
   getParentByStudentId,
+  updateProfileParent,
+  putHeathyProfile,
 };
