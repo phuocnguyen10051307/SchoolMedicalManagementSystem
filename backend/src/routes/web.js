@@ -13,6 +13,7 @@ const {
   periodicNotifications,
   vaccinationNotifications,
   userLogs,
+  getVaccinationNotifications,
 } = require("../controllers/homeControllers");
 
 // khai báo route
@@ -31,6 +32,7 @@ router.get("/healthprofiles/:user_id", healthprofiles);
 router.get("/parents/:student_id", parentByStudent);
 router.get("/notifications/:user_id", getNotifications);
 router.get("/periodic-notifications/:user_id", periodicNotifications);
+router.get("/vaccination-notifications/:accountId", getVaccinationNotifications);
 
 
 module.exports = router;

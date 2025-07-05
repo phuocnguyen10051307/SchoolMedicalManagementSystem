@@ -2,7 +2,7 @@
 const { handleParentAccountRequest, getParentByStudentId } = require("../services/parentQueries");
 const { getAccount } = require("../services/accountQueries");
 const { getInformationOfStudent, getHeathProfiles } = require("../services/studentQueries");
-const { getEventNotificationsByParentId, getPeriodicCheckupsByParentId } = require("../services/eventQueries");
+const { getEventNotificationsByParentId, getPeriodicCheckupsByParentId, getVaccinationNotificationsByParent } = require("../services/eventQueries");
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -89,7 +89,16 @@ const periodicNotifications = async (req, res) => {
   }
 };
 
-
+const getVaccinationNotifications = async (req, res) => {
+  const accountId = req.params.accountId;
+  try {
+    const notifications = await getVaccinationNotificationsByParent(accountId);
+    res.status(200).json({ success: true, data: notifications });
+  } catch (err) {
+    console.error('Error getting vaccination notifications:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 
 module.exports = {
   homePage,
@@ -102,5 +111,6 @@ module.exports = {
   getNotifications,
   updateProfileHeath,
   periodicNotifications,
+  getVaccinationNotifications
 };
 

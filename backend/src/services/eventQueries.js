@@ -57,8 +57,35 @@ const getPeriodicCheckupsByParentId = async (accountId) => {
   }
 };
 
+const getVaccinationNotificationsByParent = async (accountId) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+         vn.notification_id,
+         vn.student_vaccination_id,
+         vn.notification_status,
+         vn.sent_at,
+         vn.seen_at,
+         vn.acknowledged_at,
+         vn.rejection_reason,
+         vn.notes
+       FROM vaccination_notifications vn
+       WHERE vn.parent_account_id = $1
+       ORDER BY vn.sent_at DESC`,
+      [accountId]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 
 module.exports = {
   getEventNotificationsByParentId,
   getPeriodicCheckupsByParentId,
+  getVaccinationNotificationsByParent
 };
