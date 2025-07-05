@@ -1,0 +1,29 @@
+.login-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.diamond-shape {
+  width: 250px;
+  height: 250px;
+  background: C1E3D6;
+  transform: rotate(45deg);
+  position: absolute;
+  border-radius: 20px;
+  z-index: -1;
+}
+
+.diamond-shape.left {
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.diamond-shape.right {
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}

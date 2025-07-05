@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import "./login.css";
 import { loginAccount } from "../../service/service";
-
+import "../HomePage/login.scss"
 const Login = () => {
   const [adminData, setAdminData] = useState(null);
   const [parentData, setParentData] = useState(null);
@@ -25,7 +25,7 @@ const Login = () => {
     try {
       const rows = await loginAccount(username, password);
       const account = rows.account;
-      console.log(account)
+      console.log(account);
       setUser(account);
       localStorage.setItem("user", JSON.stringify(account));
 
@@ -40,7 +40,7 @@ const Login = () => {
           navigate("/");
           break;
         case "NURSE":
-          navigate("/")
+          navigate("/");
           break;
         default:
           toast.error("Không xác định được vai trò người dùng.");
@@ -53,39 +53,43 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <h2 className="title">Login Admin</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Username:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoFocus
-              placeholder="Enter your username or email"
-            />
-          </div>
-          <div>
-            <label>Password:</label>
-            {/* <br /> */}
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
-          <button type="submit">Sign In</button>
-        </form>
-        {toast.error && (
-          <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>
-        )}
+    <>
+      <div className="login-page">
+         <div className="diamond-shape left"></div>
+        <div className="login-container">
+          <h2 className="title">Login Admin</h2>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>Username:</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                autoFocus
+                placeholder="Enter your username or email"
+              />
+            </div>
+            <div>
+              <label>Password:</label>
+              {/* <br /> */}
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Enter your password"
+              />
+            </div>
+            <button type="submit">Sign In</button>
+          </form>
+          {toast.error && (
+            <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>
+          )}
+        </div>{" "}
+         <div className="diamond-shape left"></div>
       </div>
-    </div>
+    </>
   );
 };
 

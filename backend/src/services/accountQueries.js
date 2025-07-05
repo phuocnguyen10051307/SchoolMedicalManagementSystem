@@ -19,7 +19,7 @@ const getAccount = async (req, res) => {
 
     const account = rows[0];
 
-    if (account.account_status !== "active") {
+    if (account.account_status.toLowerCase() !== "active") {
       return res
         .status(403)
         .json({ message: `Tài khoản đang ở trạng thái ${account.status}` });
