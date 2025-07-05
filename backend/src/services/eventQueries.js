@@ -29,6 +29,36 @@ const getEventNotificationsByParentId = async (accountId) => {
   }
 };
 
+const getPeriodicCheckupsByParentId = async (accountId) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+          me.event_id,
+          me.event_title,
+          me.event_datetime,
+          me.severity_level,
+          s.full_name AS student_name,
+          s.class_name
+    FROM medical_events me
+    JOIN students s ON me.student_id = s.student_id
+    JOIN parents p ON s.student_id = p.student_id
+    WHERE me.event_type = 'fever'
+      AND p.account_id = $1 
+    ORDER BY me.event_datetime DESC;
+    `,
+      [accountId]
+    );
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+
 module.exports = {
   getEventNotificationsByParentId,
+  getPeriodicCheckupsByParentId,
 };

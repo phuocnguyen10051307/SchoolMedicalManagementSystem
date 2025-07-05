@@ -2,7 +2,7 @@
 const { handleParentAccountRequest, getParentByStudentId } = require("../services/parentQueries");
 const { getAccount } = require("../services/accountQueries");
 const { getInformationOfStudent, getHeathProfiles } = require("../services/studentQueries");
-const { getEventNotificationsByParentId } = require("../services/eventQueries");
+const { getEventNotificationsByParentId, getPeriodicCheckupsByParentId } = require("../services/eventQueries");
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -79,6 +79,18 @@ const getNotifications = async (req, res) => {
   }
 };
 
+const periodicNotifications = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const result = await getPeriodicCheckupsByParentId(user_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
 module.exports = {
   homePage,
   sendConfirmInfor,
@@ -88,6 +100,7 @@ module.exports = {
   healthprofiles,
   parentByStudent,
   getNotifications,
-  updateProfileHeath
+  updateProfileHeath,
+  periodicNotifications,
 };
 

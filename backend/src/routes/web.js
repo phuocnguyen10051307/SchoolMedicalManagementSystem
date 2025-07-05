@@ -10,6 +10,9 @@ const {
   parentByStudent,
   getNotifications,
   updateProfileHeath,
+  periodicNotifications,
+  vaccinationNotifications,
+  userLogs,
 } = require("../controllers/homeControllers");
 
 // khai báo route
@@ -27,5 +30,7 @@ router.get("/students/:user_id", getStudents);
 router.get("/healthprofiles/:user_id", healthprofiles);
 router.get("/parents/:student_id", parentByStudent);
 router.get("/notifications/:user_id", getNotifications);
+router.get("/periodic-notifications/:user_id", periodicNotifications);
+
 
 module.exports = router;
