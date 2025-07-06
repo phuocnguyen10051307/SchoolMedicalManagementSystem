@@ -140,8 +140,11 @@ const getParentByStudentId = async (accountid) => {
          p.relationship_type,
          s.address AS address,
          s.class_name AS class,
-         s.full_name AS student_name
-         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+         s.full_name AS student_name,
+         a.date_of_birth as date_of_birth
+         from parents p join students s on s.student_id = p.student_id
+         join accounts a ON a.account_id = p.account_id 
+         where p.account_id = $1`,
         [accountid]
       );
       return info[0] || null;
@@ -155,8 +158,11 @@ const getParentByStudentId = async (accountid) => {
          p.relationship_type,
          s.address AS address,
          s.class_name AS class,
-         s.full_name AS student_name
-         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+         s.full_name AS student_name,
+         a.date_of_birth as date_of_birth
+         from parents p join students s on s.student_id = p.student_id
+         join accounts a ON a.account_id = p.account_id 
+         where p.account_id = $1`,
         [accountid]
       );
       return info[0] || null;
@@ -170,8 +176,11 @@ const getParentByStudentId = async (accountid) => {
          p.relationship_type ,
          s.address AS address,
          s.class_name AS class,
-         s.full_name AS student_name
-         from parents p join students s on s.student_id = p.student_id where p.account_id = $1`,
+         s.full_name AS student_name,
+         a.date_of_birth as date_of_birth
+         from parents p join students s on s.student_id = p.student_id 
+         join accounts a ON a.account_id = p.account_id 
+         where p.account_id = $1`,
         [accountid]
       );
       return info[0] || null;
@@ -182,17 +191,16 @@ const getParentByStudentId = async (accountid) => {
     client.release();
   }
 };
-const putHeathyProfile = async (req, res) => {
-  const {
-    account_id,
-    height,
-    weight,
-    blood_type,
-    chronic_conditions,
-    allergies,
-    regular_medications,
-    additional_notes,
-  } = req.body;
+const putHeathyProfile = async (
+  account_id,
+  height,
+  weight,
+  blood_type,
+  chronic_conditions,
+  allergies,
+  regular_medications,
+  additional_notes
+) => {
   const client = await connection.connect();
   try {
     const { rows: accountUser } = await client.query(
@@ -240,15 +248,9 @@ const putHeathyProfile = async (req, res) => {
           student_id,
         ]
       );
-      return res
-        .status(200)
-        .json({ message: "Health profile updated (pending review)" });
     }
-    return res
-      .status(403)
-      .json({ error: "Role not permitted to update health profile" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    throw err;
   } finally {
     client.release();
   }
@@ -278,11 +280,10 @@ const updateProfileParent = async (
         address,
         full_name,
         avatar_url,
-        user_id
+        user_id,
       ]
     );
-    console.log("parentID:", user_id)
-
+    console.log("parentID:", user_id);
 
     // Lấy thông tin student_id và relationship
     const { rows: studentRows } = await client.query(
@@ -355,7 +356,6 @@ const updateProfileParent = async (
     client.release();
   }
 };
-
 
 module.exports = {
   handleParentAccountRequest,

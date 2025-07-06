@@ -27,10 +27,11 @@ router.post("/account/updateProfile/", updateProfileHeath);
 router.post("/account/login", account);
 router.get("/students/:user_id", getStudents);
 router.get("/healthprofiles/:user_id", healthprofiles);
-router.get("/parents/:student_id", parentByStudent);
+
 router.get("/notifications/:user_id", getNotifications);
 
-
+router.get("/parents/:student_id", parentByStudent);
+router.put("/account/updateProfile/:user_id", updateProfileHeath);
 router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent);
 
 

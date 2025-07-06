@@ -34,9 +34,30 @@ const sendConfirmInfor = async (req, res) => {
 
 const updateProfileHeath = async (req, res) => {
   try {
-    const results = await putHeathyProfile(req, res);
+    const { user_id } = req.params;
+    const {
+      height,
+      weight,
+      blood_type,
+      chronic_conditions,
+      allergies,
+      regular_medications,
+      additional_notes,
+    } = req.body;
+    const results = await putHeathyProfile(
+      user_id,
+      height,
+      weight,
+      blood_type,
+      chronic_conditions,
+      allergies,
+      regular_medications,
+      additional_notes
+    );
+    res.status(200).json({ message: "Health profile updated successfully" });
   } catch (error) {
-    res.status(500).json({ erorr: err.message });
+    console.error("Error updating health profile:", error.message);
+    res.status(500).json({ erorr: error.message });
   }
 };
 
@@ -49,7 +70,7 @@ const getStudents = async (req, res) => {
     const { user_id } = req.params;
     const students = await getInformationOfStudent(user_id);
     res.status(200).json(students);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
@@ -59,7 +80,7 @@ const healthprofiles = async (req, res) => {
     const { user_id } = req.params;
     const heath = await getHeathProfiles(user_id);
     res.status(200).json(heath);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
@@ -69,7 +90,7 @@ const parentByStudent = async (req, res) => {
     const { student_id } = req.params;
     const result = await getParentByStudentId(student_id);
     res.status(200).json(result);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
@@ -79,14 +100,14 @@ const getNotifications = async (req, res) => {
     const { user_id } = req.params;
     const result = await getEventNotificationsByParentId(user_id);
     res.status(200).json(result);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 const putUpdateProfileParent = async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log(req.params)
+    console.log(req.params);
     const {
       full_name,
       phone_number,

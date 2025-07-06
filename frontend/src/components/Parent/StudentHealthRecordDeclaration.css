@@ -1,4 +1,4 @@
-.health-form-container {
+/* .health-form-container {
     max-width: 95vw;
     margin: 40px auto 0 auto;
     background: #f4f8fa;
@@ -94,4 +94,9 @@
     color: #2ecc40;
     font-size: 17px;
     font-weight: 500;
+} */
+
+/* optional override */
+.card .list-group-item {
+  padding: 0.75rem 1.25rem;
 }

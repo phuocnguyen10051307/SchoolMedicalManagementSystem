@@ -3,81 +3,90 @@ import { useOutletContext } from "react-router-dom";
 import "./ParentProfile.css";
 import { AuthContext } from "../../context/AuthContext";
 import { getInforAccount } from "../../service/service";
-import UpdateModal from "./UpdateModal"; // Import component modal mới
+import UpdateModal from "./UpdateModal";
+import { putParentProfile } from "../../service/service";
+import { toast } from "react-toastify";
+import axios from "axios";
+import im from "../../images/user.png";
 
 const ParentProfile = () => {
   const { data } = useOutletContext();
-  const parentData = data || null;
   const { user } = useContext(AuthContext);
 
   const [parent, setParent] = useState(user);
-  const [edit, setEdit] = useState(false);
   const [form, setForm] = useState(user);
-  const [profileLeft, setProfileLeft] = useState([
-    "FullName",
-    "PhoneNumber",
-    "Email",
-  ]);
-  const [profileRight, setProfileRight] = useState([
-    "DateOfBirth",
-    "Occupation",
-    "Address",
-    "CitizenId",
-    "Students",
-    "Relationship",
-  ]);
   const [imagePreview, setImagePreview] = useState(
-    parentData?.ImageUrl || "https://randomuser.me/api/portraits/men/32.jpg"
+    data?.ImageUrl || im
   );
-
   const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     const fetchInfo = async () => {
       try {
-        const infor = await getInforAccount(parent.account_id); // Call API to get parent info
-        if (infor) {
-          setForm(infor); // Update the form state with the data returned from the API
-        }
+        const info = await getInforAccount(parent.account_id);
+        if (info) setForm(info);
       } catch (error) {
         console.error("Error fetching parent info:", error);
       }
     };
-
-    if (parent?.account_id) {
-      fetchInfo(); // Fetch parent data when component mounts
-    }
+    if (parent?.account_id) fetchInfo();
   }, [parent.account_id]);
-  console.log(form)
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleUpdate = () => setShowModal(true);
+  // ✅ Cập nhật: Upload ảnh lên Cloudinary
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const handleSave = () => {
-    setParent({ ...parent, ...form, ImageUrl: imagePreview });
-    setShowModal(false);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "images"); // 🔁 thay bằng preset bạn tạo trong Cloudinary
+
+    try {
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/dg1v9rju0/image/upload",
+        formData
+      );
+
+      const imageUrl = res.data.secure_url;
+      setImagePreview(imageUrl);
+      setForm({ ...form, avatar_url: imageUrl });
+
+      toast.success("Upload ảnh thành công!");
+    } catch (err) {
+      console.error("Upload failed", err);
+      toast.error("Upload ảnh thất bại");
+    }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setForm({ ...form, ImageUrl: reader.result });
-      };
-      reader.readAsDataURL(file);
+  const handleSave = async () => {
+    try {
+      await putParentProfile(
+        parent.account_id,
+        form.full_name,
+        form.phone_number,
+        form.email,
+        form.date_of_birth,
+        form.occupation,
+        form.address,
+        form.identity_number,
+        form.avatar_url
+      );
+
+      setParent({ ...parent, ...form });
+      setShowModal(false);
+      toast.success("Update successful!");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile.");
     }
   };
 
   return (
-    <div
-      className={
-        edit ? "parent-profile-container-edit" : "parent-profile-container-view"
-      }
-    >
-      <button className="profile-update-btn" onClick={handleUpdate}>
+    <div className="parent-profile-container-view">
+      <button className="profile-update-btn" onClick={() => setShowModal(true)}>
         <span className="profile-update-icon">
           <span className="icon-user"></span>
           <span className="icon-plus">+</span>
@@ -88,37 +97,27 @@ const ParentProfile = () => {
       <div className="profile-left">
         <div className="profile-avatar" style={{ position: "relative" }}>
           <img src={imagePreview} alt="avatar" />
-          {edit && (
-            <>
-              <input
-                type="file"
-                accept="image/*"
-                id="avatar-upload"
-                style={{ display: "none" }}
-                onChange={handleImageChange}
-              />
-              <label htmlFor="avatar-upload" className="avatar-upload-btn">
-                Update Image
-              </label>
-            </>
-          )}
+          <input
+            type="file"
+            accept="image/*"
+            id="avatar-upload"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+          />
+          <label htmlFor="avatar-upload" className="avatar-upload-btn">
+            Update Image
+          </label>
         </div>
 
         <div className="profile-info-block">
           <div className="profile-row">
-            <span className="profile-label">{profileLeft[0]}</span>
-            <span className="profile-colon">:</span>
-            <span className="profile-value">{user.full_name}</span>
+            <b>Full Name:</b> {form.full_name}
           </div>
           <div className="profile-row">
-            <span className="profile-label">{profileLeft[1]}</span>
-            <span className="profile-colon">:</span>
-            <span className="profile-value">{user.phone_number}</span>
+            <b>Phone Number:</b> {form.phone_number}
           </div>
           <div className="profile-row">
-            <span className="profile-label">{profileLeft[2]}</span>
-            <span className="profile-colon">:</span>
-            <span className="profile-value">{user.email}</span>
+            <b>Email:</b> {form.email}
           </div>
         </div>
       </div>
@@ -128,33 +127,30 @@ const ParentProfile = () => {
       <div className="profile-right">
         <div className="profile-info-block-right">
           <div className="profile-row-right">
-            <span>{profileRight[0]}:</span>
-            <span>{}</span>
+            <b>Date of Birth:</b>{" "}
+            {form.date_of_birth
+              ? new Date(form.date_of_birth).toLocaleDateString("en-CA")
+              : "N/A"}
+          </div>
+
+          <div className="profile-row-right">
+            <b>Occupation:</b> {form.occupation}
           </div>
           <div className="profile-row-right">
-            <span>{profileRight[1]}:</span>
-            <span>{form.occupation}</span>
+            <b>Address:</b> {form.address}
           </div>
           <div className="profile-row-right">
-            <span>{profileRight[2]}:</span>
-            <span>{form.address}</span>
+            <b>CCCD:</b> {form.identity_number}
           </div>
           <div className="profile-row-right">
-            <span>{profileRight[3]}:</span>
-            <span>{form.identity_number}</span>
+            <b>Students:</b> {form.student_name} - {form.class}
           </div>
           <div className="profile-row-right">
-            <span>{profileRight[4]}:</span>
-            <span>{form.student_name} - {form.class}</span>
-          </div>
-          <div className="profile-row-right">
-            <span>{profileRight[5]}:</span>
-            <span>{form.relationship_type}</span>
+            <b>Relationship:</b> {form.relationship_type}
           </div>
         </div>
       </div>
 
-      {/* Import and use the UpdateModal component */}
       <UpdateModal
         showModal={showModal}
         handleClose={() => setShowModal(false)}

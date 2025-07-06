@@ -44,13 +44,90 @@ export const createAccount = async (
   }
 };
 
-
-export const getInforAccount = async(user_id)=>{
+export const getInforAccount = async (user_id) => {
   try {
-    const inforAccount = await axios.get(`${API_BASE}/parents/${user_id}`)
+    const inforAccount = await axios.get(`${API_BASE}/parents/${user_id}`);
     return inforAccount.data;
   } catch (error) {
-     throw error.response?.data || { message: "get data failed" };
+    throw error.inforAccount?.data || { message: "get data failed" };
   }
-}
+};
+export const putParentProfile = async (
+  user_id,
+  full_name,
+  phone_number,
+  email,
+  date_of_birth,
+  occupation,
+  address,
+  identity_number,
+  avatar_url
+) => {
+  try {
+    const updateProfile = await axios.put(
+      `${API_BASE}/parents/updateProfileParent/${user_id}`,
+      {
+        full_name,
+        phone_number,
+        email,
+        date_of_birth,
+        occupation,
+        address,
+        identity_number,
+        avatar_url,
+      }
+    );
+    return updateProfile.data;
+  } catch (error) {
+    throw (
+      error.updateProfile?.data || {
+        message: "can't update information of parent ",
+      }
+    );
+  }
+};
 
+export const getHealthProfile = async (user_id) => {
+  try {
+    const getData = await axios.get(`${API_BASE}/healthprofiles/${user_id}`);
+    return getData.data;
+  } catch (error) {
+    throw (
+      error.getData?.data || {
+        message: "can not get data profile healthy of student",
+      }
+    );
+  }
+};
+export const putHealthProfileOfStudent = async (
+  user_id,
+  height,
+  weight,
+  blood_type,
+  chronic_conditions,
+  allergies,
+  regular_medications,
+  additional_notes
+) => {
+  try {
+    const updateHealth = await axios.put(
+      `${API_BASE}/account/updateProfile/${user_id}`,
+      {
+        height,
+        weight,
+        blood_type,
+        chronic_conditions,
+        allergies,
+        regular_medications,
+        additional_notes,
+      }
+    );
+    return updateHealth.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Can't update health profile of student",
+      }
+    );
+  }
+};

@@ -67,7 +67,7 @@ root.render(
     </AuthProvider>
     <ToastContainer
       position="top-center"
-      autoClose={5000}
+      autoClose={1000}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick={false}
