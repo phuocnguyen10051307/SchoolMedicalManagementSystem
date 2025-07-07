@@ -16,15 +16,19 @@ const Parent = () => {
 
   useEffect(() => {
     if (!user?.account_id) return;
-    getInforAccount(user.id)
-      .then((res) => {
+
+    const fetchInfo = async () => {
+      try {
+        const res = await getInforAccount(user.account_id);
         setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message || "Lỗi khi tải dữ liệu");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchInfo();
   }, [user]);
 
   return (

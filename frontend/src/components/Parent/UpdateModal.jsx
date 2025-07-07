@@ -1,7 +1,44 @@
-import React from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import React, { useState } from "react";
+import { Modal, Button, Form, Image } from "react-bootstrap";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const UpdateModal = ({ showModal, handleClose, handleSave, form, handleChange }) => {
+const UpdateModal = ({
+  showModal,
+  handleClose,
+  handleSave,
+  form,
+  setForm,
+  handleChange,
+}) => {
+  const [localImagePreview, setLocalImagePreview] = useState(form.avatar_url);
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const localURL = URL.createObjectURL(file);
+    setLocalImagePreview(localURL);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "images"); // Cloudinary preset
+
+    try {
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/dg1v9rju0/image/upload",
+        formData
+      );
+
+      const uploadedUrl = res.data.secure_url;
+      setForm((prev) => ({ ...prev, avatar_url: uploadedUrl }));
+      toast.success("Ảnh đã upload thành công!");
+    } catch (error) {
+      console.error("Upload thất bại:", error);
+      toast.error("Upload ảnh thất bại");
+    }
+  };
+
   return (
     <Modal show={showModal} onHide={handleClose} centered>
       <Modal.Header closeButton>
@@ -10,6 +47,31 @@ const UpdateModal = ({ showModal, handleClose, handleSave, form, handleChange })
 
       <Modal.Body>
         <Form>
+          <div className="text-center mb-3">
+            <Image
+              src={localImagePreview}
+              roundedCircle
+              width={120}
+              height={120}
+              alt="Avatar"
+              style={{ objectFit: "cover", border: "2px solid #007bff", boxShadow: "0 0 6px rgba(0,0,0,0.2)" }}
+            />
+            <Form.Label
+              htmlFor="avatar-upload-modal"
+              className="btn btn-outline-primary btn-sm d-block mt-2"
+              style={{ cursor: "pointer" }}
+            >
+              Chọn ảnh mới
+            </Form.Label>
+            <Form.Control
+              type="file"
+              id="avatar-upload-modal"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
+          </div>
+
           <Form.Group className="mb-3">
             <Form.Label>Full Name</Form.Label>
             <Form.Control
@@ -76,19 +138,18 @@ const UpdateModal = ({ showModal, handleClose, handleSave, form, handleChange })
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Identity Number (CCCD)</Form.Label>
+            <Form.Label>CCCD</Form.Label>
             <Form.Control
               type="text"
               name="identity_number"
               value={form.identity_number || ""}
               onChange={handleChange}
-              placeholder="Enter CCCD"
+              placeholder="Enter identity number"
             />
           </Form.Group>
 
-          {/* ✅ Avatar URL: hiển thị dạng readonly */}
           <Form.Group className="mb-3">
-            <Form.Label>Avatar URL (auto-uploaded)</Form.Label>
+            <Form.Label>Avatar URL (đã upload)</Form.Label>
             <Form.Control
               type="text"
               name="avatar_url"

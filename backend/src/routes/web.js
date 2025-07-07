@@ -11,8 +11,9 @@ const {
   getNotifications,
   updateProfileHeath,
   putUpdateProfileParent,
+  refreshAccessToken
 } = require("../controllers/homeControllers");
-const { updateProfileParent } = require("../services/parentQueries");
+const { authenticateJWT }= require("../middlewares/auth")
 
 // khai báo route
 // router.METHOD('/route',handler)
@@ -20,19 +21,18 @@ const { updateProfileParent } = require("../services/parentQueries");
 // route là những đường dẫn này sẽ truyền cho frontend nhận dữ liệu
 
 router.get("/", homePage);
-router.post("/parent-request/send", postDataParentSend);
-router.post("/parent-request/confirm", sendConfirmInfor);
-router.post("/account", account);
-router.post("/account/updateProfile/", updateProfileHeath);
-router.post("/account/login", account);
-router.get("/students/:user_id", getStudents);
-router.get("/healthprofiles/:user_id", healthprofiles);
+router.post("/parent-request/send", postDataParentSend);// get infor of parent and create account
+router.post("/account/login", account);// username and password of user
+router.post("/token/refresh", refreshAccessToken);
 
-router.get("/notifications/:user_id", getNotifications);
+router.get("/students/:user_id", getStudents);// id parent
+router.get("/healthprofiles/:user_id", healthprofiles);// id parent
 
-router.get("/parents/:student_id", parentByStudent);
-router.put("/account/updateProfile/:user_id", updateProfileHeath);
-router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent);
+router.get("/notifications/:user_id", getNotifications);// id parent 
+router.get("/parents/:student_id", parentByStudent)// id parent
+
+router.put("/account/updateProfile/:user_id", updateProfileHeath); // id parent
+router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent);// id parent
 
 
 module.exports = router;

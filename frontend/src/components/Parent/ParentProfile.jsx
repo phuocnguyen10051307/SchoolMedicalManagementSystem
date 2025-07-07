@@ -6,7 +6,6 @@ import { getInforAccount } from "../../service/service";
 import UpdateModal from "./UpdateModal";
 import { putParentProfile } from "../../service/service";
 import { toast } from "react-toastify";
-import axios from "axios";
 import im from "../../images/user.png";
 
 const ParentProfile = () => {
@@ -14,56 +13,21 @@ const ParentProfile = () => {
   const { user } = useContext(AuthContext);
 
   const [parent, setParent] = useState(user);
-  const [form, setForm] = useState(user);
-  const [imagePreview, setImagePreview] = useState(
-    data?.ImageUrl || im
-  );
+  const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  console.log(data);
   useEffect(() => {
-    const fetchInfo = async () => {
-      try {
-        const info = await getInforAccount(parent.account_id);
-        if (info) setForm(info);
-      } catch (error) {
-        console.error("Error fetching parent info:", error);
-      }
-    };
-    if (parent?.account_id) fetchInfo();
-  }, [parent.account_id]);
+    if (data) setForm(data);
+    console.log(data)
+  }, [data]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // ✅ Cập nhật: Upload ảnh lên Cloudinary
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "images"); // 🔁 thay bằng preset bạn tạo trong Cloudinary
-
-    try {
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dg1v9rju0/image/upload",
-        formData
-      );
-
-      const imageUrl = res.data.secure_url;
-      setImagePreview(imageUrl);
-      setForm({ ...form, avatar_url: imageUrl });
-
-      toast.success("Upload ảnh thành công!");
-    } catch (err) {
-      console.error("Upload failed", err);
-      toast.error("Upload ảnh thất bại");
-    }
-  };
-
   const handleSave = async () => {
     try {
-      await putParentProfile(
+      const response = await putParentProfile(
         parent.account_id,
         form.full_name,
         form.phone_number,
@@ -74,13 +38,14 @@ const ParentProfile = () => {
         form.identity_number,
         form.avatar_url
       );
+      console.log("Cập nhật response:", response);
 
       setParent({ ...parent, ...form });
       setShowModal(false);
-      toast.success("Update successful!");
+      toast.success("Cập nhật thông tin thành công!");
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      toast.error("Failed to update profile.");
+      console.error("Cập nhật thất bại:", error);
+      toast.error("Cập nhật thất bại.");
     }
   };
 
@@ -96,17 +61,7 @@ const ParentProfile = () => {
 
       <div className="profile-left">
         <div className="profile-avatar" style={{ position: "relative" }}>
-          <img src={imagePreview} alt="avatar" />
-          <input
-            type="file"
-            accept="image/*"
-            id="avatar-upload"
-            style={{ display: "none" }}
-            onChange={handleImageChange}
-          />
-          <label htmlFor="avatar-upload" className="avatar-upload-btn">
-            Update Image
-          </label>
+          <img src={form?.avatar_url} alt="avatar" />
         </div>
 
         <div className="profile-info-block">
@@ -132,7 +87,6 @@ const ParentProfile = () => {
               ? new Date(form.date_of_birth).toLocaleDateString("en-CA")
               : "N/A"}
           </div>
-
           <div className="profile-row-right">
             <b>Occupation:</b> {form.occupation}
           </div>
@@ -150,12 +104,14 @@ const ParentProfile = () => {
           </div>
         </div>
       </div>
+      {console.log("avatar_url đang dùng:", form.avatar_url)}
 
       <UpdateModal
         showModal={showModal}
         handleClose={() => setShowModal(false)}
         handleSave={handleSave}
         form={form}
+        setForm={setForm}
         handleChange={handleChange}
       />
     </div>

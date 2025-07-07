@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN;
+const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN;
 const {
   handleParentAccountRequest,
   getParentByStudentId,
@@ -18,7 +21,7 @@ const postDataParentSend = async (req, res) => {
     const result = await handleParentAccountRequest(req.body);
     const httpCode = result.status === "APPROVED" ? 201 : 200;
     res.status(httpCode).json(result);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
@@ -63,6 +66,28 @@ const updateProfileHeath = async (req, res) => {
 
 const account = async (req, res) => {
   await getAccount(req, res);
+};
+const refreshAccessToken = async (req, res) => {
+  const { refresh_token } = req.body;
+  if (!refresh_token) return res.status(400).json({ message: "Thiếu refresh token" });
+
+  try {
+    const user = jwt.verify(refresh_token, REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      {
+        user_id: user.user_id,
+        username: user.username,
+        role: user.role,
+      },
+      ACCESS_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.status(200).json({ access_token: newAccessToken });
+  } catch (err) {
+    return res.status(403).json({ message: "Refresh token không hợp lệ hoặc đã hết hạn" });
+  }
 };
 
 const getStudents = async (req, res) => {
@@ -147,4 +172,5 @@ module.exports = {
   getNotifications,
   updateProfileHeath,
   putUpdateProfileParent,
+  refreshAccessToken
 };

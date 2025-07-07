@@ -1,5 +1,6 @@
 const connection = require("../../config/db");
-const sendEmail = require("../utils/mailer");
+const { sendEmail } = require("../utils/mailer");
+const { randomUUID } = require("crypto");
 
 const handleParentAccountRequest = async ({
   student_code,
@@ -8,8 +9,10 @@ const handleParentAccountRequest = async ({
   email,
   relationship,
 }) => {
+  const id = randomUUID().slice(0, 16);
   const client = await connection.connect();
   try {
+
     await client.query("BEGIN");
 
     const { rows: studentRows } = await client.query(
@@ -51,9 +54,9 @@ const handleParentAccountRequest = async ({
     const { rows: pendingRows } = await client.query(
       `INSERT INTO pending_account_requests
         (request_id, student_code, identity_number, phone_number, email, relationship_type, request_status, requested_at, reviewed_by_id, reviewed_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW(), NULL, NULL)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NULL, NULL)
         RETURNING *`,
-      [student_code, cccd, phone, email, relationship, status]
+      [`par_${id}`,student_code, cccd, phone, email, relationship, status]
     );
 
     const request = pendingRows[0];
@@ -79,9 +82,9 @@ const handleParentAccountRequest = async ({
     const { rows: accountRows } = await client.query(
       `INSERT INTO accounts 
         (account_id, username, password, email, phone_number, date_of_birth,address, full_name, avatar_url, role_id, account_status, created_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, NULL,NULL, $5, NULL, 'PARENT', 'active', NOW())
+        VALUES ($1, $2, $3, $4, $5, NULL,NULL, $6, NULL, 'PARENT', 'active', NOW())
         RETURNING *`,
-      [username, password, email, phone, full_name]
+      [`acc_${id}`,username, password, email, phone, full_name]
     );
 
     const account = accountRows[0];
@@ -91,10 +94,15 @@ const handleParentAccountRequest = async ({
       if (relationship === "Guardian") return student.guardian_occupation;
       return "That Nghiep";
     })();
+    const { rows: healthyProfile } = await client.query(
+      `INSERT INTO public.health_profiles (profile_id,student_id,submitted_by_id,review_status,created_at,
+        updated_at) VALUES ($1,$2,$3,'pending',NOW(),NOW());`,
+      [`hp_${id}`,student.student_id, account.account_id]
+    );
     await client.query(
       `INSERT INTO parents (parent_id, account_id, student_id, relationship_type,occupation)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
-      [account.account_id, student.student_id, relationship, occupation]
+       VALUES ($1, $2, $3, $4, $5)`,
+      [`parent_${id}`,account.account_id, student.student_id, relationship, occupation]
     );
     await sendEmail(
       email,
@@ -130,7 +138,7 @@ const getParentByStudentId = async (accountid) => {
     );
     const parent = rows[0];
     if (!parent) return null;
-    if (parent.relationship_type === "Father") {
+    if (parent.relationship_type.toLowerCase() === "father") {
       const { rows: info } = await client.query(
         `select s.father_email AS email,
          s.father_full_name AS full_name,
@@ -141,14 +149,15 @@ const getParentByStudentId = async (accountid) => {
          s.address AS address,
          s.class_name AS class,
          s.full_name AS student_name,
-         a.date_of_birth as date_of_birth
+         a.date_of_birth as date_of_birth,
+         a.avatar_url as image
          from parents p join students s on s.student_id = p.student_id
          join accounts a ON a.account_id = p.account_id 
          where p.account_id = $1`,
         [accountid]
       );
       return info[0] || null;
-    } else if (parent.relationship_type === "Mother") {
+    } else if (parent.relationship_type.toLowerCase() === "mother") {
       const { rows: info } = await client.query(
         `select s.mother_email AS email,
          s.mother_full_name AS full_name,
@@ -159,14 +168,15 @@ const getParentByStudentId = async (accountid) => {
          s.address AS address,
          s.class_name AS class,
          s.full_name AS student_name,
-         a.date_of_birth as date_of_birth
+         a.date_of_birth as date_of_birth,
+         a.avatar_url as image
          from parents p join students s on s.student_id = p.student_id
          join accounts a ON a.account_id = p.account_id 
          where p.account_id = $1`,
         [accountid]
       );
       return info[0] || null;
-    } else if (parent.relationship_type === "Guardian") {
+    } else if (parent.relationship_type.toLowerCase() === "guardian") {
       const { rows: info } = await client.query(
         `select s.guardian_email AS email,
          s.guardian_full_name AS full_name, 
@@ -177,7 +187,8 @@ const getParentByStudentId = async (accountid) => {
          s.address AS address,
          s.class_name AS class,
          s.full_name AS student_name,
-         a.date_of_birth as date_of_birth
+         a.date_of_birth as date_of_birth,
+         a.avatar_url as image
          from parents p join students s on s.student_id = p.student_id 
          join accounts a ON a.account_id = p.account_id 
          where p.account_id = $1`,
@@ -283,6 +294,7 @@ const updateProfileParent = async (
         user_id,
       ]
     );
+    console.log("Incoming avatar_url:", avatar_url);
     console.log("parentID:", user_id);
 
     // Lấy thông tin student_id và relationship

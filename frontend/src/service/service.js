@@ -9,7 +9,7 @@ export const fetchData = async () => {
     return response.data; // Trả về toàn bộ dữ liệu
   } catch (error) {
     throw error;
-  }
+  } 
 };
 export const loginAccount = async (username, password) => {
   try {
