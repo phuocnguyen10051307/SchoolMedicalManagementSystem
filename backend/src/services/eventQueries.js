@@ -44,18 +44,13 @@ const getVaccinationNotificationsByParent = async (accountId) => {
   const client = await connection.connect();
   try {
     const { rows } = await client.query(
-      `SELECT 
-         vn.notification_id,
-         vn.student_vaccination_id,
-         vn.notification_status,
-         vn.sent_at,
-         vn.seen_at,
-         vn.acknowledged_at,
-         vn.rejection_reason,
-         vn.notes
-       FROM vaccination_notifications vn
-       WHERE vn.parent_account_id = $1
-       ORDER BY vn.sent_at DESC`,
+      `SELECT vn.*, vs.vaccine_name, sv.status AS student_vaccine_status, vr.result_status, s.full_name AS student_name
+FROM vaccination_notifications vn
+JOIN student_vaccination sv ON vn.student_vaccination_id = sv.student_vaccination_id
+JOIN vaccination_schedules vs ON sv.schedule_id = vs.schedule_id
+LEFT JOIN vaccination_results vr ON sv.student_vaccination_id = vr.student_vaccination_id
+JOIN students s ON sv.student_id = s.student_id
+WHERE vn.parent_account_id = $1`,
       [accountId]
     );
     return rows;
