@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './MedicalEvent.css';
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import { Modal, Button } from 'react-bootstrap';
 
 const MedicalEvent = () => {
     const fileInputRef = useRef(null);
@@ -66,7 +67,6 @@ const MedicalEvent = () => {
         setPreviewImage(null);
     };
 
-
     return (
         <div className="medical-event-container">
             <form className="medical-event-form" onSubmit={handleSubmit}>
@@ -74,6 +74,7 @@ const MedicalEvent = () => {
                     <div className="medical-form-content">
                         <h2 className="medical-event-title">Health Event</h2>
                         <div className="form-left">
+                            {/* Form fields */}
                             <div className="form-group floating-label">
                                 <label htmlFor="studentName">Student Name:</label>
                                 <select id="studentName">
@@ -147,6 +148,7 @@ const MedicalEvent = () => {
                                 <label htmlFor="notes">Notes:</label>
                                 <textarea id="notes" placeholder="Additional notes..." />
                             </div>
+
                             <div className="form-group">
                                 <button type="button" className="upload-button" onClick={handleUploadClick}>
                                     <img
@@ -164,6 +166,7 @@ const MedicalEvent = () => {
                                     onChange={handleFileChange}
                                 />
                             </div>
+
                             <div className="image-preview">
                                 <div className="image-box">
                                     {previewImage ? (
@@ -182,12 +185,14 @@ const MedicalEvent = () => {
                                     )}
                                 </div>
                             </div>
+
                             <button type="submit" className="submit-button">SUBMIT</button>
                         </div>
                     </div>
                 </Scrollbars>
             </form>
-             <div className="recent-events">
+
+            <div className="recent-events">
                 <h3>Recent Events</h3>
                 <div className="recent-events-scroll">
                     <Scrollbars style={{ height: '100%', width: '100%' }}>
@@ -201,7 +206,7 @@ const MedicalEvent = () => {
                                     className="view-button"
                                     onClick={() => setSelectedEvent(ev)} 
                                 >
-                                    view
+                                    View
                                 </button>
                             </div>
                         ))}
@@ -209,28 +214,38 @@ const MedicalEvent = () => {
                 </div>
             </div>
 
-            {selectedEvent && (
-                <div className="event-modal-overlay" onClick={() => setSelectedEvent(null)}>
-                    <div className="event-modal" onClick={(e) => e.stopPropagation()}>
-                        <h2>Event Details</h2>
-                        <p><strong>Name:</strong> {selectedEvent.studentName}</p>
-                        <p><strong>Class:</strong> {selectedEvent.studentClass}</p>
-                        <p><strong>Event Type:</strong> {selectedEvent.eventType}</p>
-                        <p><strong>Event Title:</strong> {selectedEvent.eventTitle}</p>
-                        <p><strong>Description:</strong> {selectedEvent.eventDesc}</p>
-                        <p><strong>Reported By:</strong> {selectedEvent.reportBy}</p>
-                        <p><strong>Severity:</strong> {selectedEvent.severity}</p>
-                        <p><strong>Location:</strong> {selectedEvent.location}</p>
-                        <p><strong>Medication:</strong> {selectedEvent.medicationName}</p>
-                        <p><strong>Dosage:</strong> {selectedEvent.dosage}</p>
-                        <p><strong>Admin Method:</strong> {selectedEvent.adminMethod}</p>
-                        <p><strong>Notes:</strong> {selectedEvent.notes}</p>
-                        <p><strong>Time:</strong> {selectedEvent.time}</p>
-                        {selectedEvent.image && <img src={selectedEvent.image} alt="Event" className="modal-img" />}
-                        <button className="close-modal-button" onClick={() => setSelectedEvent(null)}>Close</button>
-                    </div>
-                </div>
-            )}
+            <Modal show={!!selectedEvent} onHide={() => setSelectedEvent(null)} centered size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Event Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedEvent && (
+                        <>
+                            <p><strong>Name:</strong> {selectedEvent.studentName}</p>
+                            <p><strong>Class:</strong> {selectedEvent.studentClass}</p>
+                            <p><strong>Event Type:</strong> {selectedEvent.eventType}</p>
+                            <p><strong>Event Title:</strong> {selectedEvent.eventTitle}</p>
+                            <p><strong>Description:</strong> {selectedEvent.eventDesc}</p>
+                            <p><strong>Reported By:</strong> {selectedEvent.reportBy}</p>
+                            <p><strong>Severity:</strong> {selectedEvent.severity}</p>
+                            <p><strong>Location:</strong> {selectedEvent.location}</p>
+                            <p><strong>Medication:</strong> {selectedEvent.medicationName}</p>
+                            <p><strong>Dosage:</strong> {selectedEvent.dosage}</p>
+                            <p><strong>Admin Method:</strong> {selectedEvent.adminMethod}</p>
+                            <p><strong>Notes:</strong> {selectedEvent.notes}</p>
+                            <p><strong>Time:</strong> {selectedEvent.time}</p>
+                            {selectedEvent.image && (
+                                <img src={selectedEvent.image} alt="Event" className="img-fluid mt-3 rounded border" />
+                            )}
+                        </>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setSelectedEvent(null)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };
