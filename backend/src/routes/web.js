@@ -11,7 +11,8 @@ const {
   getNotifications,
   updateProfileHeath,
   putUpdateProfileParent,
-  refreshAccessToken
+  refreshAccessToken,
+  createClassHealthCheckup
 } = require("../controllers/homeControllers");
 const { authenticateJWT }= require("../middlewares/auth")
 
@@ -24,6 +25,7 @@ router.get("/", homePage);
 router.post("/parent-request/send", postDataParentSend);// get infor of parent and create account
 router.post("/account/login", account);// username and password of user
 router.post("/token/refresh", refreshAccessToken);
+router.post("/checkups/class", createClassHealthCheckup);
 
 router.get("/students/:user_id", getStudents);// id parent
 router.get("/healthprofiles/:user_id", healthprofiles);// id parent

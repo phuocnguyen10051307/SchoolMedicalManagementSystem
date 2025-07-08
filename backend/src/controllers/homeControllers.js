@@ -13,7 +13,10 @@ const {
   getInformationOfStudent,
   getHeathProfiles,
 } = require("../services/studentQueries");
-const { getEventNotificationsByParentId } = require("../services/eventQueries");
+const {
+  getEventNotificationsByParentId,
+  createClassHealthCheckupService,
+} = require("../services/eventQueries");
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -62,6 +65,15 @@ const updateProfileHeath = async (req, res) => {
   } catch (error) {
     console.error("Error updating health profile:", error.message);
     res.status(500).json({ erorr: error.message });
+  }
+};
+const createClassHealthCheckup = async (req, res) => {
+  try {
+    const result = await createClassHealthCheckupService(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error creating class health checkup:", error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -172,4 +184,5 @@ module.exports = {
   updateProfileHeath,
   putUpdateProfileParent,
   refreshAccessToken,
+  createClassHealthCheckup,
 };
