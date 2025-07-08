@@ -2,6 +2,8 @@ import React from 'react';
 import './SchoolNurse.css';
 import { FaClipboardList, FaHeartbeat, FaSyringe, FaNotesMedical, FaFolderOpen, FaFileMedicalAlt, FaInfoCircle } from 'react-icons/fa';
 import { NavLink, Outlet } from 'react-router-dom';
+import nurse2 from '../../images/nurse2.png';
+
 
 
 const menuItems = [
@@ -20,7 +22,7 @@ const SchoolNurse = () => {
       <div className="sidebar">
         <div className="profile">
           <img
-            src="https://www.kindpng.com/picc/m/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+            src={nurse2}
             alt="User Avatar"
             className="avatar"
           />

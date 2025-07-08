@@ -40,8 +40,8 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  object-fit: cover;
-  background-color: white;
+  object-fit: contain;
+  background-color: #ccc;
 }
 
 .username {
