@@ -1,5 +1,6 @@
-const jwt = require("jsonwebtoken");
 const connection = require("../../config/db");
+const {  generateAccessToken,
+  generateRefreshToken} = require("../utils/jwt")
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN;
 const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN;
@@ -29,8 +30,8 @@ const getAccount = async (req, res) => {
       role: account.role_id,
     };
 
-    const accessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
-    const refreshToken = jwt.sign(payload, REFRESH_SECRET, { expiresIn: "7d" });
+    const accessToken = generateAccessToken(payload)
+    const refreshToken = generateRefreshToken(payload)
 
     // (tùy chọn) Lưu refresh token vào DB hoặc bộ nhớ nếu muốn kiểm soát
 
