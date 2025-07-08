@@ -12,14 +12,19 @@ const ParentProfile = () => {
   const { data } = useOutletContext();
   const { user } = useContext(AuthContext);
 
-  const [parent, setParent] = useState(user);
   const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   console.log(data);
   useEffect(() => {
-    if (data) setForm(data);
-    console.log(data)
+    if (data) {
+      const mappedData = {
+        ...data, 
+        avatar_url:data.image|| im
+      }
+      setForm(mappedData);
+    }
+    console.log(data);
   }, [data]);
 
   const handleChange = (e) =>
@@ -28,7 +33,7 @@ const ParentProfile = () => {
   const handleSave = async () => {
     try {
       const response = await putParentProfile(
-        parent.account_id,
+        user.account_id,
         form.full_name,
         form.phone_number,
         form.email,
@@ -38,10 +43,8 @@ const ParentProfile = () => {
         form.identity_number,
         form.avatar_url
       );
-      console.log("Cập nhật response:", response);
-
-      setParent({ ...parent, ...form });
       setShowModal(false);
+      const updated = await getInforAccount(form.account_id);
       toast.success("Cập nhật thông tin thành công!");
     } catch (error) {
       console.error("Cập nhật thất bại:", error);
@@ -61,7 +64,7 @@ const ParentProfile = () => {
 
       <div className="profile-left">
         <div className="profile-avatar" style={{ position: "relative" }}>
-          <img src={form?.avatar_url} alt="avatar" />
+          <img src={`${form?.avatar_url}?v=${Date.now()}`} alt="avatar" />
         </div>
 
         <div className="profile-info-block">

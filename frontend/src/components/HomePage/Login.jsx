@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import "./login.css";
-import { loginAccount } from "../../service/service";
+import { loginAccount, getInforAccount } from "../../service/service";
 import "../HomePage/login.scss"
 const Login = () => {
   const [adminData, setAdminData] = useState(null);
@@ -25,9 +25,7 @@ const Login = () => {
     try {
       const rows = await loginAccount(username, password);
       const account = rows.account;
-      console.log(account);
       setUser(account);
-      localStorage.setItem("user", JSON.stringify(account));
 
       switch (account.role_id) {
         case "ADMIN":

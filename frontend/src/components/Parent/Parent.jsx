@@ -1,35 +1,12 @@
-// src/components/Parent/Parent.js
-import React, { useEffect, useState, useContext } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import "./Parent.css";
-import { AuthContext } from "../../context/AuthContext";
-import { getInforAccount } from "../../service/service";
+import { useParentData } from "../../hooks/useParentData";
 
 const Parent = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, loading, error } = useParentData();
   const location = useLocation();
-  const { user } = useContext(AuthContext);
 
   const isActive = (path) => location.pathname.endsWith(path);
-
-  useEffect(() => {
-    if (!user?.account_id) return;
-
-    const fetchInfo = async () => {
-      try {
-        const res = await getInforAccount(user.account_id);
-        setData(res);
-      } catch (err) {
-        setError(err.message || "Lỗi khi tải dữ liệu");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInfo();
-  }, [user]);
 
   return (
     <div className="parent-bg">
