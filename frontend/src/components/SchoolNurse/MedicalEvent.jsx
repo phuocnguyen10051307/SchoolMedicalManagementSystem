@@ -7,7 +7,9 @@ const MedicalEvent = () => {
     const fileInputRef = useRef(null);
     const [previewImage, setPreviewImage] = useState(null);
     const [events, setEvents] = useState([]);
-    const [selectedEvent, setSelectedEvent] = useState(null); 
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [eventType, setEventType] = useState('');
+    const [customEventType, setCustomEventType] = useState('');
 
     useEffect(() => {
         const storedEvents = JSON.parse(localStorage.getItem('medicalEvents')) || [];
@@ -21,16 +23,12 @@ const MedicalEvent = () => {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-
         if (!file.type.startsWith('image/')) {
             alert('Please select a valid image file.');
             return;
         }
-
         const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreviewImage(reader.result);
-        };
+        reader.onloadend = () => setPreviewImage(reader.result);
         reader.readAsDataURL(file);
     };
 
@@ -42,10 +40,12 @@ const MedicalEvent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const finalEventType = eventType === 'Other' ? customEventType : eventType;
+
         const newEvent = {
             studentName: document.getElementById("studentName").value,
             studentClass: document.getElementById("studentClass").value,
-            eventType: document.getElementById("eventType").value,
+            eventType: finalEventType,
             eventTitle: document.getElementById("eventTitle").value,
             eventDesc: document.getElementById("eventDesc").value,
             reportBy: document.getElementById("reportBy").value,
@@ -65,6 +65,8 @@ const MedicalEvent = () => {
 
         e.target.reset();
         setPreviewImage(null);
+        setEventType('');
+        setCustomEventType('');
     };
 
     return (
@@ -74,14 +76,13 @@ const MedicalEvent = () => {
                     <div className="medical-form-content">
                         <h2 className="medical-event-title">Health Event</h2>
                         <div className="form-left">
-                            {/* Form fields */}
                             <div className="form-group floating-label">
                                 <label htmlFor="studentName">Student Name:</label>
-                                <select id="studentName">
-                                    <option>Select Name of Student in class</option>
-                                    <option>Emma Johnson</option>
-                                    <option>Liam Smith</option>
-                                    <option>Noah Brown</option>
+                                <select id="studentName" required>
+                                    <option value="">Select Name of Student in class</option>
+                                    <option value="Emma">Emma Johnson</option>
+                                    <option value="Liam">Liam Smith</option>
+                                    <option value="Noah">Noah Brown</option>
                                 </select>
                             </div>
                             <div className='form-group floating-label'>
@@ -90,63 +91,83 @@ const MedicalEvent = () => {
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="eventType">Event Type:</label>
-                                <select id="eventType">
-                                    <option>Select Event Type</option>
-                                    <option>Fever</option>
-                                    <option>Injury</option>
-                                    <option>Fall</option>
-                                    <option>Epidemic case</option>
-                                    <option>Allergic reaction</option>
-                                    <option>Stomachache</option>
-                                    <option>Nosebleed</option>
-                                    <option>Headache</option>
+                                <select
+                                    id="eventType"
+                                    value={eventType}
+                                    onChange={e => setEventType(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select Event Type</option>
+                                    <option value="Fever">Fever</option>
+                                    <option value="Injury">Injury</option>
+                                    <option value="Fall">Fall</option>
+                                    <option value="Epidemic">Epidemic case</option>
+                                    <option value="Allergic">Allergic reaction</option>
+                                    <option value="Stomachache">Stomachache</option>
+                                    <option value="Nosebleed">Nosebleed</option>
+                                    <option value="Headache">Headache</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
+
+                            {eventType === 'Other' && (
+                                <div className="form-group floating-label">
+                                    <input
+                                        type="text"
+                                        id="customEventType"
+                                        placeholder="Enter custom event type"
+                                        value={customEventType}
+                                        onChange={e => setCustomEventType(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            )}
+
                             <div className="form-group floating-label">
                                 <label htmlFor="eventTitle">Event Title:</label>
-                                <input type="text" id="eventTitle" placeholder="Enter event title" />
+                                <input type="text" id="eventTitle" placeholder="Enter event title" required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="eventDesc">Event Description:</label>
-                                <textarea id="eventDesc" placeholder="Detailed description of the medical event..." />
+                                <textarea id="eventDesc" placeholder="Detailed description..." required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="reportBy">Report by:</label>
-                                <input type="text" id="reportBy" placeholder="Enter Name or roles" />
+                                <input type="text" id="reportBy" placeholder="Enter Name or roles" required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="severity">Severity level:</label>
-                                <select id="severity">
-                                    <option>Select severity level</option>
-                                    <option>Low</option>
-                                    <option>Medium</option>
-                                    <option>High</option>
+                                <select id="severity" required>
+                                    <option value="">Select severity level</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
                                 </select>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="location">Location:</label>
-                                <input type="text" id="location" placeholder="Enter the event location" />
+                                <input type="text" id="location" placeholder="Enter the event location" required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="medicationName">Medication Name:</label>
-                                <select id="medicationName">
-                                    <option>Select medication</option>
-                                    <option>Paracetamol</option>
-                                    <option>Ibuprofen</option>
-                                    <option>Antihistamine</option>
+                                <select id="medicationName" required>
+                                    <option value="">Select medication</option>
+                                    <option value="Paracetamol">Paracetamol</option>
+                                    <option value="Ibuprofen">Ibuprofen</option>
+                                    <option value="Antihistamine">Antihistamine</option>
                                 </select>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="dosage">Dosage:</label>
-                                <input type="text" id="dosage" placeholder="Enter Dosage" />
+                                <input type="text" id="dosage" placeholder="Enter Dosage" required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="adminMethod">Administration method:</label>
-                                <input type="text" id="adminMethod" placeholder="Enter administration method" />
+                                <input type="text" id="adminMethod" placeholder="Enter administration method" required/>
                             </div>
                             <div className="form-group floating-label">
                                 <label htmlFor="notes">Notes:</label>
-                                <textarea id="notes" placeholder="Additional notes..." />
+                                <textarea id="notes" placeholder="Additional notes..." required/>
                             </div>
 
                             <div className="form-group">
