@@ -26,6 +26,11 @@ import Manager from "./components/Manager/Manager";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Register from "./components/HomePage/Register";
+import "./components/Parent/Parent.css";
+import ParentProfile from "./components/Parent/ParentProfile";
+import StudentHealthRecordDeclaration from "./components/Parent/StudentHealthRecordDeclaration";
+import RegisterMedicine from "./components/Parent/RegisterMedicine";
+import HealthHistory from "./components/Parent/HealthHistory";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -35,8 +40,7 @@ root.render(
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="service" element={<Service></Service>}></Route>
           <Route path="blog" element={<Blog></Blog>}></Route>
-          <Route path="admin" element={<Admin/>}></Route>
-          <Route path="parent" element={<Parent></Parent>}></Route>``
+          <Route path="admin" element={<Admin />}></Route>
           <Route path="student" element={<Student></Student>}></Route>
           <Route path="nurse" element={<SchoolNurse />}>
             <Route path="dashboard" element={<DashBoard />} />
@@ -48,15 +52,22 @@ root.render(
             <Route path="profile" element={<Profile />} />
             <Route index element={<DashBoard />} />
           </Route>
-          <Route path="register" element={<Register/>}></Route>
+          <Route path="parent/*" element={<Parent />}>
+            <Route index element={<Navigate to="profile" replace />} />
+            <Route path="profile" element={<ParentProfile />} />
+            <Route path="health" element={<StudentHealthRecordDeclaration />} />
+            <Route path="medicine" element={<RegisterMedicine />} />
+            <Route path="history" element={<HealthHistory />} />
+          </Route>
+          <Route path="register" element={<Register />}></Route>
           <Route path="login" element={<Login></Login>}></Route>
-          <Route path="manager" element={<Manager></Manager>}></Route>
+          <Route path="manager" element={<Manager/>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
     <ToastContainer
       position="top-center"
-      autoClose={5000}
+      autoClose={1000}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick={false}

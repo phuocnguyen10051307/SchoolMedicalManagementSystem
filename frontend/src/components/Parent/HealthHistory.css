@@ -1,0 +1,28 @@
+.health-history-container {
+  background: #f4f8fa;
+  border-radius: 24px;
+  padding: 20px 24px 450px 24px;
+  margin-top: 24px;
+}
+.health-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0001;
+}
+.health-history-table th,
+.health-history-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 17px;
+}
+.health-history-table th {
+  background: #d7d7d7;
+  font-weight: 600;
+}
+.health-history-table tr:last-child td {
+  border-bottom: none;
+}
