@@ -22,6 +22,8 @@ const {
 const {
   confirmParentMedicationReceiptService,
   getPendingRequestsForNurse,
+  getInforNurse,
+  updateNurseInfo,
 } = require("../services/nurseQueries");
 const homePage = (req, res) => {
   res.send("hello world");
@@ -114,7 +116,7 @@ const getPendingMedicationRequestsByNurse = async (req, res) => {
 const confirmMedicationReceipt = async (req, res) => {
   try {
     //const {nurse_account_id} = req.user.user_id; // lấy từ token
-    const { request_id, received_quantity,nurse_account_id } = req.body;
+    const { request_id, received_quantity, nurse_account_id } = req.body;
     console.log("REQ BODY", req.body);
 
     const result = await confirmParentMedicationReceiptService({
@@ -131,6 +133,27 @@ const confirmMedicationReceipt = async (req, res) => {
     if (error.status === 403) {
       return res.status(403).json({ error: error.message });
     }
+    res.status(500).json({ error: error.message });
+  }
+};
+const getInformationNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+
+    const requests = await getInforNurse(nurse_id);
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const updateInformationNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const { full_name, phone_number, email, avatar_url, date_of_birth} = req.body
+    const requests = await updateNurseInfo(nurse_id, full_name, phone_number, email, avatar_url, date_of_birth);
+    res.status(200).json(requests);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
@@ -201,7 +224,6 @@ const getNotifications = async (req, res) => {
 const putUpdateProfileParent = async (req, res) => {
   try {
     const { user_id } = req.params;
-    console.log(req.params);
     const {
       full_name,
       phone_number,
@@ -247,4 +269,6 @@ module.exports = {
   createParentMedicationRequest,
   confirmMedicationReceipt,
   getPendingMedicationRequestsByNurse,
+  getInformationNurse,
+  updateInformationNurse
 };
