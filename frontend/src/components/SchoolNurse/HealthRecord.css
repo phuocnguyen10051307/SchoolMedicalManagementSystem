@@ -1,0 +1,178 @@
+.record-container {
+  /* max-height: 100vh; */
+  height: 100%;
+  background-color: #f0f8ff;
+  box-sizing: border-box;
+
+}
+
+
+.filter-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #57c2b0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-buttons button:hover {
+  background-color: #54de7d;
+}
+
+.filter-buttons .active {
+  background-color: #54de7d;
+}
+
+
+.table-wrapper {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+
+
+.record-table {
+  width: 1310px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+
+
+
+
+.record-table th,
+.record-table td {
+  padding: 21px 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* No. */
+.record-table th:nth-child(1),
+.record-table td:nth-child(1) {
+  width: 30px;
+}
+
+/* Name */
+.record-table th:nth-child(2),
+.record-table td:nth-child(2) {
+  width: 80px;
+}
+
+/* Class */
+.record-table th:nth-child(3),
+.record-table td:nth-child(3) {
+  width: 30px;
+}
+
+/* Event Type */
+.record-table th:nth-child(4),
+.record-table td:nth-child(4) {
+  width: 55px;
+}
+
+/* Severity */
+.record-table th:nth-child(5),
+.record-table td:nth-child(5) {
+  width: 50px;
+
+}
+
+/* Medication */
+.record-table th:nth-child(6),
+.record-table td:nth-child(6) {
+  width: 60px;
+}
+
+/* Description */
+.record-table th:nth-child(7),
+.record-table td:nth-child(7) {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Date Time */
+.record-table th:nth-child(8),
+.record-table td:nth-child(8) {
+  width: 80px;
+}
+
+
+
+/* .description-cell {
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+} */
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #888;
+}
+
+/* Pagination */
+.pagination-numbers {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 10px 0 0;
+  font-size: 14px;
+  user-select: none;
+}
+
+.page-number {
+  padding: 4px 8px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-number:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.page-number.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.arrow {
+  font-weight: bold;
+  color: #007bff;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: color 0.2s ease;
+}
+
+.arrow:hover {
+  color: #0056b3;
+}
+
+.arrow.disabled {
+  color: #aaa;
+  cursor: default;
+}
