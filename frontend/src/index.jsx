@@ -26,6 +26,15 @@ import Manager from "./components/Manager/Manager";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Register from "./components/HomePage/Register";
+import AdminProfile from "./components/Admin/AdminProfile";
+import ManagerSchoolNurse from "./components/Admin/ManagerSchoolNurse";
+import ManagerParent from "./components/Admin/ManagerParent";
+import ManagerStudent from "./components/Admin/ManagerStudent";
+
+
+
+
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -35,9 +44,10 @@ root.render(
           <Route path="/" element={<HomePage></HomePage>}></Route>
           <Route path="service" element={<Service></Service>}></Route>
           <Route path="blog" element={<Blog></Blog>}></Route>
-          <Route path="admin" element={<Admin/>}></Route>
+          <Route path="admin" element={<Admin />}></Route>
           <Route path="parent" element={<Parent></Parent>}></Route>``
           <Route path="student" element={<Student></Student>}></Route>
+          
           <Route path="nurse" element={<SchoolNurse />}>
             <Route path="dashboard" element={<DashBoard />} />
             <Route path="event" element={<MedicalEvent />} />
@@ -48,7 +58,17 @@ root.render(
             <Route path="profile" element={<Profile />} />
             <Route index element={<DashBoard />} />
           </Route>
-          <Route path="register" element={<Register/>}></Route>
+          {/* <Route path="admin/profile" element={<Admin />} /> */}
+<Route path="admin" element={<Admin />}>
+  <Route index element={<Navigate to="profile" replace />} />
+  <Route path="profile" element={<AdminProfile />} />
+  <Route path="nurse" element={<ManagerSchoolNurse />} />
+  <Route path="parent" element={<ManagerParent />} />
+  <Route path="student" element={<ManagerStudent />} />
+</Route>
+
+
+          <Route path="register" element={<Register />}></Route>
           <Route path="login" element={<Login></Login>}></Route>
           <Route path="manager" element={<Manager></Manager>}></Route>
         </Routes>
