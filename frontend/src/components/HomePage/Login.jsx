@@ -6,7 +6,6 @@ import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import "./login.css";
 import { loginAccount, getInforAccount } from "../../service/service";
-import "../HomePage/login.scss"
 const Login = () => {
   const [adminData, setAdminData] = useState(null);
   const [parentData, setParentData] = useState(null);
