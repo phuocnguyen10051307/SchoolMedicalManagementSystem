@@ -1,5 +1,5 @@
 const connection = require("../../config/db");
- const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 
 const getEventNotificationsByParentId = async (accountId) => {
   const client = await connection.connect();
@@ -29,12 +29,16 @@ const getEventNotificationsByParentId = async (accountId) => {
     client.release();
   }
 };
-const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date, checkup_type, notes }) => {
+const createClassHealthCheckupService = async ({
+  nurse_account_id,
+  checkup_date,
+  checkup_type,
+  notes,
+}) => {
   const client = await connection.connect();
   try {
     await client.query("BEGIN");
 
-    // 1. Lấy danh sách học sinh từ lớp mà y tá quản lý
     const { rows: students } = await client.query(
       `SELECT s.student_id
        FROM nurse_classes nc
@@ -47,7 +51,6 @@ const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date,
       const checkup_id = uuidv4();
       const student_id = student.student_id;
 
-      // 2. Tạo record health_checkup
       await client.query(
         `INSERT INTO health_checkups (
           checkup_id, student_id, checkup_date, checkup_type, status, notes, created_at, updated_at
@@ -55,7 +58,6 @@ const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date,
         [checkup_id, student_id, checkup_date, checkup_type, notes]
       );
 
-      // 3. Lấy danh sách phụ huynh của học sinh
       const { rows: parents } = await client.query(
         `SELECT a.account_id
          FROM parents p
@@ -64,7 +66,7 @@ const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date,
         [student_id]
       );
 
-      // 4. Gửi thông báo cho phụ huynh
+
       for (const parent of parents) {
         const notification_id = uuidv4();
         await client.query(
@@ -77,7 +79,9 @@ const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date,
     }
 
     await client.query("COMMIT");
-    return { message: "Tạo sự kiện kiểm tra định kỳ và gửi thông báo thành công" };
+    return {
+      message: "Tạo sự kiện kiểm tra định kỳ và gửi thông báo thành công",
+    };
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
@@ -86,8 +90,132 @@ const createClassHealthCheckupService = async ({ nurse_account_id, checkup_date,
   }
 };
 
+const createMedicalEventService = async ({
+  nurse_account_id,
+  student_id,
+  event_type,
+  event_title,
+  event_description,
+  event_datetime,
+  reported_by,
+  severity_level,
+  location,
+  follow_up_action,
+}) => {
+  const client = await connection.connect();
+  try {
+    await client.query("BEGIN");
+
+    const { rowCount } = await client.query(
+      `SELECT 1
+       FROM nurse_classes nc
+       JOIN students s ON s.class_name = nc.class_name
+       WHERE nc.nurse_account_id = $1 AND s.student_id = $2`,
+      [nurse_account_id, student_id]
+    );
+    if (rowCount === 0) {
+      throw new Error("Bạn không có quyền tạo sự kiện cho học sinh này");
+    }
+
+    const event_id = uuidv4();
+
+    await client.query(
+      `INSERT INTO medical_events (
+        event_id, student_id, nurse_account_id, event_type, event_title,
+        event_description, event_datetime, reported_by, severity_level,
+        location, follow_up_action, created_at, updated_at
+      ) VALUES (
+        $1, $2, $3, $4, $5,
+        $6, $7, $8, $9,
+        $10, $11, NOW(), NOW()
+      )`,
+      [
+        event_id,
+        student_id,
+        nurse_account_id,
+        event_type,
+        event_title,
+        event_description,
+        event_datetime,
+        reported_by,
+        severity_level,
+        location,
+        follow_up_action,
+      ]
+    );
+
+    const { rows: parents } = await client.query(
+      `SELECT a.account_id
+       FROM parents p
+       JOIN accounts a ON a.account_id = p.account_id
+       WHERE p.student_id = $1`,
+      [student_id]
+    );
+
+    for (const parent of parents) {
+      await client.query(
+        `INSERT INTO event_notifications (
+          notification_id, event_id, parent_account_id, notification_status, sent_at
+        ) VALUES ($1, $2, $3, 'SENT', NOW())`,
+        [uuidv4(), event_id, parent.account_id]
+      );
+    }
+
+    await client.query("COMMIT");
+    return {
+      message: "Tạo sự kiện y tế thành công và đã gửi thông báo tới phụ huynh.",
+    };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+const createParentMedicationRequestService = async ({
+  student_id,
+  medication_name,
+  dosage,
+  instructions,
+  notes,
+  medication_type = 'TEMPORARY', // default nếu frontend không gửi
+  requested_by_id,
+}) => {
+  const client = await connection.connect();
+  try {
+    const request_id = uuidv4();
+
+    await client.query(
+      `INSERT INTO parent_medication_requests (
+        request_id, student_id, medication_name, dosage, instructions, notes,
+        medication_type, request_status, requested_by_id, requested_at
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6,
+        $7, 'PENDING', $8, NOW()
+      )`,
+      [
+        request_id,
+        student_id,
+        medication_name,
+        dosage,
+        instructions,
+        notes,
+        medication_type,
+        requested_by_id,
+      ]
+    );
+
+    return { request_id };
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
 
 module.exports = {
-  getEventNotificationsByParentId, 
-  createClassHealthCheckupService
+  getEventNotificationsByParentId,
+  createClassHealthCheckupService,
+  createMedicalEventService,
+  createParentMedicationRequestService
 };

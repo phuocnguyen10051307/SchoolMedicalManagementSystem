@@ -12,7 +12,11 @@ const {
   updateProfileHeath,
   putUpdateProfileParent,
   refreshAccessToken,
-  createClassHealthCheckup
+  createClassHealthCheckup,
+  createMedicalEventController,
+  createParentMedicationRequest,
+  confirmMedicationReceipt,
+  getPendingMedicationRequestsByNurse
 } = require("../controllers/homeControllers");
 const { authenticateJWT }= require("../middlewares/auth")
 
@@ -26,6 +30,13 @@ router.post("/parent-request/send", postDataParentSend);// get infor of parent a
 router.post("/account/login", account);// username and password of user
 router.post("/token/refresh", refreshAccessToken);
 router.post("/checkups/class", createClassHealthCheckup);
+router.post("/events/create",  createMedicalEventController);
+router.post("/medications/parent-request", createParentMedicationRequest);
+router.post("/medications/confirm-receipt",authenticateJWT, confirmMedicationReceipt);
+router.get("/medications/requests/pending/:nurse_id", getPendingMedicationRequestsByNurse);
+
+
+
 
 router.get("/students/:user_id", getStudents);// id parent
 router.get("/healthprofiles/:user_id", healthprofiles);// id parent

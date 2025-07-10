@@ -16,7 +16,13 @@ const {
 const {
   getEventNotificationsByParentId,
   createClassHealthCheckupService,
+  createMedicalEventService,
+  createParentMedicationRequestService,
 } = require("../services/eventQueries");
+const {
+  confirmParentMedicationReceiptService,
+  getPendingRequestsForNurse,
+} = require("../services/nurseQueries");
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -73,6 +79,58 @@ const createClassHealthCheckup = async (req, res) => {
     res.status(201).json(result);
   } catch (error) {
     console.error("Error creating class health checkup:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+const createMedicalEventController = async (req, res) => {
+  try {
+    const result = await createMedicalEventService(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const createParentMedicationRequest = async (req, res) => {
+  try {
+    const result = await createParentMedicationRequestService(req.body);
+    res
+      .status(201)
+      .json({ message: "Yêu cầu gửi thuốc thành công", data: result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getPendingMedicationRequestsByNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+
+    const requests = await getPendingRequestsForNurse(nurse_id);
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const confirmMedicationReceipt = async (req, res) => {
+  try {
+    //const {nurse_account_id} = req.user.user_id; // lấy từ token
+    const { request_id, received_quantity,nurse_account_id } = req.body;
+    console.log("REQ BODY", req.body);
+
+    const result = await confirmParentMedicationReceiptService({
+      request_id,
+      nurse_account_id,
+      received_quantity,
+    });
+
+    res.status(200).json({
+      message: "Y tá đã xác nhận nhận thuốc thành công",
+      data: result,
+    });
+  } catch (error) {
+    if (error.status === 403) {
+      return res.status(403).json({ error: error.message });
+    }
     res.status(500).json({ error: error.message });
   }
 };
@@ -185,4 +243,8 @@ module.exports = {
   putUpdateProfileParent,
   refreshAccessToken,
   createClassHealthCheckup,
+  createMedicalEventController,
+  createParentMedicationRequest,
+  confirmMedicationReceipt,
+  getPendingMedicationRequestsByNurse,
 };
