@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Profile.css';
+import './Profile.scss';
 import nurse2 from '../../images/nurse2.png';
 import { Modal, Button, Form } from 'react-bootstrap';
 

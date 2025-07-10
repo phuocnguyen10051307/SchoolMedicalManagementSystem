@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import './HealthRecord.css';
+import './HealthRecord.scss';
 
 const HealthRecord = () => {
   const [records, setRecords] = useState([]);

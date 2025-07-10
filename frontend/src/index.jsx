@@ -26,7 +26,7 @@ import Manager from "./components/Manager/Manager";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Register from "./components/HomePage/Register";
-import "./components/Parent/Parent.css";
+import "./components/Parent/Parent.scss";
 import ParentProfile from "./components/Parent/ParentProfile";
 import StudentHealthRecordDeclaration from "./components/Parent/StudentHealthRecordDeclaration";
 import RegisterMedicine from "./components/Parent/RegisterMedicine";

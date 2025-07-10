@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useOutletContext } from "react-router-dom";
-import "./ParentProfile.css";
+import "./ParentProfile.scss";
 import { AuthContext } from "../../context/AuthContext";
 import { getInforAccount } from "../../service/service";
 import UpdateModal from "./UpdateModal";

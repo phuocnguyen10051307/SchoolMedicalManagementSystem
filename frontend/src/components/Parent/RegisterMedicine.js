@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./RegisterMedicine.css";
+import "./RegisterMedicine.scss";
 
 const RegisterMedicine = () => {
   const [form, setForm] = useState({ medicineName: "", dosage: "", note: "" });

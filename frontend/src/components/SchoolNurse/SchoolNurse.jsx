@@ -1,5 +1,5 @@
 import React from 'react';
-import './SchoolNurse.css';
+import './SchoolNurse.scss';
 import { FaClipboardList, FaHeartbeat, FaSyringe, FaNotesMedical, FaFolderOpen, FaFileMedicalAlt, FaInfoCircle } from 'react-icons/fa';
 import { NavLink, Outlet } from 'react-router-dom';
 import nurse2 from '../../images/nurse2.png';

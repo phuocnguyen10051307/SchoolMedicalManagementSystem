@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import "./Parent.css";
+import "./Parent.scss";
 import { useParentData } from "../../hooks/useParentData";
 
 const Parent = () => {

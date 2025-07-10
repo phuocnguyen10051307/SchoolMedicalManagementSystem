@@ -4,7 +4,7 @@ import { fetchData } from "../../service/service";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
-import "./login.css";
+import "./login.scss";
 import { loginAccount, getInforAccount } from "../../service/service";
 const Login = () => {
   const [adminData, setAdminData] = useState(null);

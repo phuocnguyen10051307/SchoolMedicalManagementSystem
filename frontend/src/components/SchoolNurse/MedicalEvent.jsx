@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import './MedicalEvent.css';
+import './MedicalEvent.scss';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { Modal, Button } from 'react-bootstrap';
 
