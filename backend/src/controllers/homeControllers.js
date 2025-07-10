@@ -3,7 +3,7 @@ const { handleParentAccountRequest, getParentByStudentId } = require("../service
 const { getAccount, getLogsByAccountId } = require("../services/accountQueries");
 const { getInformationOfStudent, getHeathProfiles } = require("../services/studentQueries");
 const { getEventNotificationsByParentId, getPeriodicCheckupsByParentId, getVaccinationNotificationsByParent } = require("../services/eventQueries");
-const { getNurseClassList } = require('../services/nurseQueries');
+const { getNurseClassList, getVaccinationSchedulesByNurse } = require('../services/nurseQueries');
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -124,6 +124,16 @@ const nurseClassList = async (req, res) => {
   }
 };
 
+const vaccinationSchedulesByNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getVaccinationSchedulesByNurse(nurse_id);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports = {
   homePage,
@@ -138,6 +148,7 @@ module.exports = {
   periodicNotifications,
   getVaccinationNotifications,
   getUserLogs,
-  nurseClassList
+  nurseClassList,
+  vaccinationSchedulesByNurse
 };
 
