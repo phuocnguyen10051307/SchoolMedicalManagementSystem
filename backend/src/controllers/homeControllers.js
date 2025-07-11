@@ -151,6 +151,7 @@ const updateInformationNurse = async (req, res) => {
   try {
     const { nurse_id } = req.params;
     const { full_name, phone_number, email, avatar_url, date_of_birth} = req.body
+    console.log(date_of_birth)
     const requests = await updateNurseInfo(nurse_id, full_name, phone_number, email, avatar_url, date_of_birth);
     res.status(200).json(requests);
   } catch (error) {

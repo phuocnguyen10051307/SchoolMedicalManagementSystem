@@ -38,7 +38,7 @@ router.post("/medications/confirm-receipt",authenticateJWT, confirmMedicationRec
 
 
 router.get("/medications/requests/pending/:nurse_id", getPendingMedicationRequestsByNurse);
-router.get("/nurse/:nurse_id",getInformationNurse)
+router.get("/nurse/:nurse_id", getInformationNurse)
 router.get("/students/:user_id", getStudents);// id parent
 router.get("/healthprofiles/:user_id", healthprofiles);// id parent
 router.get("/notifications/:user_id", getNotifications);// id parent 
