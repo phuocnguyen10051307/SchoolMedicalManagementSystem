@@ -1,4 +1,3 @@
-// src/service.js
 import axios from "./axiosInstance";
 
 const API_BASE = "http://localhost:8000";
@@ -129,3 +128,41 @@ export const putHealthProfileOfStudent = async (
     );
   }
 };
+
+export const getNurseProfile = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/nurse/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy thông tin y tá" };
+  }
+};
+
+export const putNurseProfile = async (
+  nurse_id,
+  full_name,
+  phone_number,
+  email,
+  avatar_url,
+  date_of_birth
+) => {
+  try {
+    const response = await axios.put(
+      `/nurse/updateNurseProfile/${nurse_id}`,
+      {
+        full_name,
+        phone_number,
+        email,
+        avatar_url,
+        date_of_birth,
+      }
+    );
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Không thể cập nhật thông tin y tá",
+    };
+  }
+};
+

@@ -1,31 +1,73 @@
-import React from 'react';
-import './SchoolNurse.scss';
-import { FaClipboardList, FaHeartbeat, FaSyringe, FaNotesMedical, FaFolderOpen, FaFileMedicalAlt, FaInfoCircle } from 'react-icons/fa';
-import { NavLink, Outlet } from 'react-router-dom';
-import nurse2 from '../../images/nurse2.png';
-
-
+import React from "react";
+import "./SchoolNurse.scss";
+import {
+  FaClipboardList,
+  FaHeartbeat,
+  FaSyringe,
+  FaNotesMedical,
+  FaFolderOpen,
+  FaFileMedicalAlt,
+  FaInfoCircle,
+} from "react-icons/fa";
+import { NavLink, Outlet } from "react-router-dom";
+import nurse2 from "../../images/nurse2.png";
+import { useNurseData } from "../../hooks/useNurseData";
 
 const menuItems = [
-  { id: 'dashboard', icon: <FaClipboardList />, label: 'Dashboard', path: 'dashboard' },
-  { id: 'events', icon: <FaHeartbeat />, label: 'Medical Events', path: 'event' },
-  { id: 'vaccination', icon: <FaSyringe />, label: 'Vaccination', path: 'vaccination' },
-  { id: 'checkup', icon: <FaNotesMedical />, label: 'Health Checkup', path: 'checkup' },
-  { id: 'records', icon: <FaFolderOpen />, label: 'Student Health Records', path: 'records' },
-  { id: 'reports', icon: <FaFileMedicalAlt />, label: 'Reports', path: 'reports' },
-  { id: 'profile', icon: <FaInfoCircle />, label: 'My Profile', path: 'profile' },
+  {
+    id: "dashboard",
+    icon: <FaClipboardList />,
+    label: "Dashboard",
+    path: "dashboard",
+  },
+  {
+    id: "events",
+    icon: <FaHeartbeat />,
+    label: "Medical Events",
+    path: "event",
+  },
+  {
+    id: "vaccination",
+    icon: <FaSyringe />,
+    label: "Vaccination",
+    path: "vaccination",
+  },
+  {
+    id: "checkup",
+    icon: <FaNotesMedical />,
+    label: "Health Checkup",
+    path: "checkup",
+  },
+  {
+    id: "records",
+    icon: <FaFolderOpen />,
+    label: "Student Health Records",
+    path: "records",
+  },
+  {
+    id: "reports",
+    icon: <FaFileMedicalAlt />,
+    label: "Reports",
+    path: "reports",
+  },
+  {
+    id: "profile",
+    icon: <FaInfoCircle />,
+    label: "My Profile",
+    path: "profile",
+  },
 ];
 
 const SchoolNurse = () => {
+  const { data, loading, error, refetch } = useNurseData();
+  if (loading) return <div>Loading nurse data...</div>;
+  if (error) return <div>Error loading nurse data: {error}</div>;
+
   return (
     <div className="nurse-container">
       <div className="sidebar">
         <div className="profile">
-          <img
-            src={nurse2}
-            alt="User Avatar"
-            className="avatar"
-          />
+          <img src={data.avatar_url} alt="User Avatar" className="avatar" />
           <h2 className="username">Hacker</h2>
         </div>
 
@@ -34,7 +76,9 @@ const SchoolNurse = () => {
             <li key={item.id}>
               <NavLink
                 to={item.path}
-                className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}
+                className={({ isActive }) =>
+                  `menu-item ${isActive ? "active" : ""}`
+                }
               >
                 <span className="icon">{item.icon}</span>
                 <span className="label">{item.label}</span>
@@ -45,7 +89,7 @@ const SchoolNurse = () => {
       </div>
 
       <div className="main-content">
-        <Outlet />
+        <Outlet context={{ refetchNurse: refetch, nurseData: data }} />
       </div>
     </div>
   );
