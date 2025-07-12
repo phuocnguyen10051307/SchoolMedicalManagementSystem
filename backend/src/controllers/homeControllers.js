@@ -1,30 +1,41 @@
 const jwt = require("jsonwebtoken");
 const { generateAccessToken, verifyRefreshToken } = require("../utils/jwt");
-const ACCESS_SECRET = process.env.JWT_ACCESS_TOKEN;
-const REFRESH_SECRET = process.env.JWT_REFRESH_TOKEN;
+
 const {
   handleParentAccountRequest,
   getParentByStudentId,
   putHeathyProfile,
   updateProfileParent,
 } = require("../services/parentQueries");
-const { getAccount } = require("../services/accountQueries");
+
+const {
+  getAccount,
+  getLogsByAccountId,
+} = require("../services/accountQueries");
+
 const {
   getInformationOfStudent,
   getHeathProfiles,
 } = require("../services/studentQueries");
+
 const {
   getEventNotificationsByParentId,
+  getPeriodicCheckupsByParentId,
+  getVaccinationNotificationsByParent,
   createClassHealthCheckupService,
   createMedicalEventService,
   createParentMedicationRequestService,
 } = require("../services/eventQueries");
+
 const {
   confirmParentMedicationReceiptService,
   getPendingRequestsForNurse,
   getInforNurse,
   updateNurseInfo,
+  getNurseClassList,
+  getVaccinationSchedulesByNurse,
 } = require("../services/nurseQueries");
+
 const homePage = (req, res) => {
   res.send("hello world");
 };
@@ -150,9 +161,17 @@ const getInformationNurse = async (req, res) => {
 const updateInformationNurse = async (req, res) => {
   try {
     const { nurse_id } = req.params;
-    const { full_name, phone_number, email, avatar_url, date_of_birth} = req.body
-    console.log(date_of_birth)
-    const requests = await updateNurseInfo(nurse_id, full_name, phone_number, email, avatar_url, date_of_birth);
+    const { full_name, phone_number, email, avatar_url, date_of_birth } =
+      req.body;
+    console.log(date_of_birth);
+    const requests = await updateNurseInfo(
+      nurse_id,
+      full_name,
+      phone_number,
+      email,
+      avatar_url,
+      date_of_birth
+    );
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -253,6 +272,59 @@ const putUpdateProfileParent = async (req, res) => {
   }
 };
 
+const periodicNotifications = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const result = await getPeriodicCheckupsByParentId(user_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getVaccinationNotifications = async (req, res) => {
+  const accountId = req.params.accountId;
+  try {
+    const notifications = await getVaccinationNotificationsByParent(accountId);
+    res.status(200).json({ success: true, data: notifications });
+  } catch (err) {
+    console.error("Error getting vaccination notifications:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const getUserLogs = async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const logs = await getLogsByAccountId(accountId);
+    res.status(200).json({ success: true, data: logs });
+  } catch (err) {
+    console.error("Error getting user logs:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const nurseClassList = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getNurseClassList(nurse_id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const vaccinationSchedulesByNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getVaccinationSchedulesByNurse(nurse_id);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   homePage,
   sendConfirmInfor,
@@ -263,6 +335,11 @@ module.exports = {
   parentByStudent,
   getNotifications,
   updateProfileHeath,
+  periodicNotifications,
+  getVaccinationNotifications,
+  getUserLogs,
+  nurseClassList,
+  vaccinationSchedulesByNurse,
   putUpdateProfileParent,
   refreshAccessToken,
   createClassHealthCheckup,
@@ -271,5 +348,5 @@ module.exports = {
   confirmMedicationReceipt,
   getPendingMedicationRequestsByNurse,
   getInformationNurse,
-  updateInformationNurse
+  updateInformationNurse,
 };
