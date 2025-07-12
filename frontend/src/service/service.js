@@ -166,3 +166,51 @@ export const putNurseProfile = async (
   }
 };
 
+
+export const getNurseClassListService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/nurse-classes/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy danh sách lớp của y tá" };
+  }
+};
+
+export const getStudentListByClassService = async (class_name) => {
+  try {
+    const response = await axios.get(`/nurseGetStudent/${class_name}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy danh sách học sinh theo lớp" };
+  }
+};
+export const createMedicalEventService = async (eventData) => {
+  try {
+    const response = await axios.post("/events/create", eventData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Tạo sự kiện y tế thất bại" };
+  }
+};
+
+export const getMedicalEventsByNurseService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/events/nurse/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Không thể lấy danh sách sự kiện y tế của y tá",
+    };
+  }
+};
+
+export const updateMedicalEventService = async (eventData) => {
+  try {
+    const response = await axios.put("/events/update", eventData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Cập nhật sự kiện y tế thất bại",
+    };
+  }
+};
