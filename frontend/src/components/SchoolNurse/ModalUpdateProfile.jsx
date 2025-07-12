@@ -1,17 +1,14 @@
-import React, { useState } from "react";
-import { Modal, Button, Form, Image } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
-import { toast } from "react-toastify";
 
-const UpdateModal = ({
-  showModal,
-  handleClose,
-  handleSave,
-  form,
-  setForm,
-  handleChange,
-}) => {
-  const [localImagePreview, setLocalImagePreview] = useState(form.avatar_url);
+const UpdateProfileModal = ({ show, handleClose, handleSave, form, editedNurse, handleChange, setForm }) => {
+  const [localImagePreview, setLocalImagePreview] = useState(form.image);
+
+  // Cập nhật preview khi modal mở lại hoặc form.image thay đổi
+  useEffect(() => {
+    setLocalImagePreview(form.image);
+  }, [form.image, show]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -22,39 +19,41 @@ const UpdateModal = ({
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "images"); // Cloudinary preset
+    formData.append("upload_preset", "images"); // Thay bằng preset Cloudinary của bạn nếu khác
 
     try {
       const res = await axios.post(
         "https://api.cloudinary.com/v1_1/dg1v9rju0/image/upload",
         formData
       );
-
       const uploadedUrl = res.data.secure_url;
-      setForm((prev) => ({ ...prev, avatar_url: uploadedUrl }));
-      toast.success("Ảnh đã upload thành công!");
-    } catch (error) {
-      console.error("Upload thất bại:", error);
-      toast.error("Upload ảnh thất bại");
+      console.log(uploadedUrl)
+      setForm((prev) => ({ ...prev, image: uploadedUrl }));
+    } catch (err) {
+      console.error("Upload ảnh thất bại:", err);
+      alert("Upload ảnh thất bại!");
     }
   };
 
   return (
-    <Modal show={showModal} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Update Parent Profile</Modal.Title>
+        <Modal.Title>Update Profile</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form>
           <div className="text-center mb-3">
-            <Image
+            <img
               src={localImagePreview}
-              roundedCircle
+              alt="Avatar"
               width={120}
               height={120}
-              alt="Avatar"
-              style={{ objectFit: "cover", border: "2px solid #007bff", boxShadow: "0 0 6px rgba(0,0,0,0.2)" }}
+              style={{
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid #007bff",
+              }}
             />
             <Form.Label
               htmlFor="avatar-upload-modal"
@@ -76,21 +75,19 @@ const UpdateModal = ({
             <Form.Label>Full Name</Form.Label>
             <Form.Control
               type="text"
-              name="full_name"
-              value={form.full_name || ""}
+              name="fullName"
+              value={editedNurse.fullName ?? form.fullName ?? ""}
               onChange={handleChange}
-              placeholder="Enter full name"
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Phone Number</Form.Label>
+            <Form.Label>Phone</Form.Label>
             <Form.Control
               type="text"
-              name="phone_number"
-              value={form.phone_number || ""}
+              name="phone"
+              value={editedNurse.phone ?? form.phone ?? ""}
               onChange={handleChange}
-              placeholder="Enter phone number"
             />
           </Form.Group>
 
@@ -99,9 +96,8 @@ const UpdateModal = ({
             <Form.Control
               type="email"
               name="email"
-              value={form.email || ""}
+              value={editedNurse.email ?? form.email ?? ""}
               onChange={handleChange}
-              placeholder="Enter email"
             />
           </Form.Group>
 
@@ -109,8 +105,16 @@ const UpdateModal = ({
             <Form.Label>Date of Birth</Form.Label>
             <Form.Control
               type="date"
-              name="date_of_birth"
-              value={form.date_of_birth?.substring(0, 10) || ""}
+              name="dob"
+              value={
+                editedNurse.dob
+                  ? editedNurse.dob.includes("/")
+                    ? ""
+                    : editedNurse.dob
+                  : form?.dob?.includes("/")
+                    ? ""
+                    : form.dob ?? ""
+              }
               onChange={handleChange}
             />
           </Form.Group>
@@ -120,42 +124,9 @@ const UpdateModal = ({
             <Form.Control
               type="text"
               name="occupation"
-              value={form.occupation || ""}
-              onChange={handleChange}
-              placeholder="Enter occupation"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              type="text"
-              name="address"
-              value={form.address || ""}
-              onChange={handleChange}
-              placeholder="Enter address"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>CCCD</Form.Label>
-            <Form.Control
-              type="text"
-              name="identity_number"
-              value={form.identity_number || ""}
-              onChange={handleChange}
-              placeholder="Enter identity number"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Avatar URL (đã upload)</Form.Label>
-            <Form.Control
-              type="text"
-              name="avatar_url"
-              value={form.avatar_url || ""}
+              value={form.occupation}
+              disabled
               readOnly
-              plaintext
             />
           </Form.Group>
         </Form>
@@ -166,11 +137,11 @@ const UpdateModal = ({
           Cancel
         </Button>
         <Button variant="primary" onClick={handleSave}>
-          Save Changes
+          Save
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default UpdateModal;
+export default UpdateProfileModal;

@@ -1,13 +1,13 @@
 .nurse-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f1f8fc;
 }
 
 .sidebar {
   position: relative;
-  width: 260px;
+  width: 270px;
   background-color: #57c2b0; 
   overflow: hidden;
   z-index: 0;
@@ -40,8 +40,8 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  object-fit: cover;
-  background-color: white;
+  object-fit: contain;
+  background-color: #ccc;
 }
 
 .username {
@@ -73,7 +73,7 @@
   z-index: 2;
   font-size: 16px;
   font-weight: 500;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* transition: background-color 0.3s ease, color 0.3s ease; */
 }
 
 .menu-item.active {

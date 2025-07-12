@@ -1,26 +1,23 @@
-// src/service.js
-import axios from "axios";
+import axios from "./axiosInstance";
 
 const API_BASE = "http://localhost:8000";
 
-export const fetchData = async () => {
-  try {
-    const response = await axios.get("/data/school_health_data.json");
-    return response.data; // Trả về toàn bộ dữ liệu
-  } catch (error) {
-    throw error;
-  }
-};
 export const loginAccount = async (username, password) => {
   try {
-    const response = await axios.post(`${API_BASE}/account/login`, {
+    const response = await axios.post(`/account/login`, {
       username,
       password,
     });
+    localStorage.setItem("access_token", response.data.access_token);
+    localStorage.setItem("refresh_token", response.data.refresh_token);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Đăng nhập thất bại" };
   }
+};
+export const refreshAccessToken = async (refresh_token) => {
+  const res = await axios.post("/token/refresh", { refresh_token });
+  return res.data;
 };
 
 export const createAccount = async (
@@ -31,7 +28,7 @@ export const createAccount = async (
   relationship
 ) => {
   try {
-    const createAcc = await axios.post(`${API_BASE}/parent-request/send`, {
+    const createAcc = await axios.post(`/parent-request/send`, {
       student_code: studentCode,
       cccd: identify,
       phone: phoneNumber,
@@ -44,13 +41,128 @@ export const createAccount = async (
   }
 };
 
-
-export const getInforAccount = async(user_id)=>{
+export const getInforAccount = async (user_id) => {
   try {
-    const inforAccount = await axios.get(`${API_BASE}/parents/${user_id}`)
+    const inforAccount = await axios.get(`/parents/${user_id}`);
     return inforAccount.data;
   } catch (error) {
-     throw error.response?.data || { message: "get data failed" };
+    throw error.inforAccount?.data || { message: "get data failed" };
   }
-}
+};
+export const putParentProfile = async (
+  user_id,
+  full_name,
+  phone_number,
+  email,
+  date_of_birth,
+  occupation,
+  address,
+  identity_number,
+  avatar_url
+) => {
+  try {
+    const updateProfile = await axios.put(
+      `/parents/updateProfileParent/${user_id}`,
+      {
+        full_name,
+        phone_number,
+        email,
+        date_of_birth,
+        occupation,
+        address,
+        identity_number,
+        avatar_url,
+      }
+    );
+    return updateProfile.data;
+  } catch (error) {
+    throw (
+      error.updateProfile?.data || {
+        message: "can't update information of parent ",
+      }
+    );
+  }
+};
+
+export const getHealthProfile = async (user_id) => {
+  try {
+    const getData = await axios.get(`/healthprofiles/${user_id}`);
+    return getData.data;
+  } catch (error) {
+    throw (
+      error.getData?.data || {
+        message: "can not get data profile healthy of student",
+      }
+    );
+  }
+};
+export const putHealthProfileOfStudent = async (
+  user_id,
+  height,
+  weight,
+  blood_type,
+  chronic_conditions,
+  allergies,
+  regular_medications,
+  additional_notes
+) => {
+  try {
+    const updateHealth = await axios.put(
+      `/account/updateProfile/${user_id}`,
+      {
+        height,
+        weight,
+        blood_type,
+        chronic_conditions,
+        allergies,
+        regular_medications,
+        additional_notes,
+      }
+    );
+    return updateHealth.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Can't update health profile of student",
+      }
+    );
+  }
+};
+
+export const getNurseProfile = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/nurse/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy thông tin y tá" };
+  }
+};
+
+export const putNurseProfile = async (
+  nurse_id,
+  full_name,
+  phone_number,
+  email,
+  avatar_url,
+  date_of_birth
+) => {
+  try {
+    const response = await axios.put(
+      `/nurse/updateNurseProfile/${nurse_id}`,
+      {
+        full_name,
+        phone_number,
+        email,
+        avatar_url,
+        date_of_birth,
+      }
+    );
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Không thể cập nhật thông tin y tá",
+    };
+  }
+};
 

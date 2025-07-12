@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import "./HealthHistory.css";
+import "./HealthHistory.scss";
 
 const HealthHistory = ({ parentId = 2 }) => {
   const { data } = useOutletContext();
