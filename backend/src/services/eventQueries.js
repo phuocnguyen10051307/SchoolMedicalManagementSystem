@@ -98,6 +98,21 @@ const createMedicalEventService = async ({
   file_type = "image",
 }) => {
   const client = await connection.connect();
+  console.log("Received medical event data:", {
+    nurse_account_id,
+    student_id,
+    event_type,
+    event_title,
+    event_description,
+    event_datetime,
+    reported_by,
+    severity_level,
+    location,
+    follow_up_action,
+    medication_description,
+    file_url,
+    file_type,
+  });
 
   try {
     await client.query("BEGIN");
@@ -196,7 +211,8 @@ const createMedicalEventService = async ({
     await client.query("COMMIT");
 
     return {
-      message: "Tạo sự kiện y tế thành công, đã lưu file (nếu có) và gửi thông báo.",
+      message:
+        "Tạo sự kiện y tế thành công, đã lưu file (nếu có) và gửi thông báo.",
       event_id,
     };
   } catch (error) {
@@ -206,8 +222,109 @@ const createMedicalEventService = async ({
     client.release();
   }
 };
+const updateMedicalEventService = async ({
+  event_id,
+  nurse_account_id,
+  student_id,
+  event_type,
+  event_title,
+  event_description,
+  event_datetime,
+  reported_by,
+  severity_level,
+  location,
+  follow_up_action,
+  medication_description,
+  file_url,
+  file_type = "image",
+}) => {
+  const client = await connection.connect();
+  try {
+    await client.query("BEGIN");
 
+    const { rowCount } = await client.query(
+      `SELECT 1 FROM nurse_classes nc
+       JOIN students s ON s.class_name = nc.class_name
+       WHERE nc.nurse_account_id = $1 AND s.student_id = $2`,
+      [nurse_account_id, student_id]
+    );
 
+    if (rowCount === 0) {
+      throw new Error("Bạn không có quyền cập nhật sự kiện cho học sinh này");
+    }
+
+    await client.query(
+      `UPDATE medical_events SET
+        event_type = $1,
+        event_title = $2,
+        event_description = $3,
+        event_datetime = $4,
+        reported_by = $5,
+        severity_level = $6,
+        location = $7,
+        follow_up_action = $8,
+        updated_at = NOW()
+      WHERE event_id = $9`,
+      [
+        event_type,
+        event_title,
+        event_description,
+        event_datetime,
+        reported_by,
+        severity_level,
+        location,
+        follow_up_action,
+        event_id,
+      ]
+    );
+
+    await client.query(`DELETE FROM event_medications WHERE event_id = $1`, [event_id]);
+
+    if (medication_description) {
+      const event_medication_id = `em_${uuidv4().slice(0, 8)}`;
+      await client.query(
+        `INSERT INTO event_medications (
+          event_medication_id, event_id, medication_name, dosage, administration_method,
+          administered_by_id, administered_at, notes
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, NOW(), NULL
+        )`,
+        [
+          event_medication_id,
+          event_id,
+          medication_description,
+          "Không rõ",
+          "Không rõ",
+          nurse_account_id,
+        ]
+      );
+    }
+
+    await client.query(`DELETE FROM event_files WHERE event_id = $1`, [event_id]);
+
+    if (file_url) {
+      const file_id = `ef_${uuidv4().slice(0, 8)}`;
+      await client.query(
+        `INSERT INTO event_files (
+          file_id, event_id, file_url, file_type, uploaded_by_id, uploaded_at
+        ) VALUES ($1, $2, $3, $4, $5, NOW())`,
+        [file_id, event_id, file_url, file_type, nurse_account_id]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    return {
+      message: "Cập nhật sự kiện y tế thành công",
+      event_id,
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 const createParentMedicationRequestService = async ({
   student_id,
@@ -292,7 +409,6 @@ WHERE vn.parent_account_id = $1`,
   }
 };
 
-
 module.exports = {
   getEventNotificationsByParentId,
   getPeriodicCheckupsByParentId,
@@ -300,4 +416,5 @@ module.exports = {
   createClassHealthCheckupService,
   createMedicalEventService,
   createParentMedicationRequestService,
+  updateMedicalEventService,
 };

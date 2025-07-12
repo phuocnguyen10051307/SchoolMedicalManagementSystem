@@ -25,6 +25,7 @@ const {
   createClassHealthCheckupService,
   createMedicalEventService,
   createParentMedicationRequestService,
+  updateMedicalEventService
 } = require("../services/eventQueries");
 
 const {
@@ -34,6 +35,8 @@ const {
   updateNurseInfo,
   getNurseClassList,
   getVaccinationSchedulesByNurse,
+  getStudentName,
+  getMedicalEventsByNurseId
 } = require("../services/nurseQueries");
 
 const homePage = (req, res) => {
@@ -83,7 +86,7 @@ const updateProfileHeath = async (req, res) => {
     res.status(200).json({ message: "Health profile updated successfully" });
   } catch (error) {
     console.error("Error updating health profile:", error.message);
-    res.status(500).json({ erorr: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 const createClassHealthCheckup = async (req, res) => {
@@ -313,6 +316,15 @@ const nurseClassList = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const nurseClassStudentName = async (req, res) => {
+  try {
+    const { class_name } = req.params
+    const result = await getStudentName(class_name);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 const vaccinationSchedulesByNurse = async (req, res) => {
   try {
@@ -322,6 +334,26 @@ const vaccinationSchedulesByNurse = async (req, res) => {
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ error: err.message });
+  }
+};
+const getMedicalEventsByNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const events = await getMedicalEventsByNurseId(nurse_id);
+    res.status(200).json(events);
+  } catch (error) {
+    console.error("Error fetching events by nurse:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+const updateMedicalEventController = async (req, res) => {
+  try {
+    const result = await updateMedicalEventService(req.body);
+    console.log(req.body)
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error updating medical event:", error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -349,4 +381,7 @@ module.exports = {
   getPendingMedicationRequestsByNurse,
   getInformationNurse,
   updateInformationNurse,
+  nurseClassStudentName,
+  getMedicalEventsByNurse,
+  updateMedicalEventController
 };

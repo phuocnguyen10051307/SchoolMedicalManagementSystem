@@ -24,6 +24,9 @@ const {
   getPendingMedicationRequestsByNurse,
   getInformationNurse,
   updateInformationNurse,
+  nurseClassStudentName,
+  getMedicalEventsByNurse,
+  updateMedicalEventController
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 
@@ -50,6 +53,7 @@ router.post("/medications/confirm-receipt", authenticateJWT, confirmMedicationRe
 router.get("/students/:user_id", getStudents); // id parent
 router.get("/healthprofiles/:user_id", healthprofiles); // id parent
 router.get("/parents/:student_id", authenticateJWT, parentByStudent); // get parent by student id
+router.get("/events/nurse/:nurse_id", getMedicalEventsByNurse);
 router.get("/notifications/:user_id", getNotifications); // id parent
 router.get("/periodic-notifications/:user_id", periodicNotifications);
 router.get("/vaccination-notifications/:accountId", getVaccinationNotifications);
@@ -57,11 +61,14 @@ router.get("/logs/:accountId", getUserLogs);
 router.get("/medications/requests/pending/:nurse_id", getPendingMedicationRequestsByNurse);
 router.get("/nurse/:nurse_id", getInformationNurse);
 router.get("/nurse-classes/:nurse_id", nurseClassList);
+router.get("/nurseGetStudent/:class_name", nurseClassStudentName);
 router.get("/vaccination-schedules/nurse/:nurse_id", vaccinationSchedulesByNurse);
 
 // PUT
 router.put("/account/updateProfile/:user_id", updateProfileHeath); // id parent
 router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent); // id parent
 router.put("/nurse/updateNurseProfile/:nurse_id", updateInformationNurse);
+router.put("/events/update", updateMedicalEventController);
+
 
 module.exports = router;
