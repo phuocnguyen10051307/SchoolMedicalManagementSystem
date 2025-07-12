@@ -129,17 +129,6 @@ const UpdateProfileModal = ({ show, handleClose, handleSave, form, editedNurse, 
               readOnly
             />
           </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Managed Class</Form.Label>
-            <Form.Control
-              type="text"
-              name="managedClass"
-              value={form.managedClass}
-              disabled
-              readOnly
-            />
-          </Form.Group>
         </Form>
       </Modal.Body>
 

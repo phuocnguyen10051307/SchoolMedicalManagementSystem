@@ -10,7 +10,6 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
-import nurse2 from "../../images/nurse2.png";
 import { useNurseData } from "../../hooks/useNurseData";
 
 const menuItems = [
