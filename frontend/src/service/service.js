@@ -214,3 +214,14 @@ export const updateMedicalEventService = async (eventData) => {
     };
   }
 };
+
+export const getNurseDashboardService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/dashboard/nurse/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Không thể lấy dữ liệu thống kê dashboard của y tá",
+    };
+  }
+};

@@ -1,5 +1,7 @@
 .nurse-container {
+  height:100vh;
   display: flex;
+  overflow: hidden;
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f1f8fc;
@@ -120,3 +122,5 @@
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
 }
+
+
