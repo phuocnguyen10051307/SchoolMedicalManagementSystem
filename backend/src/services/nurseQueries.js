@@ -234,6 +234,81 @@ const getVaccinationSchedulesByNurse = async (nurseId) => {
   }
 };
 
+const getNurseDashboardStats = async (nurse_id) => {
+  const client = await connection.connect();
+  try {
+    // Thống kê loại sự kiện
+    const eventTypeResult = await client.query(`
+      SELECT event_type, COUNT(*) AS total
+      FROM medical_events
+      WHERE nurse_account_id = $1
+      GROUP BY event_type
+    `, [nurse_id]);
+
+    //Thống kê mức độ nghiêm trọng
+    const severityResult = await client.query(`
+      SELECT severity_level, COUNT(*) AS total
+      FROM medical_events
+      WHERE nurse_account_id = $1
+      GROUP BY severity_level
+    `, [nurse_id]);
+
+    // Thống kê số sự kiện theo tháng
+    const monthlyEventResult = await client.query(`
+      SELECT DATE_TRUNC('month', event_datetime) AS month, COUNT(*) AS total
+      FROM medical_events
+      WHERE nurse_account_id = $1
+      GROUP BY month
+      ORDER BY month
+    `, [nurse_id]);
+
+    // Thống kê trạng thái yêu cầu thuốc của học sinh do y tá phụ trách
+    const medicationStatusResult = await client.query(`
+      SELECT request_status, COUNT(*) AS count
+      FROM parent_medication_requests
+      WHERE student_id IN (
+        SELECT student_id
+        FROM students
+        WHERE class_name IN (
+          SELECT class_name
+          FROM nurse_classes
+          WHERE nurse_account_id = $1
+        )
+      )
+      GROUP BY request_status
+    `, [nurse_id]);
+
+    //  Trạng thái xét duyệt hồ sơ sức khỏe
+    const healthReviewStatusResult = await client.query(`
+      SELECT review_status, COUNT(*) AS count
+      FROM health_profiles
+      WHERE student_id IN (
+        SELECT student_id
+        FROM students
+        WHERE class_name IN (
+          SELECT class_name
+          FROM nurse_classes
+          WHERE nurse_account_id = $1
+        )
+      )
+      GROUP BY review_status
+    `, [nurse_id]);
+
+    return {
+      eventTypeStats: eventTypeResult.rows,
+      severityStats: severityResult.rows,
+      monthlyEventStats: monthlyEventResult.rows,
+      medicationRequestStats: medicationStatusResult.rows,
+      healthProfileReviewStats: healthReviewStatusResult.rows
+    };
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+
 
 module.exports = {
   confirmParentMedicationReceiptService,
@@ -243,5 +318,6 @@ module.exports = {
   getNurseClassList,
   getVaccinationSchedulesByNurse,
   getStudentName,
-  getMedicalEventsByNurseId
+  getMedicalEventsByNurseId,
+  getNurseDashboardStats
 };

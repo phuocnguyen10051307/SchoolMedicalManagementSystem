@@ -36,7 +36,8 @@ const {
   getNurseClassList,
   getVaccinationSchedulesByNurse,
   getStudentName,
-  getMedicalEventsByNurseId
+  getMedicalEventsByNurseId,
+  getNurseDashboardStats
 } = require("../services/nurseQueries");
 
 const homePage = (req, res) => {
@@ -356,6 +357,16 @@ const updateMedicalEventController = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getNurseDashboard = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getNurseDashboardStats(nurse_id);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error getting nurse dashboard:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports = {
   homePage,
@@ -383,5 +394,6 @@ module.exports = {
   updateInformationNurse,
   nurseClassStudentName,
   getMedicalEventsByNurse,
-  updateMedicalEventController
+  updateMedicalEventController,
+  getNurseDashboard
 };

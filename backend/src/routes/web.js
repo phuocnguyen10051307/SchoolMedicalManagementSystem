@@ -26,7 +26,8 @@ const {
   updateInformationNurse,
   nurseClassStudentName,
   getMedicalEventsByNurse,
-  updateMedicalEventController
+  updateMedicalEventController,
+  getNurseDashboard
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 
@@ -63,6 +64,7 @@ router.get("/nurse/:nurse_id", getInformationNurse);
 router.get("/nurse-classes/:nurse_id", nurseClassList);
 router.get("/nurseGetStudent/:class_name", nurseClassStudentName);
 router.get("/vaccination-schedules/nurse/:nurse_id", vaccinationSchedulesByNurse);
+router.get("/dashboard/nurse/:nurse_id", getNurseDashboard);
 
 // PUT
 router.put("/account/updateProfile/:user_id", updateProfileHeath); // id parent
