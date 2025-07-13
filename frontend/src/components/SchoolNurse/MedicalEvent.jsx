@@ -42,7 +42,6 @@ const MedicalEvent = () => {
   };
 
   const [studentList, setStudentList] = useState([]);
-
   const handleClassChange = async (selectedClass) => {
     try {
       const result = await getStudentListByClassService(selectedClass);
@@ -112,7 +111,7 @@ const MedicalEvent = () => {
         location: document.getElementById("location").value,
         follow_up_action: document.getElementById("notes").value,
         medication_description: document.getElementById("medicationName").value,
-        file_url: previewImage, // nếu đã upload lên Firebase thì dùng URL thật
+        file_url: previewImage,
         file_type: "image",
       };
 
@@ -131,6 +130,7 @@ const MedicalEvent = () => {
     e.preventDefault();
     try {
       const updatedEvent = {
+        event_id:selectedEvent.event_id,
         event_title: selectedEvent.eventTitle,
         event_description: selectedEvent.eventDesc,
         reported_by: selectedEvent.reportBy,
@@ -148,7 +148,7 @@ const MedicalEvent = () => {
         event_datetime: new Date().toISOString(), // hoặc giữ nguyên thời gian cũ nếu có
       };
 
-      await updateMedicalEventService(selectedEvent.event_id, updatedEvent);
+      await updateMedicalEventService( updatedEvent);
       toast.success("Cập nhật sự kiện thành công");
       await fetchEvents(user.account_id);
       setSelectedEvent(null);
