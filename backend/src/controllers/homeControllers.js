@@ -25,7 +25,10 @@ const {
   createClassHealthCheckupService,
   createMedicalEventService,
   createParentMedicationRequestService,
-  updateMedicalEventService
+  updateMedicalEventService,
+  getCheckupTypesService,
+  createVaccinationScheduleService,
+  getVaccinationSchedulesService,
 } = require("../services/eventQueries");
 
 const {
@@ -37,7 +40,10 @@ const {
   getVaccinationSchedulesByNurse,
   getStudentName,
   getMedicalEventsByNurseId,
-  getNurseDashboardStats
+  getNurseDashboardStats,
+  getReportsByNurseService,
+  getHealthCheckupsByNurseService,
+  getVaccinationReportsByNurseService,
 } = require("../services/nurseQueries");
 
 const homePage = (req, res) => {
@@ -319,7 +325,7 @@ const nurseClassList = async (req, res) => {
 };
 const nurseClassStudentName = async (req, res) => {
   try {
-    const { class_name } = req.params
+    const { class_name } = req.params;
     const result = await getStudentName(class_name);
     res.status(200).json(result);
   } catch (err) {
@@ -350,7 +356,7 @@ const getMedicalEventsByNurse = async (req, res) => {
 const updateMedicalEventController = async (req, res) => {
   try {
     const result = await updateMedicalEventService(req.body);
-    console.log(req.body)
+    console.log(req.body);
     res.status(200).json(result);
   } catch (error) {
     console.error("Error updating medical event:", error.message);
@@ -365,6 +371,66 @@ const getNurseDashboard = async (req, res) => {
   } catch (err) {
     console.error("Error getting nurse dashboard:", err);
     res.status(500).json({ error: err.message });
+  }
+};
+const getCheckupTypes = async (req, res) => {
+  try {
+    const result = await getCheckupTypesService();
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách loại kiểm tra:", error.message);
+    res.status(500).json({ error: "Lỗi server" });
+  }
+};
+const createVaccinationScheduleController = async (req, res) => {
+  try {
+    const result = await createVaccinationScheduleService(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error creating vaccination schedule:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+const getVaccinationSchedulesController = async (req, res) => {
+  try {
+    const schedules = await getVaccinationSchedulesService();
+    res.status(200).json(schedules);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getReportsByNurse = async (req, res) => {
+  const { nurse_account_id } = req.params;
+
+  try {
+    const reports = await getReportsByNurseService(nurse_account_id);
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error("Lỗi khi lấy báo cáo:", error);
+    res.status(500).json({ error: "Không thể lấy báo cáo của y tá" });
+  }
+};
+const getHealthCheckupsByNurse = async (req, res) => {
+  const { nurse_account_id } = req.params;
+
+  try {
+    const checkups = await getHealthCheckupsByNurseService(nurse_account_id);
+    res.status(200).json(checkups);
+  } catch (error) {
+    console.error("Lỗi khi lấy kiểm tra sức khỏe:", error);
+    res.status(500).json({ error: "Không thể lấy kiểm tra sức khỏe" });
+  }
+};
+const getVaccinationReportsByNurse = async (req, res) => {
+  const { nurse_account_id } = req.params;
+
+  try {
+    const results = await getVaccinationReportsByNurseService(nurse_account_id);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Lỗi khi lấy lịch tiêm chủng:", error);
+    res.status(500).json({ error: "Không thể lấy lịch tiêm chủng" });
   }
 };
 
@@ -395,5 +461,11 @@ module.exports = {
   nurseClassStudentName,
   getMedicalEventsByNurse,
   updateMedicalEventController,
-  getNurseDashboard
+  getNurseDashboard,
+  getCheckupTypes,
+  createVaccinationScheduleController,
+  getVaccinationSchedulesController,
+  getReportsByNurse,
+  getHealthCheckupsByNurse,
+  getVaccinationReportsByNurse
 };

@@ -308,6 +308,93 @@ const getNurseDashboardStats = async (nurse_id) => {
   }
 };
 
+const getReportsByNurseService = async (nurse_account_id) => {
+  const client = await connection.connect();
+
+  try {
+    const query = `
+      SELECT 
+        me.event_id,
+        s.full_name AS student_name,
+        me.event_type,
+        me.event_title,
+        me.event_description,
+        me.event_datetime,
+        me.severity_level,
+        me.location,
+        me.follow_up_action,
+        me.created_at
+      FROM medical_events me
+      JOIN students s ON me.student_id = s.student_id
+      WHERE me.nurse_account_id = $1
+      ORDER BY me.event_datetime DESC
+    `;
+    const { rows } = await client.query(query, [nurse_account_id]);
+    return rows;
+  } catch (err) {
+    console.error("Lỗi khi lấy báo cáo:", err);
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+const getHealthCheckupsByNurseService = async (nurse_account_id) => {
+  const client = await connection.connect();
+
+  try {
+    const query = `
+      SELECT 
+        hc.checkup_id,
+        s.full_name AS student_name,
+        s.class_name,
+        hc.checkup_date,
+        ct.display_name AS checkup_type,
+        hc.status,
+        hc.notes
+      FROM health_checkups hc
+      JOIN students s ON hc.student_id = s.student_id
+      JOIN checkup_types ct ON hc.checkup_type = ct.checkup_type
+      WHERE s.class_name IN (
+        SELECT class_name FROM nurse_classes WHERE nurse_account_id = $1
+      )
+      ORDER BY hc.checkup_date DESC
+    `;
+    const { rows } = await client.query(query, [nurse_account_id]);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+const getVaccinationReportsByNurseService = async (nurse_account_id) => {
+  const client = await connection.connect();
+
+  try {
+    const query = `
+      SELECT 
+        vs.schedule_id,
+        vs.vaccine_name,
+        vs.vaccination_date,
+        vs.target_age_group,
+        vs.status,
+        COUNT(sv.student_id) AS total_students,
+        COUNT(CASE WHEN sv.status = 'COMPLETED' THEN 1 END) AS completed,
+        COUNT(CASE WHEN sv.status = 'PENDING' THEN 1 END) AS pending
+      FROM vaccination_schedules vs
+      LEFT JOIN student_vaccination sv ON vs.schedule_id = sv.schedule_id
+      WHERE vs.schedule_id IN (
+        SELECT schedule_id FROM vaccination_schedules WHERE nurse_account_id = $1
+      )
+      GROUP BY vs.schedule_id
+      ORDER BY vs.vaccination_date DESC
+    `;
+    const { rows } = await client.query(query, [nurse_account_id]);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
+
 
 
 module.exports = {
@@ -319,5 +406,9 @@ module.exports = {
   getVaccinationSchedulesByNurse,
   getStudentName,
   getMedicalEventsByNurseId,
-  getNurseDashboardStats
+  getNurseDashboardStats,
+   getReportsByNurseService,
+   getHealthCheckupsByNurseService,
+   getVaccinationReportsByNurseService,
+
 };

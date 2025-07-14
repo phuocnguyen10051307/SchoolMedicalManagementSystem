@@ -27,7 +27,13 @@ const {
   nurseClassStudentName,
   getMedicalEventsByNurse,
   updateMedicalEventController,
-  getNurseDashboard
+  getNurseDashboard,
+  getCheckupTypes,
+  createVaccinationScheduleController,
+  getVaccinationSchedulesController,
+  getReportsByNurse,
+  getHealthCheckupsByNurse,
+  getVaccinationReportsByNurse,
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 
@@ -48,7 +54,12 @@ router.post("/token/refresh", refreshAccessToken);
 router.post("/checkups/class", createClassHealthCheckup);
 router.post("/events/create", createMedicalEventController);
 router.post("/medications/parent-request", createParentMedicationRequest);
-router.post("/medications/confirm-receipt", authenticateJWT, confirmMedicationReceipt);
+router.post(
+  "/medications/confirm-receipt",
+  authenticateJWT,
+  confirmMedicationReceipt
+);
+router.post("/schedule", createVaccinationScheduleController);
 
 // GET
 router.get("/students/:user_id", getStudents); // id parent
@@ -57,20 +68,34 @@ router.get("/parents/:student_id", authenticateJWT, parentByStudent); // get par
 router.get("/events/nurse/:nurse_id", getMedicalEventsByNurse);
 router.get("/notifications/:user_id", getNotifications); // id parent
 router.get("/periodic-notifications/:user_id", periodicNotifications);
-router.get("/vaccination-notifications/:accountId", getVaccinationNotifications);
+router.get(
+  "/vaccination-notifications/:accountId",
+  getVaccinationNotifications
+);
 router.get("/logs/:accountId", getUserLogs);
-router.get("/medications/requests/pending/:nurse_id", getPendingMedicationRequestsByNurse);
+router.get(
+  "/medications/requests/pending/:nurse_id",
+  getPendingMedicationRequestsByNurse
+);
 router.get("/nurse/:nurse_id", getInformationNurse);
 router.get("/nurse-classes/:nurse_id", nurseClassList);
 router.get("/nurseGetStudent/:class_name", nurseClassStudentName);
-router.get("/vaccination-schedules/nurse/:nurse_id", vaccinationSchedulesByNurse);
+router.get(
+  "/vaccination-schedules/nurse/:nurse_id",
+  vaccinationSchedulesByNurse
+);
 router.get("/dashboard/nurse/:nurse_id", getNurseDashboard);
+router.get("/checkup-types", getCheckupTypes);
+router.get("/schedules", getVaccinationSchedulesController);
+router.get("/reports/:nurse_account_id", getReportsByNurse); 
+router.get("/checkups/:nurse_account_id", getHealthCheckupsByNurse); 
+router.get("/vaccinations/:nurse_account_id", getVaccinationReportsByNurse);
+
 
 // PUT
 router.put("/account/updateProfile/:user_id", updateProfileHeath); // id parent
 router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent); // id parent
 router.put("/nurse/updateNurseProfile/:nurse_id", updateInformationNurse);
 router.put("/events/update", updateMedicalEventController);
-
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const connection = require("../../config/db");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
+const parseAgeGroup = require("../utils/ageUtils");
 const generateId = (prefix = "") =>
   `${prefix}${crypto.randomBytes(4).toString("hex")}`;
 
@@ -278,7 +279,9 @@ const updateMedicalEventService = async ({
       ]
     );
 
-    await client.query(`DELETE FROM event_medications WHERE event_id = $1`, [event_id]);
+    await client.query(`DELETE FROM event_medications WHERE event_id = $1`, [
+      event_id,
+    ]);
 
     if (medication_description) {
       const event_medication_id = `em_${uuidv4().slice(0, 8)}`;
@@ -300,7 +303,9 @@ const updateMedicalEventService = async ({
       );
     }
 
-    await client.query(`DELETE FROM event_files WHERE event_id = $1`, [event_id]);
+    await client.query(`DELETE FROM event_files WHERE event_id = $1`, [
+      event_id,
+    ]);
 
     if (file_url) {
       const file_id = `ef_${uuidv4().slice(0, 8)}`;
@@ -408,6 +413,131 @@ WHERE vn.parent_account_id = $1`,
     client.release();
   }
 };
+const getCheckupTypesService = async () => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT checkup_type, display_name, description FROM checkup_types`
+    );
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+const createVaccinationScheduleService = async (data) => {
+  const client = await connection.connect();
+  try {
+    const {
+      nurse_account_id,
+      vaccine_name,
+      vaccination_date,
+      target_age_group,
+      notes, // ✨ notes từ FE truyền xuống
+    } = data;
+
+    if (
+      !nurse_account_id ||
+      !vaccine_name ||
+      !vaccination_date ||
+      !target_age_group
+    ) {
+      throw new Error("Thiếu thông tin bắt buộc");
+    }
+
+    await client.query("BEGIN");
+
+    const schedule_id = `vs_${uuidv4().slice(0, 8)}`;
+
+    await client.query(
+      `INSERT INTO vaccination_schedules (
+        schedule_id, vaccine_name, vaccination_date, target_age_group,
+        status, created_at, updated_at
+      ) VALUES (
+        $1, $2, $3, $4, 'ACTIVE', NOW(), NOW()
+      )`,
+      [schedule_id, vaccine_name, vaccination_date, target_age_group]
+    );
+
+    const { minDate, maxDate } = parseAgeGroup(
+      target_age_group,
+      vaccination_date
+    );
+
+    const studentsRes = await client.query(
+      `SELECT student_id FROM students WHERE date_of_birth BETWEEN $1 AND $2`,
+      [minDate, maxDate]
+    );
+
+    if (studentsRes.rows.length === 0) {
+      throw new Error("Không có học sinh phù hợp với nhóm tuổi");
+    }
+
+    for (const student of studentsRes.rows) {
+      const student_id = student.student_id;
+      const student_vaccination_id = `sv_${uuidv4().slice(0, 8)}`;
+
+      await client.query(
+        `INSERT INTO student_vaccination (
+          student_vaccination_id, student_id, schedule_id,
+          status, consent_status, vaccination_date, created_at, updated_at
+        ) VALUES (
+          $1, $2, $3, 'PENDING', 'WAITING', $4, NOW(), NOW()
+        )`,
+        [student_vaccination_id, student_id, schedule_id, vaccination_date]
+      );
+
+      const parentRes = await client.query(
+        `SELECT account_id FROM parents WHERE student_id = $1`,
+        [student_id]
+      );
+
+      for (const parent of parentRes.rows) {
+        const notification_id = `vn_${uuidv4().slice(0, 8)}`;
+        await client.query(
+          `INSERT INTO vaccination_notifications (
+            notification_id, student_vaccination_id, parent_account_id,
+            notification_status, sent_at, notes
+          ) VALUES (
+            $1, $2, $3, 'SENT', NOW(), $4
+          )`,
+          [notification_id, student_vaccination_id, parent.account_id, notes]
+        );
+      }
+    }
+
+    await client.query("COMMIT");
+    return {
+      message: "Tạo lịch tiêm chủng và gửi thông báo thành công.",
+      schedule_id,
+    };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("❌ Lỗi khi tạo lịch tiêm:", err);
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const getVaccinationSchedulesService = async () => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(`
+      SELECT 
+        schedule_id, vaccine_name, vaccination_date, 
+        target_age_group, status, created_at, updated_at
+      FROM vaccination_schedules
+      ORDER BY vaccination_date DESC
+    `);
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 module.exports = {
   getEventNotificationsByParentId,
@@ -417,4 +547,7 @@ module.exports = {
   createMedicalEventService,
   createParentMedicationRequestService,
   updateMedicalEventService,
+  getCheckupTypesService,
+  createVaccinationScheduleService,
+  getVaccinationSchedulesService,
 };
