@@ -172,7 +172,7 @@ export const getNurseClassListService = async (nurse_id) => {
     const response = await axios.get(`/nurse-classes/${nurse_id}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Không thể lấy danh sách lớp của y tá" };
+    throw error.response?.data || { message:"Không thể lấy danh sách lớp của y tá" };
   }
 };
 
@@ -223,5 +223,137 @@ export const getNurseDashboardService = async (nurse_id) => {
     throw error.response?.data || {
       message: "Không thể lấy dữ liệu thống kê dashboard của y tá",
     };
+  }
+};
+
+export const getCheckupTypes = async () => {
+  try {
+    const response = await axios.get("/checkup-types");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Không thể lấy danh sách loại kiểm tra sức khỏe",
+    };
+  }
+};
+
+export const createClassHealthCheckupService = async ({
+  nurse_account_id,
+  checkup_date,
+  checkup_type,
+  notes,
+}) => {
+  try {
+    const response = await axios.post("/checkups/class", {
+      nurse_account_id,
+      checkup_date,
+      checkup_type,
+      notes,
+    });
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể tạo sự kiện kiểm tra sức khỏe định kỳ",
+      }
+    );
+  }
+};
+
+export const getAllVaccinationSchedules = async () => {
+  try {
+    const response = await axios.get("/schedules");
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách lịch tiêm chủng",
+      }
+    );
+  }
+};
+export const createVaccinationScheduleService = async ({
+  nurse_account_id,
+  vaccine_name,
+  vaccination_date,
+  target_age_group,
+}) => {
+  try {
+    const response = await axios.post("/vaccination/schedules/create", {
+      nurse_account_id,
+      vaccine_name,
+      vaccination_date,
+      target_age_group,
+    });
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể tạo lịch tiêm chủng",
+      }
+    );
+  }
+};
+export const getVaccinationSchedulesService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/vaccination/schedules/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách lịch tiêm chủng của y tá",
+      }
+    );
+  }
+};
+
+
+export const createVaccinationScheduleForFE = async ({
+  nurse_account_id,
+  vaccine_name,
+  vaccination_date,
+  target_age_group,
+}) => {
+  try {
+    const response = await axios.post("/schedule", {
+      nurse_account_id,
+      vaccine_name,
+      vaccination_date,
+      target_age_group,
+    });
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể tạo lịch tiêm và gửi thông báo",
+      }
+    );
+  }
+};
+
+export const getHealthCheckupsByNurseService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/checkups/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách kiểm tra sức khỏe của y tá",
+      }
+    );
+  }
+};
+
+
+export const getVaccinationReportsByNurseService = async (nurse_id) => {
+  try {
+    const response = await axios.get(`/vaccinations/${nurse_id}`);
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách lịch tiêm chủng báo cáo của y tá",
+      }
+    );
   }
 };

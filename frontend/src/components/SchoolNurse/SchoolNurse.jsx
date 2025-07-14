@@ -67,7 +67,7 @@ const SchoolNurse = () => {
       <div className="sidebar">
         <div className="profile">
           <img src={data.avatar_url} alt="User Avatar" className="avatar" />
-          <h2 className="username">Hacker</h2>
+          <h2 className="username">{data.full_name}</h2>
         </div>
 
         <ul className="menu">
