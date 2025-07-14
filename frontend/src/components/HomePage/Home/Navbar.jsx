@@ -3,8 +3,9 @@ import "./Navbar.scss";
 import { AuthContext } from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
 
+
 const Navbar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   return (
     <nav className="navbar">
       <div className="navbar_logo">
@@ -27,7 +28,7 @@ const Navbar = () => {
         )}
         {!!user && user.role_id === "PARENT" && (
           <li>
-            <Link to="/parent">Parent</Link>
+            <Link to="/parent/profile">Parent</Link>
           </li>
         )}
         {!!user && user.role_id === "MANAGER" && (
@@ -42,11 +43,13 @@ const Navbar = () => {
         )}
       </ul>
       <div className="navbar_auth">
-        {!!!user && (
+        {!user ? (
           <div>
-            <Link to="login">Sign in </Link>
+            <Link to="login">Sign in</Link>
             <Link to="register">Sign Up</Link>
           </div>
+        ) : (
+          <button onClick={logout}>Logout</button>
         )}
       </div>
     </nav>
