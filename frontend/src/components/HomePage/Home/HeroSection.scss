@@ -6,7 +6,10 @@
   background-color: white;
   max-width: 1250px;
   margin: 0 75px;
+  min-height: 100vh;
+  width: 90%;
   flex-wrap: wrap;
+  position: relative;
 
   .hero-left {
     flex: 1.5;
@@ -33,7 +36,7 @@
     }
 
     .hero-button {
-      width:200px;
+      width: 200px;
       background-color: #5db8b5;
       color: white;
       font-size: 16px;
@@ -54,7 +57,7 @@
     flex: 1;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-end;
     overflow: visible;
     min-width: 0;
 
@@ -65,16 +68,17 @@
       align-items: flex-end;
 
       .nurse-image {
-        max-width: 380px;
-        height: 500px;
-        z-index: 0;
-        transform: translateX(320px);
+        position: absolute;
+        bottom: -320px;;
+        right: -500px;
+        max-width: 420px;
+        height: auto;
+        z-index: 1;
       }
 
       .nurse-card {
         position: relative;
-        bottom: 230px;
-        left: 290px;
+
         background: white;
         border-radius: 16px;
         padding: 20px;
@@ -82,6 +86,8 @@
         text-align: center;
         z-index: 2;
         width: 250px;
+        left: 160px;
+        bottom: 90px;
 
         .nurse-avatar {
           width: 60px;
