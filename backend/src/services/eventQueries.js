@@ -337,7 +337,7 @@ const createParentMedicationRequestService = async ({
   dosage,
   instructions,
   notes,
-  medication_type = "TEMPORARY", // default nếu frontend không gửi
+  medication_type = "TEMPORARY",
   requested_by_id,
 }) => {
   const client = await connection.connect();

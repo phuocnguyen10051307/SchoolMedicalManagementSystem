@@ -15,7 +15,7 @@ const ParentProfile = () => {
   const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(data);
+  console.log(data.student_id)
   useEffect(() => {
     if (data) {
       const mappedData = {

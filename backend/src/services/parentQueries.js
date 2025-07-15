@@ -150,7 +150,8 @@ const getParentByStudentId = async (accountid) => {
          s.class_name AS class,
          s.full_name AS student_name,
          a.date_of_birth as date_of_birth,
-         a.avatar_url as image
+         a.avatar_url as image,
+         s.student_id
          from parents p join students s on s.student_id = p.student_id
          join accounts a ON a.account_id = p.account_id 
          where p.account_id = $1`,

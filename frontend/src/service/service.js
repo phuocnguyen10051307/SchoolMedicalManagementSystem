@@ -1,7 +1,5 @@
 import axios from "./axiosInstance";
 
-const API_BASE = "http://localhost:8000";
-
 export const loginAccount = async (username, password) => {
   try {
     const response = await axios.post(`/account/login`, {
@@ -107,18 +105,15 @@ export const putHealthProfileOfStudent = async (
   additional_notes
 ) => {
   try {
-    const updateHealth = await axios.put(
-      `/account/updateProfile/${user_id}`,
-      {
-        height,
-        weight,
-        blood_type,
-        chronic_conditions,
-        allergies,
-        regular_medications,
-        additional_notes,
-      }
-    );
+    const updateHealth = await axios.put(`/account/updateProfile/${user_id}`, {
+      height,
+      weight,
+      blood_type,
+      chronic_conditions,
+      allergies,
+      regular_medications,
+      additional_notes,
+    });
     return updateHealth.data;
   } catch (error) {
     throw (
@@ -147,32 +142,34 @@ export const putNurseProfile = async (
   date_of_birth
 ) => {
   try {
-    const response = await axios.put(
-      `/nurse/updateNurseProfile/${nurse_id}`,
-      {
-        full_name,
-        phone_number,
-        email,
-        avatar_url,
-        date_of_birth,
-      }
-    );
-    console.log(response.data)
+    const response = await axios.put(`/nurse/updateNurseProfile/${nurse_id}`, {
+      full_name,
+      phone_number,
+      email,
+      avatar_url,
+      date_of_birth,
+    });
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Không thể cập nhật thông tin y tá",
-    };
+    throw (
+      error.response?.data || {
+        message: "Không thể cập nhật thông tin y tá",
+      }
+    );
   }
 };
-
 
 export const getNurseClassListService = async (nurse_id) => {
   try {
     const response = await axios.get(`/nurse-classes/${nurse_id}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message:"Không thể lấy danh sách lớp của y tá" };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách lớp của y tá",
+      }
+    );
   }
 };
 
@@ -181,7 +178,11 @@ export const getStudentListByClassService = async (class_name) => {
     const response = await axios.get(`/nurseGetStudent/${class_name}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Không thể lấy danh sách học sinh theo lớp" };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách học sinh theo lớp",
+      }
+    );
   }
 };
 export const createMedicalEventService = async (eventData) => {
@@ -198,9 +199,11 @@ export const getMedicalEventsByNurseService = async (nurse_id) => {
     const response = await axios.get(`/events/nurse/${nurse_id}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Không thể lấy danh sách sự kiện y tế của y tá",
-    };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách sự kiện y tế của y tá",
+      }
+    );
   }
 };
 
@@ -209,9 +212,11 @@ export const updateMedicalEventService = async (eventData) => {
     const response = await axios.put("/events/update", eventData);
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Cập nhật sự kiện y tế thất bại",
-    };
+    throw (
+      error.response?.data || {
+        message: "Cập nhật sự kiện y tế thất bại",
+      }
+    );
   }
 };
 
@@ -220,9 +225,11 @@ export const getNurseDashboardService = async (nurse_id) => {
     const response = await axios.get(`/dashboard/nurse/${nurse_id}`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Không thể lấy dữ liệu thống kê dashboard của y tá",
-    };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy dữ liệu thống kê dashboard của y tá",
+      }
+    );
   }
 };
 
@@ -231,9 +238,11 @@ export const getCheckupTypes = async () => {
     const response = await axios.get("/checkup-types");
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Không thể lấy danh sách loại kiểm tra sức khỏe",
-    };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách loại kiểm tra sức khỏe",
+      }
+    );
   }
 };
 
@@ -307,7 +316,6 @@ export const getVaccinationSchedulesService = async (nurse_id) => {
   }
 };
 
-
 export const getHealthCheckupsByNurseService = async (nurse_id) => {
   try {
     const response = await axios.get(`/checkups/${nurse_id}`);
@@ -320,7 +328,6 @@ export const getHealthCheckupsByNurseService = async (nurse_id) => {
     );
   }
 };
-
 
 export const getVaccinationReportsByNurseService = async (nurse_id) => {
   try {
@@ -356,13 +363,18 @@ export const activateVaccinationScheduleService = async ({
   }
 };
 
-
 export const getApprovedMedicationFromParent = async (nurse_id) => {
   try {
-    const response = await axios.get(`/medications/getRequestsFromParent/${nurse_id}`);
+    const response = await axios.get(
+      `/medications/getRequestsFromParent/${nurse_id}`
+    );
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Không thể lấy danh sách thuốc phụ huynh gửi" };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách thuốc phụ huynh gửi",
+      }
+    );
   }
 };
 
@@ -372,29 +384,59 @@ export const confirmMedicationReceiptService = async ({
   received_quantity,
 }) => {
   try {
-    const response = await axios.post(
-      "/medications/confirm-receipt",
-      {
-        request_id,
-        nurse_account_id,
-        received_quantity,
-      }
-    );
+    const response = await axios.post("/medications/confirm-receipt", {
+      request_id,
+      nurse_account_id,
+      received_quantity,
+    });
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Xác nhận nhận thuốc thất bại",
-    };
+    throw (
+      error.response?.data || {
+        message: "Xác nhận nhận thuốc thất bại",
+      }
+    );
   }
 };
 
 export const getMedicationPendingParentSent = async (nurse_id) => {
   try {
-    const response = await axios.get(`/medications/requests/pending/${nurse_id}`);
+    const response = await axios.get(
+      `/medications/requests/pending/${nurse_id}`
+    );
+    console.log(response);
     return response.data;
   } catch (error) {
-    throw error.response?.data || {
-      message: "Không thể lấy danh sách thuốc đã xác nhận",
-    };
+    throw (
+      error.response?.data || {
+        message: "Không thể lấy danh sách thuốc đã xác nhận",
+      }
+    );
+  }
+};
+
+export const createParentMedicationRequest = async ({
+  student_id,
+  medication_name,
+  dosage,
+  instructions,
+  notes,
+  medication_type = "TEMPORARY",
+  requested_by_id,
+}) => {
+  try {
+    const response = await axios.post("/medications/parent-request", {
+      student_id,
+      medication_name,
+      dosage,
+      instructions,
+      notes,
+      medication_type,
+      requested_by_id,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Gửi yêu cầu thuốc thất bại" };
   }
 };

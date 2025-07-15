@@ -58,7 +58,7 @@ router.post("/checkups/class", createClassHealthCheckup);
 router.post("/events/create", createMedicalEventController);
 router.post("/medications/parent-request", createParentMedicationRequest);
 router.post(
-  "/medications/confirm-receipt",
+  "/medications/confirm-receipt",authenticateJWT,
   confirmMedicationReceipt
 );
 router.post("/scheduleByNurse", acctiveVaccinationScheduleController);

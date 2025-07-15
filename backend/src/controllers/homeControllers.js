@@ -133,7 +133,7 @@ const getPendingMedicationRequestsByNurseCo = async (req, res) => {
     const { nurse_id } = req.params;
 
     const requests = await getPendingRequestsForNurse(nurse_id);
-
+    console.log(requests)
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });
