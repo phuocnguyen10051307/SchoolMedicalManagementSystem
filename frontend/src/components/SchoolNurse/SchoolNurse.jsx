@@ -40,7 +40,7 @@ const menuItems = [
   {
     id: "records",
     icon: <FaFolderOpen />,
-    label: "Student Health Records",
+    label: "Get medicine",
     path: "records",
   },
   {

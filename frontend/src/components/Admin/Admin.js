@@ -19,7 +19,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (user) {
-      toast.success(`Chào mừng ${user.username} đến với trang quản trị`);
+      
     }
   }, [user]);
 

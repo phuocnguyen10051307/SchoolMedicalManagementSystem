@@ -39,7 +39,7 @@
     padding: 10px 20px;
 } */
 
-.pro-menu-item:hover {
+/* .pro-menu-item:hover {
   background: #b2dfdf;
   color: #222;
 }
@@ -82,4 +82,91 @@ body{
   display: block;
   width: 100%;
   height: 100%;
+}
+ */
+
+.pro-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background-color: #ffffff;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+  z-index: 100;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+  border: 3px solid #e0f7fa;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0d3b66;
+  margin-bottom: 20px;
+}
+
+.menu-main {
+  width: 100%;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #0d3b66;
+  background-color: #f0f8ff;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-main:hover {
+  background-color: #e0f7fa;
+  color: #004d40;
+}
+
+.menu-sub {
+  padding: 10px 36px;
+  font-size: 15px;
+  color: #37474f;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-sub:hover {
+  background-color: #f5f5f5;
+  color: #00796b;
+}
+
+body {
+  background-color: #f7fafa;
+}
+
+.admin-profile-page {
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.admin-profile-page .title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d3b66;
+  margin-bottom: 20px;
 }

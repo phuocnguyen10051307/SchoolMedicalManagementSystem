@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   getAllVaccinationSchedules,
-  createVaccinationScheduleForFE,
+  activateVaccinationScheduleService,
 } from "../../service/service";
 import "./Vaccination.scss";
 import { AuthContext } from "../../context/AuthContext";
@@ -15,11 +15,30 @@ const Vaccination = () => {
   const [message, setMessage] = useState({ notes: "" });
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
+  // 🔹 Phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSchedules = schedules.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(schedules.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   const fetchSchedules = async () => {
     try {
       setLoading(true);
       const data = await getAllVaccinationSchedules();
-      setSchedules(data);
+      const sortedData = data.sort((a, b) => {
+        if (a.status === "PENDING" && b.status !== "PENDING") return -1;
+        if (a.status !== "PENDING" && b.status === "PENDING") return 1;
+        return 0;
+      });
+
+      setSchedules(sortedData);
     } catch (error) {
       console.error("Lỗi khi tải lịch tiêm:", error.message);
     } finally {
@@ -34,7 +53,7 @@ const Vaccination = () => {
   const handleOpenModal = (schedule) => {
     setSelectedSchedule(schedule);
     setShowModal(true);
-    setMessage({ notes: "" }); // reset ghi chú
+    setMessage({ notes: "" });
   };
 
   const handleSendNotification = async () => {
@@ -44,18 +63,13 @@ const Vaccination = () => {
 
     const payload = {
       nurse_account_id: user?.account_id,
-      vaccine_name: selectedSchedule.vaccine_name,
-      vaccination_date: selectedSchedule.vaccination_date,
-      target_age_group: selectedSchedule.target_age_group,
+      schedule_id: selectedSchedule.schedule_id,
       notes: message.notes,
     };
 
-    console.log("🔍 Gửi lịch tiêm với dữ liệu:", payload);
-
     try {
-      const result = await createVaccinationScheduleForFE(payload);
-      console.log("✅ Kết quả:", result);
-      alert("Gửi thông báo thành công!");
+      const result = await activateVaccinationScheduleService(payload);
+      alert(" Gửi thông báo thành công!");
       setShowModal(false);
       setMessage({ notes: "" });
       setSelectedSchedule(null);
@@ -87,23 +101,22 @@ const Vaccination = () => {
               </tr>
             </thead>
             <tbody>
-              {schedules.map((schedule) => {
-                const isPast =
-                  new Date(schedule.vaccination_date) < new Date();
+              {currentSchedules.map((schedule) => {
+                const isPast = new Date(schedule.vaccination_date) < new Date();
 
                 return (
                   <tr key={schedule.schedule_id}>
                     <td>{schedule.vaccine_name}</td>
                     <td>
-                      {new Date(
-                        schedule.vaccination_date
-                      ).toLocaleDateString()}
+                      {new Date(schedule.vaccination_date).toLocaleDateString()}
                     </td>
                     <td>{schedule.target_age_group}</td>
                     <td>{schedule.status}</td>
                     <td>
                       {isPast ? (
                         <span className="text-muted">Đã quá hạn</span>
+                      ) : schedule.status === "ACTIVE" ? (
+                        <span className="text-muted">Đã gửi</span>
                       ) : (
                         <Button
                           size="sm"
@@ -119,6 +132,24 @@ const Vaccination = () => {
               })}
             </tbody>
           </table>
+
+          {/* 🔹 Nút phân trang */}
+          {totalPages > 1 && (
+            <div className="pagination d-flex justify-content-center mt-3">
+              {[...Array(totalPages)].map((_, index) => (
+                <Button
+                  key={index + 1}
+                  variant={
+                    currentPage === index + 1 ? "primary" : "outline-primary"
+                  }
+                  onClick={() => handlePageChange(index + 1)}
+                  className="mx-1"
+                >
+                  {index + 1}
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
