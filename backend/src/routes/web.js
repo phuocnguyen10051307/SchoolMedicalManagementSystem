@@ -21,7 +21,7 @@ const {
   createMedicalEventController,
   createParentMedicationRequest,
   confirmMedicationReceipt,
-  getPendingMedicationRequestsByNurse,
+  getPendingMedicationRequestsByNurseCo,
   getInformationNurse,
   updateInformationNurse,
   nurseClassStudentName,
@@ -29,11 +29,14 @@ const {
   updateMedicalEventController,
   getNurseDashboard,
   getCheckupTypes,
-  createVaccinationScheduleController,
+ acctiveVaccinationScheduleController,
   getVaccinationSchedulesController,
   getReportsByNurse,
   getHealthCheckupsByNurse,
   getVaccinationReportsByNurse,
+  createVaccinationScheduleControllerByManager,
+  getApprovedMedicationFromParent,
+  getConfirmedMedicationRequestsByNurse,
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 
@@ -56,10 +59,10 @@ router.post("/events/create", createMedicalEventController);
 router.post("/medications/parent-request", createParentMedicationRequest);
 router.post(
   "/medications/confirm-receipt",
-  authenticateJWT,
   confirmMedicationReceipt
 );
-router.post("/schedule", createVaccinationScheduleController);
+router.post("/scheduleByNurse", acctiveVaccinationScheduleController);
+router.post("/scheduleByMager", createVaccinationScheduleControllerByManager);
 
 // GET
 router.get("/students/:user_id", getStudents); // id parent
@@ -75,7 +78,7 @@ router.get(
 router.get("/logs/:accountId", getUserLogs);
 router.get(
   "/medications/requests/pending/:nurse_id",
-  getPendingMedicationRequestsByNurse
+  getPendingMedicationRequestsByNurseCo
 );
 router.get("/nurse/:nurse_id", getInformationNurse);
 router.get("/nurse-classes/:nurse_id", nurseClassList);
@@ -90,6 +93,14 @@ router.get("/schedules", getVaccinationSchedulesController);
 router.get("/reports/:nurse_account_id", getReportsByNurse); 
 router.get("/checkups/:nurse_account_id", getHealthCheckupsByNurse); 
 router.get("/vaccinations/:nurse_account_id", getVaccinationReportsByNurse);
+router.get(
+  "/medications/getRequestsFromParent/:nurse_id",
+ getApprovedMedicationFromParent
+);
+router.get(
+  "/medications/requests/confirmed/:nurse_id",
+  getConfirmedMedicationRequestsByNurse
+);
 
 
 // PUT

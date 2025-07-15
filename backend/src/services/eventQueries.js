@@ -426,43 +426,40 @@ const getCheckupTypesService = async () => {
     client.release();
   }
 };
-const createVaccinationScheduleService = async (data) => {
+const activateVaccinationScheduleByNurseService = async ({
+  nurse_account_id,
+  schedule_id,
+  notes,
+}) => {
   const client = await connection.connect();
+
   try {
-    const {
-      nurse_account_id,
-      vaccine_name,
-      vaccination_date,
-      target_age_group,
-      notes, // ✨ notes từ FE truyền xuống
-    } = data;
-
-    if (
-      !nurse_account_id ||
-      !vaccine_name ||
-      !vaccination_date ||
-      !target_age_group
-    ) {
-      throw new Error("Thiếu thông tin bắt buộc");
-    }
-
     await client.query("BEGIN");
 
-    const schedule_id = `vs_${uuidv4().slice(0, 8)}`;
-
-    await client.query(
-      `INSERT INTO vaccination_schedules (
-        schedule_id, vaccine_name, vaccination_date, target_age_group,
-        status, created_at, updated_at
-      ) VALUES (
-        $1, $2, $3, $4, 'ACTIVE', NOW(), NOW()
-      )`,
-      [schedule_id, vaccine_name, vaccination_date, target_age_group]
+    // 1. Kiểm tra lịch tiêm tồn tại và đang PENDING
+    const scheduleRes = await client.query(
+      `SELECT * FROM vaccination_schedules WHERE schedule_id = $1 AND status = 'PENDING'`,
+      [schedule_id]
     );
 
+    if (scheduleRes.rows.length === 0) {
+      throw new Error("Lịch tiêm không tồn tại hoặc đã được kích hoạt.");
+    }
+
+    const schedule = scheduleRes.rows[0];
+
+    // 2. Cập nhật trạng thái lịch sang ACTIVE
+    await client.query(
+      `UPDATE vaccination_schedules
+       SET status = 'ACTIVE', updated_at = NOW()
+       WHERE schedule_id = $1`,
+      [schedule_id]
+    );
+
+    // 3. Tìm học sinh phù hợp nhóm tuổi
     const { minDate, maxDate } = parseAgeGroup(
-      target_age_group,
-      vaccination_date
+      schedule.target_age_group,
+      schedule.vaccination_date
     );
 
     const studentsRes = await client.query(
@@ -471,9 +468,10 @@ const createVaccinationScheduleService = async (data) => {
     );
 
     if (studentsRes.rows.length === 0) {
-      throw new Error("Không có học sinh phù hợp với nhóm tuổi");
+      throw new Error("Không có học sinh phù hợp với nhóm tuổi.");
     }
 
+    // 4. Gán lịch cho học sinh + gửi thông báo
     for (const student of studentsRes.rows) {
       const student_id = student.student_id;
       const student_vaccination_id = `sv_${uuidv4().slice(0, 8)}`;
@@ -485,7 +483,12 @@ const createVaccinationScheduleService = async (data) => {
         ) VALUES (
           $1, $2, $3, 'PENDING', 'WAITING', $4, NOW(), NOW()
         )`,
-        [student_vaccination_id, student_id, schedule_id, vaccination_date]
+        [
+          student_vaccination_id,
+          student_id,
+          schedule_id,
+          schedule.vaccination_date,
+        ]
       );
 
       const parentRes = await client.query(
@@ -498,23 +501,29 @@ const createVaccinationScheduleService = async (data) => {
         await client.query(
           `INSERT INTO vaccination_notifications (
             notification_id, student_vaccination_id, parent_account_id,
-            notification_status, sent_at, notes
+            notification_status, sent_at, notes, sent_by_nurse_id
           ) VALUES (
-            $1, $2, $3, 'SENT', NOW(), $4
+            $1, $2, $3, 'SENT', NOW(), $4, $5
           )`,
-          [notification_id, student_vaccination_id, parent.account_id, notes]
+          [
+            notification_id,
+            student_vaccination_id,
+            parent.account_id,
+            notes,
+            nurse_account_id,
+          ]
         );
       }
     }
 
     await client.query("COMMIT");
     return {
-      message: "Tạo lịch tiêm chủng và gửi thông báo thành công.",
+      message: "Đã kích hoạt lịch tiêm và gửi thông báo thành công.",
       schedule_id,
     };
   } catch (err) {
     await client.query("ROLLBACK");
-    console.error("❌ Lỗi khi tạo lịch tiêm:", err);
+    console.error(" Lỗi kích hoạt lịch tiêm:", err.message);
     throw err;
   } finally {
     client.release();
@@ -525,11 +534,15 @@ const getVaccinationSchedulesService = async () => {
   const client = await connection.connect();
   try {
     const { rows } = await client.query(`
-      SELECT 
-        schedule_id, vaccine_name, vaccination_date, 
-        target_age_group, status, created_at, updated_at
-      FROM vaccination_schedules
-      ORDER BY vaccination_date DESC
+    SELECT vs.*, 
+    EXISTS (
+      SELECT 1 
+      FROM vaccination_notifications vn
+      JOIN student_vaccination sv ON vn.student_vaccination_id = sv.student_vaccination_id
+      WHERE sv.schedule_id = vs.schedule_id
+    ) AS is_sent
+    FROM vaccination_schedules vs
+    ORDER BY vaccination_date DESC;
     `);
     return rows;
   } catch (error) {
@@ -538,6 +551,71 @@ const getVaccinationSchedulesService = async () => {
     client.release();
   }
 };
+
+const getApprovedMedicationReceiptsByNurse = async (nurse_account_id) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+         r.request_id,
+         s.full_name AS student_name,
+         s.class_name,
+         r.medication_name,
+         r.dosage,
+         r.instructions,
+         r.notes,
+         r.medication_type,
+         r.requested_at,
+         r.reviewed_at,
+         nmr.received_quantity,
+         nmr.received_at
+       FROM nurse_medication_receipts nmr
+       JOIN parent_medication_requests r ON nmr.request_id = r.request_id
+       JOIN students s ON r.student_id = s.student_id
+       WHERE nmr.nurse_account_id = $1
+       AND r.request_status = 'APPROVED'
+       ORDER BY nmr.received_at DESC`,
+      [nurse_account_id]
+    );
+
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+const getPendingMedicationRequestsByNurse = async (nurse_account_id) => {
+  const client = await connection.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT 
+         r.request_id,
+         s.full_name AS student_name,
+         s.class_name,
+         r.medication_name,
+         r.dosage,
+         r.instructions,
+         r.notes,
+         r.medication_type,
+         r.requested_at
+       FROM parent_medication_requests r
+       JOIN students s ON r.student_id = s.student_id
+       JOIN nurse_classes nc ON s.class_name = nc.class_name
+       WHERE nc.nurse_account_id = $1
+         AND r.request_status = 'PENDING'
+       ORDER BY r.requested_at DESC`,
+      [nurse_account_id]
+    );
+
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
 
 module.exports = {
   getEventNotificationsByParentId,
@@ -548,6 +626,8 @@ module.exports = {
   createParentMedicationRequestService,
   updateMedicalEventService,
   getCheckupTypesService,
-  createVaccinationScheduleService,
+  activateVaccinationScheduleByNurseService,
   getVaccinationSchedulesService,
+  getApprovedMedicationReceiptsByNurse,
+  getPendingMedicationRequestsByNurse
 };

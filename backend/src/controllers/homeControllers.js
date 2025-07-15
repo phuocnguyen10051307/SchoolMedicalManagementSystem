@@ -7,6 +7,9 @@ const {
   putHeathyProfile,
   updateProfileParent,
 } = require("../services/parentQueries");
+const {
+  createVaccinationScheduleServiceByManager,
+} = require("../services/adminAndManagerQuries");
 
 const {
   getAccount,
@@ -27,8 +30,10 @@ const {
   createParentMedicationRequestService,
   updateMedicalEventService,
   getCheckupTypesService,
-  createVaccinationScheduleService,
+  activateVaccinationScheduleByNurseService,
   getVaccinationSchedulesService,
+  getApprovedMedicationReceiptsByNurse,
+  getPendingMedicationRequestsByNurse,
 } = require("../services/eventQueries");
 
 const {
@@ -123,7 +128,7 @@ const createParentMedicationRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const getPendingMedicationRequestsByNurse = async (req, res) => {
+const getPendingMedicationRequestsByNurseCo = async (req, res) => {
   try {
     const { nurse_id } = req.params;
 
@@ -138,7 +143,7 @@ const confirmMedicationReceipt = async (req, res) => {
   try {
     //const {nurse_account_id} = req.user.user_id; // lấy từ token
     const { request_id, received_quantity, nurse_account_id } = req.body;
-    console.log("REQ BODY", req.body);
+
 
     const result = await confirmParentMedicationReceiptService({
       request_id,
@@ -382,9 +387,9 @@ const getCheckupTypes = async (req, res) => {
     res.status(500).json({ error: "Lỗi server" });
   }
 };
-const createVaccinationScheduleController = async (req, res) => {
+const acctiveVaccinationScheduleController = async (req, res) => {
   try {
-    const result = await createVaccinationScheduleService(req.body);
+    const result = await activateVaccinationScheduleByNurseService(req.body);
     res.status(201).json(result);
   } catch (error) {
     console.error("Error creating vaccination schedule:", error);
@@ -433,6 +438,44 @@ const getVaccinationReportsByNurse = async (req, res) => {
     res.status(500).json({ error: "Không thể lấy lịch tiêm chủng" });
   }
 };
+const createVaccinationScheduleControllerByManager = async (req, res) => {
+  const { account_id, vaccine_name, vaccination_date, target_age_group } =
+    req.body;
+
+  try {
+    const result = await createVaccinationScheduleServiceByManager({
+      account_id,
+      vaccine_name,
+      vaccination_date,
+      target_age_group,
+    });
+
+    res.status(201).json(result);
+  } catch (error) {
+    const status = error.status || 500;
+    const message = error.message || "Đã xảy ra lỗi khi tạo lịch tiêm chủng.";
+    res.status(status).json({ error: message });
+  }
+};
+
+const getApprovedMedicationFromParent = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getApprovedMedicationReceiptsByNurse(nurse_id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getConfirmedMedicationRequestsByNurse = async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const result = await getConfirmedRequestsForNurse(nurse_id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   homePage,
@@ -455,7 +498,7 @@ module.exports = {
   createMedicalEventController,
   createParentMedicationRequest,
   confirmMedicationReceipt,
-  getPendingMedicationRequestsByNurse,
+  getPendingMedicationRequestsByNurseCo,
   getInformationNurse,
   updateInformationNurse,
   nurseClassStudentName,
@@ -463,9 +506,12 @@ module.exports = {
   updateMedicalEventController,
   getNurseDashboard,
   getCheckupTypes,
-  createVaccinationScheduleController,
+  acctiveVaccinationScheduleController,
   getVaccinationSchedulesController,
   getReportsByNurse,
   getHealthCheckupsByNurse,
-  getVaccinationReportsByNurse
+  getVaccinationReportsByNurse,
+  createVaccinationScheduleControllerByManager,
+  getApprovedMedicationFromParent,
+  getConfirmedMedicationRequestsByNurse,
 };

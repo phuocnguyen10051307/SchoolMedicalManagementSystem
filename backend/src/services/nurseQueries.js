@@ -66,6 +66,7 @@ const confirmParentMedicationReceiptService = async ({
   received_quantity,
 }) => {
   const client = await connection.connect();
+  console.log(request_id,  nurse_account_id,)
   try {
     await client.query("BEGIN");
     const { rows: requests } = await client.query(
@@ -367,7 +368,6 @@ const getHealthCheckupsByNurseService = async (nurse_account_id) => {
 };
 const getVaccinationReportsByNurseService = async (nurse_account_id) => {
   const client = await connection.connect();
-
   try {
     const query = `
       SELECT 
@@ -380,15 +380,17 @@ const getVaccinationReportsByNurseService = async (nurse_account_id) => {
         COUNT(CASE WHEN sv.status = 'COMPLETED' THEN 1 END) AS completed,
         COUNT(CASE WHEN sv.status = 'PENDING' THEN 1 END) AS pending
       FROM vaccination_schedules vs
-      LEFT JOIN student_vaccination sv ON vs.schedule_id = sv.schedule_id
-      WHERE vs.schedule_id IN (
-        SELECT schedule_id FROM vaccination_schedules WHERE nurse_account_id = $1
-      )
+      JOIN student_vaccination sv ON vs.schedule_id = sv.schedule_id
+      JOIN vaccination_notifications vn ON vn.student_vaccination_id = sv.student_vaccination_id
+      WHERE vn.sent_by_nurse_id = $1
       GROUP BY vs.schedule_id
-      ORDER BY vs.vaccination_date DESC
+      ORDER BY vs.vaccination_date DESC;
     `;
     const { rows } = await client.query(query, [nurse_account_id]);
     return rows;
+  } catch (error) {
+    console.error("Lỗi truy vấn báo cáo tiêm chủng:", error);
+    throw error;
   } finally {
     client.release();
   }
