@@ -33,16 +33,14 @@ const Parent = () => {
             Register medicine to be sent to school
           </Link>
           <Link
-            to="history"
-            className={isActive("history") ? "parent-tab active" : "parent-tab"}
+            to="notifications"
+            className={
+              isActive("notifications") ? "parent-tab active" : "parent-tab"
+            }
           >
-            Health History
+            Notifications
           </Link>
           <div className="parent-tab blank"></div>
-        </div>
-        <div className="parent-notify">
-          <span className="bell">🔔</span>
-          <span className="notify-badge">3</span>
         </div>
       </div>
       <div className="parent-content">

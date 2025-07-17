@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import StudentHealthRecordUpdateModal from "./StudentHealthRecordUpdateModal";
 import { AuthContext } from "../../context/AuthContext";
 import { getHealthProfile } from "../../service/service";
+import "./StudentHealthRecordDeclaration.scss"
 
 const StudentHealthRecordDeclaration = () => {
   const { user } = useContext(AuthContext);

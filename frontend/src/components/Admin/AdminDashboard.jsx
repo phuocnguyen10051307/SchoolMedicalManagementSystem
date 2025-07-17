@@ -1,65 +1,35 @@
-import { useContext, useEffect, useState } from "react";
-import "./Admin.css";
+import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { toast } from "react-toastify";
-import {
-  ProSidebar,
-  Menu,
-  MenuItem,
-  SidebarHeader,
-  SidebarContent,
-} from "react-pro-sidebar";
-import avatarImg from "./avatar.jpg";
-import Modal from "react-modal";
-import AdminProfileModal from "./AdminProfile";
-import { Link, Outlet } from "react-router-dom";
-import { AiOutlineUser } from "react-icons/ai";
+import { NavLink } from "react-router-dom";
+import avatarImg from "../../images/user.png";
+import "./AdminDashBoard.scss";
 
-const AdminDashBoard = () => {
+const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const [showContent, setShowContent] = useState(false);
-
-  const toggleManagerContent = () => {
-    setShowContent(!showContent);
-  };
 
   return (
-    <div>
-      <ProSidebar>
-        <SidebarHeader>
-          <div>
-            <img className="avatar" src={avatarImg} alt="Avatar" />
-            <h3 className="name"> user.full_name</h3>
-          </div>
-          <button>
-            <Link to="/admin/profile">Admin Profile</Link>
-          </button>
-        </SidebarHeader>
+    <div className="admin-sidebar">
+      <div className="admin-sidebar__header">
+        <img className="admin-sidebar__avatar" src={avatarImg} alt="Avatar" />
+        <h3 className="admin-sidebar__name">{user.full_name}</h3>
+      </div>
 
-        <SidebarContent>
-          <Menu iconShape="square">
-            <MenuItem className="menu-main" onClick={toggleManagerContent}>
-              <AiOutlineUser />
-              <span style={{ marginLeft: "10px" }}>Manager</span>
-            </MenuItem>
-
-            {showContent && (
-              <>
-                <MenuItem className="menu-sub">
-                  <Link to="/admin/nurse">Manager School Nurse</Link>
-                </MenuItem>
-                <MenuItem className="menu-sub">
-                  <Link to="/admin/parent">Manager Parent</Link>
-                </MenuItem>
-                <MenuItem className="menu-sub">
-                  <Link to="/admin/student">Manager Student</Link>
-                </MenuItem>
-              </>
-            )}
-          </Menu>
-        </SidebarContent>
-      </ProSidebar>
+      <ul className="admin-sidebar__menu">
+        <li>
+          <NavLink to="/admin/profile" className={({ isActive }) => isActive ? "active" : ""}>Admin Profile</NavLink>
+        </li>
+        <li>
+          <NavLink to="/admin/nurse" className={({ isActive }) => isActive ? "active" : ""}>Manager School Nurse</NavLink>
+        </li>
+        <li>
+          <NavLink to="/admin/parent" className={({ isActive }) => isActive ? "active" : ""}>Manager Parent</NavLink>
+        </li>
+        <li>
+          <NavLink to="/admin/student" className={({ isActive }) => isActive ? "active" : ""}>Manager Student</NavLink>
+        </li>
+      </ul>
     </div>
   );
 };
-export default AdminDashBoard;
+
+export default AdminDashboard;

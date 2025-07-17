@@ -1,0 +1,43 @@
+.manager-student-page {
+  padding: 32px;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .class-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .class-card {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 12px;
+    width: 180px;
+    text-align: center;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+
+    .class-name {
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .view-btn {
+      padding: 6px 16px;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #0b5ed7;
+      }
+    }
+  }
+}

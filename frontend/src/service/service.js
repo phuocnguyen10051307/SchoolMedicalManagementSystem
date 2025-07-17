@@ -440,3 +440,166 @@ export const createParentMedicationRequest = async ({
     throw error.response?.data || { message: "Gửi yêu cầu thuốc thất bại" };
   }
 };
+
+export const getVaccinationNotifications = async (accountId) => {
+  try {
+    const res = await axios.get(`/vaccination-notifications/${accountId}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lỗi lấy thông báo tiêm chủng" };
+  }
+};
+
+export const getCheckupNotifications = async (accountId) => {
+  try {
+    const res = await axios.get(`/periodic-notifications/${accountId}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lỗi lấy thông báo khám định kỳ" };
+  }
+};
+
+export const getEventNotifications = async (accountId) => {
+  try {
+    const res = await axios.get(`/notifications/${accountId}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lỗi lấy thông báo sự kiện" };
+  }
+};
+
+export const approveCheckupNotification = async (
+  notification_id,
+  notes = ""
+) => {
+  const res = await axios.post(
+    `/checkup-notifications/${notification_id}/approve`,
+    { notes }
+  );
+  return res.data;
+};
+export const rejectCheckupNotification = async (
+  notification_id,
+  notes = ""
+) => {
+  const res = await axios.post(
+    `/checkup-notifications/${notification_id}/reject`,
+    { notes }
+  );
+  return res.data;
+};
+export const markCheckupNotificationSeen = async (notification_id) => {
+  const res = await axios.patch(
+    `/checkup-notifications/${notification_id}/seen`
+  );
+  return res.data;
+};
+
+
+export const approveVaccinationNotification = async (notification_id, notes = "") => {
+  const res = await axios.post(`/vaccination-notifications/${notification_id}/approve`, { notes });
+  return res.data;
+};
+export const rejectVaccinationNotification = async (notification_id, notes = "") => {
+  const res = await axios.post(`/vaccination-notifications/${notification_id}/reject`, { notes });
+  return res.data;
+};
+export const markVaccinationNotificationSeen = async (notification_id) => {
+  const res = await axios.patch(`/vaccination-notifications/${notification_id}/seen`);
+  return res.data;
+};
+
+
+export const getAllStudents = async () => {
+  try {
+    const res = await axios.get("/manager/students");
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lấy danh sách học sinh thất bại" };
+  }
+};
+
+export const getAllNurses = async () => {
+  try {
+    const res = await axios.get("/manager/nurses");
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lấy danh sách y tá thất bại" };
+  }
+};
+export const getAllParents = async () => {
+  try {
+    const res = await axios.get("/manager/parents");
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Lấy danh sách phụ huynh thất bại" };
+  }
+};
+
+
+export const fetchAllClasses = async () => {
+  try {
+    const res = await axios.get("/manager/classes");
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Không thể lấy danh sách lớp" };
+  }
+};
+
+export const fetchStudentsByClass = async (className) => {
+  try {
+    const res = await axios.get(`/manager/classes/${className}/students`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Không thể lấy học sinh theo lớp" };
+  }
+};
+
+
+export const fetchParentsByClass = async (className) => {
+  try {
+    const res = await axios.get(`/manager/classes/${className}/parents`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Không thể lấy phụ huynh theo lớp" };
+  }
+};
+
+export const createStudentAccount = async (studentData) => {
+  try {
+    const response = await axios.post("/manager/students", studentData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Tạo tài khoản học sinh thất bại" };
+  }
+};
+
+export const createNurseAccount = async (nurseData) => {
+  try {
+    const res = await axios.post("/manager/nurses", nurseData);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Tạo tài khoản y tá thất bại" };
+  }
+};
+export const createVaccinationSchedule = async ({
+  account_id,
+  vaccine_name,
+  vaccination_date,
+  target_age_group,
+}) => {
+  try {
+    const response = await axios.post(`/scheduleByManager`, {
+      account_id,
+      vaccine_name,
+      vaccination_date,
+      target_age_group,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || {
+      message: "Tạo lịch tiêm chủng thất bại",
+    };
+  }
+};
+

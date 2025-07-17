@@ -11,6 +11,7 @@ import im from "../../images/user.png";
 const ParentProfile = () => {
   const { data } = useOutletContext();
   const { user } = useContext(AuthContext);
+  console.log(user)
 
   const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);

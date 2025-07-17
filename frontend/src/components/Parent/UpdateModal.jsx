@@ -32,7 +32,6 @@ const UpdateModal = ({
 
       const uploadedUrl = res.data.secure_url;
       setForm((prev) => ({ ...prev, avatar_url: uploadedUrl }));
-      toast.success("Ảnh đã upload thành công!");
     } catch (error) {
       console.error("Upload thất bại:", error);
       toast.error("Upload ảnh thất bại");
@@ -49,11 +48,11 @@ const UpdateModal = ({
         <Form>
           <div className="text-center mb-3">
             <Image
-              src={localImagePreview}
+              src={form.avatar_url}
               roundedCircle
               width={120}
               height={120}
-              alt="Avatar"
+              alt="avatar"
               style={{ objectFit: "cover", border: "2px solid #007bff", boxShadow: "0 0 6px rgba(0,0,0,0.2)" }}
             />
             <Form.Label
@@ -148,16 +147,6 @@ const UpdateModal = ({
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Avatar URL (đã upload)</Form.Label>
-            <Form.Control
-              type="text"
-              name="avatar_url"
-              value={form.avatar_url || ""}
-              readOnly
-              plaintext
-            />
-          </Form.Group>
         </Form>
       </Modal.Body>
 

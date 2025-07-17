@@ -42,6 +42,7 @@ import Report from "./components/SchoolNurse/Report";
 import Profile from "./components/SchoolNurse/Profile";
 
 import Manager from "./components/Manager/Manager";
+import Notificated from "./components/Parent/Notificated";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -67,6 +68,8 @@ root.render(
             <Route path="health" element={<StudentHealthRecordDeclaration />} />
             <Route path="medicine" element={<RegisterMedicine />} />
             <Route path="history" element={<HealthHistory />} />
+            <Route path="notifications" element={<Notificated/>} />
+
           </Route>
 
           <Route path="student" element={<Student />} />

@@ -59,73 +59,77 @@ const RegisterMedicine = () => {
   };
 
   return (
-    <div className="medicine-form-container">
-      <h2>Register medicine to be sent to school</h2>
-      <form className="medicine-form" onSubmit={handleSubmit} noValidate>
-        <div className="medicine-row">
-          <label>* Medicine Name:</label>
-          <input
-            name="medicineName"
-            value={form.medicineName}
-            onChange={handleChange}
-            className={errors.medicineName ? "input-error" : ""}
-          />
-          {errors.medicineName && (
-            <span className="error-text">{errors.medicineName}</span>
-          )}
+    <>
+      <div className="medicine-form-wrapper">
+        <div className="medicine-form-container">
+          <h2 className="form-title">Register medicine to be sent to school</h2>
+          <form className="medicine-form" onSubmit={handleSubmit} noValidate>
+            <div className="medicine-row">
+              <label>* Medicine Name:</label>
+              <input
+                name="medicineName"
+                value={form.medicineName}
+                onChange={handleChange}
+                className={errors.medicineName ? "input-error" : ""}
+              />
+              {errors.medicineName && (
+                <span className="error-text">{errors.medicineName}</span>
+              )}
+            </div>
+
+            <div className="medicine-row">
+              <label>* Dosage:</label>
+              <input
+                name="dosage"
+                value={form.dosage}
+                onChange={handleChange}
+                className={errors.dosage ? "input-error" : ""}
+              />
+              {errors.dosage && (
+                <span className="error-text">{errors.dosage}</span>
+              )}
+            </div>
+
+            <div className="medicine-row">
+              <label>* Instructions:</label>
+              <textarea
+                name="instructions"
+                value={form.instructions}
+                onChange={handleChange}
+                rows={3}
+                className={errors.instructions ? "input-error" : ""}
+              />
+              {errors.instructions && (
+                <span className="error-text">{errors.instructions}</span>
+              )}
+            </div>
+
+            <div className="medicine-row">
+              <label>Note:</label>
+              <textarea
+                name="note"
+                value={form.note}
+                onChange={handleChange}
+                rows={4}
+              />
+            </div>
+
+            <button type="submit" className="medicine-submit-btn">
+              SUBMIT
+            </button>
+
+            {success && (
+              <div
+                className="success-text"
+                style={{ color: "green", marginTop: 12 }}
+              >
+                Medicine registered!
+              </div>
+            )}
+          </form>
         </div>
-
-        <div className="medicine-row">
-          <label>* Dosage:</label>
-          <input
-            name="dosage"
-            value={form.dosage}
-            onChange={handleChange}
-            className={errors.dosage ? "input-error" : ""}
-          />
-          {errors.dosage && (
-            <span className="error-text">{errors.dosage}</span>
-          )}
-        </div>
-
-        <div className="medicine-row">
-          <label>* Instructions:</label>
-          <textarea
-            name="instructions"
-            value={form.instructions}
-            onChange={handleChange}
-            rows={3}
-            className={errors.instructions ? "input-error" : ""}
-          />
-          {errors.instructions && (
-            <span className="error-text">{errors.instructions}</span>
-          )}
-        </div>
-
-        <div className="medicine-row">
-          <label>Note:</label>
-          <textarea
-            name="note"
-            value={form.note}
-            onChange={handleChange}
-            rows={4}
-          />
-        </div>
-
-        <button type="submit" className="medicine-submit-btn">
-          SUBMIT
-        </button>
-
-        {success && (
-          <div
-            className="success-text"
-            style={{ color: "green", marginTop: 12 }}
-          >
-            Medicine registered!
-          </div>
-        )}
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
 

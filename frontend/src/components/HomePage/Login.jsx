@@ -54,7 +54,7 @@ const Login = () => {
       <div className="login-page">
          <div className="diamond-shape left"></div>
         <div className="login-container">
-          <h2 className="title">Login Admin</h2>
+          <h2 className="title">Login </h2>
           <form onSubmit={handleSubmit}>
             <div>
               <label>Username:</label>

@@ -1,0 +1,36 @@
+.admin-profile {
+  margin-left: 250px;
+  padding: 40px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: calc(100% - 250px);
+  box-sizing: border-box;
+
+  &__title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #0d3b66;
+  }
+
+  &__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 2px solid #e0f7fa;
+  }
+
+  &__info {
+    p {
+      font-size: 16px;
+      margin: 12px 0;
+      color: #333;
+
+      strong {
+        color: #0d3b66;
+      }
+    }
+  }
+}

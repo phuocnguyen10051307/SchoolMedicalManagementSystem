@@ -33,7 +33,7 @@ const Navbar = () => {
         )}
         {!!user && user.role_id === "MANAGER" && (
           <li>
-            <Link to="/manager">Manager</Link>
+            <Link to="/admin/profilec">Manager</Link>
           </li>
         )}
         {!!user && user.role_id === "NURSE" && (
