@@ -29,7 +29,7 @@ const {
   updateMedicalEventController,
   getNurseDashboard,
   getCheckupTypes,
- acctiveVaccinationScheduleController,
+  acctiveVaccinationScheduleController,
   getVaccinationSchedulesController,
   getReportsByNurse,
   getHealthCheckupsByNurse,
@@ -37,8 +37,23 @@ const {
   createVaccinationScheduleControllerByManager,
   getApprovedMedicationFromParent,
   getConfirmedMedicationRequestsByNurse,
+  handleCheckupApproval,
+  handleVaccinationApproval,
+  handleCheckupRejection,
+  handleVaccinationRejection,
+  handleViewCheckupNotification,
+  handleViewVaccinationNotification,
+  getAllStudents,
+  getAllNurses,
+  getAllParents,
+  getAllClasses,
+  getStudentsByClass,
+  getParentsByClass,
+  createStudentAccount,
+  createNurseAccount
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
+const { checkRole } = require("../middlewares/checkRole");
 
 // ================= ROUTES ================= //
 // khai báo route
@@ -58,23 +73,54 @@ router.post("/checkups/class", createClassHealthCheckup);
 router.post("/events/create", createMedicalEventController);
 router.post("/medications/parent-request", createParentMedicationRequest);
 router.post(
-  "/medications/confirm-receipt",authenticateJWT,
+  "/medications/confirm-receipt",
+  authenticateJWT,
   confirmMedicationReceipt
 );
 router.post("/scheduleByNurse", acctiveVaccinationScheduleController);
-router.post("/scheduleByMager", createVaccinationScheduleControllerByManager);
+router.post("/scheduleByManager", createVaccinationScheduleControllerByManager);
+router.post(
+  "/checkup-notifications/:notification_id/approve",
+  handleCheckupApproval
+);
+router.post(
+  "/vaccination-notifications/:notification_id/approve",
+  handleVaccinationApproval
+);
+router.post(
+  "/checkup-notifications/:notification_id/reject",
+  handleCheckupRejection
+);
+router.post(
+  "/vaccination-notifications/:notification_id/reject",
+  handleVaccinationRejection
+);
+router.post(
+  "/manager/students",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  createStudentAccount
+);
+router.post(
+  "/manager/nurses",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  createNurseAccount
+);
+
+
 
 // GET
 router.get("/students/:user_id", getStudents); // id parent
 router.get("/healthprofiles/:user_id", healthprofiles); // id parent
 router.get("/parents/:student_id", authenticateJWT, parentByStudent); // get parent by student id
 router.get("/events/nurse/:nurse_id", getMedicalEventsByNurse);
-router.get("/notifications/:user_id", getNotifications); // id parent
-router.get("/periodic-notifications/:user_id", periodicNotifications);
+router.get("/notifications/:user_id", getNotifications); // id parent 1
+router.get("/periodic-notifications/:user_id", periodicNotifications); // 2 checkup notification
 router.get(
   "/vaccination-notifications/:accountId",
   getVaccinationNotifications
-);
+); // vaccin
 router.get("/logs/:accountId", getUserLogs);
 router.get(
   "/medications/requests/pending/:nurse_id",
@@ -90,17 +136,38 @@ router.get(
 router.get("/dashboard/nurse/:nurse_id", getNurseDashboard);
 router.get("/checkup-types", getCheckupTypes);
 router.get("/schedules", getVaccinationSchedulesController);
-router.get("/reports/:nurse_account_id", getReportsByNurse); 
-router.get("/checkups/:nurse_account_id", getHealthCheckupsByNurse); 
+router.get("/reports/:nurse_account_id", getReportsByNurse);
+router.get("/checkups/:nurse_account_id", getHealthCheckupsByNurse);
 router.get("/vaccinations/:nurse_account_id", getVaccinationReportsByNurse);
 router.get(
   "/medications/getRequestsFromParent/:nurse_id",
- getApprovedMedicationFromParent
+  getApprovedMedicationFromParent
 );
 router.get(
   "/medications/requests/confirmed/:nurse_id",
   getConfirmedMedicationRequestsByNurse
 );
+router.get(
+  "/manager/students",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getAllStudents
+);
+router.get(
+  "/manager/nurses",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getAllNurses
+);
+router.get(
+  "/manager/parents",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getAllParents
+);
+router.get("/manager/classes", authenticateJWT, checkRole("ADMIN", "MANAGER"), getAllClasses);
+router.get("/manager/classes/:className/students", authenticateJWT, checkRole("ADMIN", "MANAGER"), getStudentsByClass);
+router.get("/manager/classes/:className/parents", authenticateJWT, checkRole("ADMIN", "MANAGER"), getParentsByClass);
 
 
 // PUT
@@ -109,4 +176,13 @@ router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent); // 
 router.put("/nurse/updateNurseProfile/:nurse_id", updateInformationNurse);
 router.put("/events/update", updateMedicalEventController);
 
+//PATCH
+router.patch(
+  "/checkup-notifications/:notification_id/seen",
+  handleViewCheckupNotification
+);
+router.patch(
+  "/vaccination-notifications/:notification_id/seen",
+  handleViewVaccinationNotification
+);
 module.exports = router;

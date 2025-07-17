@@ -25,9 +25,8 @@ const getAccount = async (req, res) => {
     delete account.password;
 
     const payload = {
-      user_id: account.user_id,
-      username: account.username,
-      role: account.role_id,
+      account_id: account.account_id,
+      role_id: account.role_id,
     };
 
     const accessToken = generateAccessToken(payload)

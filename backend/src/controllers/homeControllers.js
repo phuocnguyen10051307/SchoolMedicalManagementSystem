@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/mailer")
 const { generateAccessToken, verifyRefreshToken } = require("../utils/jwt");
 
 const {
@@ -6,9 +7,23 @@ const {
   getParentByStudentId,
   putHeathyProfile,
   updateProfileParent,
+  approveCheckupNotification,
+  approveVaccinationNotification,
+  rejectCheckupNotification,
+  rejectVaccinationNotification,
+  markCheckupNotificationSeen,
+  markVaccinationNotificationSeen,
 } = require("../services/parentQueries");
 const {
   createVaccinationScheduleServiceByManager,
+  fetchAllStudents,
+  fetchAllNurses,
+  fetchAllParents,
+  fetchAllClasses,
+  fetchStudentsByClass,
+  fetchParentsByClass,
+   insertStudent,
+    insertNurse
 } = require("../services/adminAndManagerQuries");
 
 const {
@@ -133,7 +148,7 @@ const getPendingMedicationRequestsByNurseCo = async (req, res) => {
     const { nurse_id } = req.params;
 
     const requests = await getPendingRequestsForNurse(nurse_id);
-    console.log(requests)
+    console.log(requests);
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -143,7 +158,6 @@ const confirmMedicationReceipt = async (req, res) => {
   try {
     //const {nurse_account_id} = req.user.user_id; // lấy từ token
     const { request_id, received_quantity, nurse_account_id } = req.body;
-
 
     const result = await confirmParentMedicationReceiptService({
       request_id,
@@ -449,6 +463,7 @@ const createVaccinationScheduleControllerByManager = async (req, res) => {
       vaccination_date,
       target_age_group,
     });
+    console.log(result)
 
     res.status(201).json(result);
   } catch (error) {
@@ -476,6 +491,180 @@ const getConfirmedMedicationRequestsByNurse = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+const handleVaccinationApproval = async (req, res) => {
+  const { notification_id } = req.params;
+  const { notes } = req.body;
+  try {
+    await approveVaccinationNotification(notification_id, notes);
+    res.status(200).json({ message: "Vaccination notification approved" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const handleCheckupApproval = async (req, res) => {
+  const { notification_id } = req.params;
+  const { notes } = req.body;
+  try {
+    await approveCheckupNotification(notification_id, notes);
+    res.status(200).json({ message: "Checkup notification approved" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const handleVaccinationRejection = async (req, res) => {
+  const { notification_id } = req.params;
+  const { rejection_reason } = req.body;
+  try {
+    await rejectVaccinationNotification(notification_id, rejection_reason);
+    res.status(200).json({ message: "Vaccination notification rejected" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const handleCheckupRejection = async (req, res) => {
+  const { notification_id } = req.params;
+  const { notes } = req.body;
+  try {
+    await rejectCheckupNotification(notification_id, notes);
+    res.status(200).json({ message: "Checkup notification rejected" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const handleViewVaccinationNotification = async (req, res) => {
+  const { notification_id } = req.params;
+  try {
+    await markVaccinationNotificationSeen(notification_id);
+    res
+      .status(200)
+      .json({ message: "Vaccination notification marked as seen" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const handleViewCheckupNotification = async (req, res) => {
+  const { notification_id } = req.params;
+  try {
+    await markCheckupNotificationSeen(notification_id);
+    res.status(200).json({ message: "Checkup notification marked as seen" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const getAllStudents = async (req, res) => {
+  try {
+    const students = await fetchAllStudents();
+    res.status(200).json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAllNurses = async (req, res) => {
+  try {
+    const nurses = await fetchAllNurses();
+    res.status(200).json(nurses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAllParents = async (req, res) => {
+  try {
+    const parents = await fetchAllParents();
+    res.status(200).json(parents);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAllClasses = async (req, res) => {
+  try {
+    const classes = await fetchAllClasses();
+    res.status(200).json(classes.map((c) => c.class_name)); // trả mảng tên lớp
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getStudentsByClass = async (req, res) => {
+  try {
+    const className = req.params.className;
+    const students = await fetchStudentsByClass(className);
+    res.status(200).json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getParentsByClass = async (req, res) => {
+  try {
+    const className = req.params.className;
+    const parents = await fetchParentsByClass(className);
+    res.status(200).json(parents);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+const createStudentAccount = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const { student_id, student_code } = await insertStudent(data);
+
+    res.status(201).json({
+      message: "Tạo tài khoản học sinh thành công.",
+      student_id,
+      student_code,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi khi tạo học sinh." });
+  }
+};
+const createNurseAccount = async (req, res) => {
+  try {
+    const { full_name, email, phone_number, assigned_class } = req.body;
+
+    if (!email || !full_name || !assigned_class) {
+      return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
+    }
+
+    const username = email.split("@")[0];
+    const password = Math.random().toString(36).slice(-8); 
+
+    const nurseData = {
+      full_name,
+      email,
+      phone_number,
+      assigned_class,
+      username,
+      password, 
+    };
+
+    const { account_id, username: insertedUsername } = await insertNurse(nurseData);
+    const nurse_code = `NUR${account_id.slice(0, 4).toUpperCase()}`;
+
+    const htmlContent = `
+      <h3>Tài khoản Y tá của bạn đã được tạo</h3>
+      <p><strong>Mã Y tá:</strong> ${nurse_code}</p>
+      <p><strong>Username:</strong> ${insertedUsername}</p>
+      <p><strong>Password:</strong> ${password}</p>
+      <p>Vui lòng đăng nhập và đổi mật khẩu sớm.</p>
+    `;
+
+    await sendEmail(email, "Thông tin tài khoản Y tá", htmlContent);
+
+    res.status(201).json({ message: "Tạo tài khoản y tá thành công", nurse_code });
+  } catch (err) {
+    console.error("Lỗi tạo tài khoản y tá:", err.message);
+    res.status(500).json({ message: "Lỗi tạo tài khoản y tá" });
+  }
+};
+
 
 module.exports = {
   homePage,
@@ -514,4 +703,18 @@ module.exports = {
   createVaccinationScheduleControllerByManager,
   getApprovedMedicationFromParent,
   getConfirmedMedicationRequestsByNurse,
+  handleCheckupApproval,
+  handleVaccinationApproval,
+  handleCheckupRejection,
+  handleVaccinationRejection,
+  handleViewCheckupNotification,
+  handleViewVaccinationNotification,
+  getAllStudents,
+  getAllNurses,
+  getAllParents,
+  getAllClasses,
+  getStudentsByClass,
+  getParentsByClass,
+  createStudentAccount,
+  createNurseAccount
 };

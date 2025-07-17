@@ -370,9 +370,141 @@ const updateProfileParent = async (
   }
 };
 
+const approveCheckupNotification = async (notification_id, notes = null) => {
+  const client = await connection.connect();
+  try {
+    await client.query(
+      `UPDATE checkup_notifications
+       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       WHERE notification_id = $1`,
+      [notification_id, notes]
+    );
+  } finally {
+    client.release();
+  }
+};
+const approveVaccinationNotification = async (notification_id, notes = null) => {
+  const client = await connection.connect();
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      `SELECT student_vaccination_id FROM vaccination_notifications WHERE notification_id = $1`,
+      [notification_id]
+    );
+
+    if (!rows.length) throw new Error("Notification not found");
+
+    const studentVaccinationId = rows[0].student_vaccination_id;
+
+    await client.query(
+      `UPDATE vaccination_notifications
+       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       WHERE notification_id = $1`,
+      [notification_id, notes]
+    );
+
+    await client.query(
+      `UPDATE student_vaccination
+       SET consent_status = 'APPROVED'
+       WHERE student_vaccination_id = $1`,
+      [studentVaccinationId]
+    );
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const rejectCheckupNotification = async (notification_id, notes = null) => {
+  const client = await connection.connect();
+  try {
+    await client.query(
+      `UPDATE checkup_notifications
+       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       WHERE notification_id = $1`,
+      [notification_id, notes]
+    );
+  } finally {
+    client.release();
+  }
+};
+const rejectVaccinationNotification = async (notification_id, rejection_reason = null) => {
+  const client = await connection.connect();
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      `SELECT student_vaccination_id FROM vaccination_notifications WHERE notification_id = $1`,
+      [notification_id]
+    );
+    if (!rows.length) throw new Error("Notification not found");
+
+    const studentVaccinationId = rows[0].student_vaccination_id;
+
+    await client.query(
+      `UPDATE vaccination_notifications
+       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), rejection_reason = $2
+       WHERE notification_id = $1`,
+      [notification_id, rejection_reason]
+    );
+
+    await client.query(
+      `UPDATE student_vaccination
+       SET consent_status = 'REJECTED', rejection_reason = $1
+       WHERE student_vaccination_id = $2`,
+      [rejection_reason, studentVaccinationId]
+    );
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const markCheckupNotificationSeen = async (notification_id) => {
+  const client = await connection.connect();
+  try {
+    await client.query(
+      `UPDATE checkup_notifications
+       SET seen_at = NOW(), notification_status = 'SEEN'
+       WHERE notification_id = $1 AND seen_at IS NULL`,
+      [notification_id]
+    );
+  } finally {
+    client.release();
+  }
+};
+const markVaccinationNotificationSeen = async (notification_id) => {
+  const client = await connection.connect();
+  try {
+    await client.query(
+      `UPDATE vaccination_notifications
+       SET seen_at = NOW(), notification_status = 'SEEN'
+       WHERE notification_id = $1 AND seen_at IS NULL`,
+      [notification_id]
+    );
+  } finally {
+    client.release();
+  }
+};
+
 module.exports = {
   handleParentAccountRequest,
   getParentByStudentId,
   updateProfileParent,
   putHeathyProfile,
+  approveCheckupNotification,
+  approveVaccinationNotification,
+  rejectCheckupNotification,
+  rejectVaccinationNotification,
+  markCheckupNotificationSeen,
+  markVaccinationNotificationSeen
 };
