@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { sendEmail } = require("../utils/mailer")
+const { sendEmail } = require("../utils/mailer");
 const { generateAccessToken, verifyRefreshToken } = require("../utils/jwt");
 
 const {
@@ -22,8 +22,8 @@ const {
   fetchAllClasses,
   fetchStudentsByClass,
   fetchParentsByClass,
-   insertStudent,
-    insertNurse
+  insertStudent,
+  insertNurse,
 } = require("../services/adminAndManagerQuries");
 
 const {
@@ -34,6 +34,8 @@ const {
 const {
   getInformationOfStudent,
   getHeathProfiles,
+  getFullStudentProfile,
+  getStudentHealthProfileData,
 } = require("../services/studentQueries");
 
 const {
@@ -463,7 +465,7 @@ const createVaccinationScheduleControllerByManager = async (req, res) => {
       vaccination_date,
       target_age_group,
     });
-    console.log(result)
+    console.log(result);
 
     res.status(201).json(result);
   } catch (error) {
@@ -634,7 +636,7 @@ const createNurseAccount = async (req, res) => {
     }
 
     const username = email.split("@")[0];
-    const password = Math.random().toString(36).slice(-8); 
+    const password = Math.random().toString(36).slice(-8);
 
     const nurseData = {
       full_name,
@@ -642,10 +644,12 @@ const createNurseAccount = async (req, res) => {
       phone_number,
       assigned_class,
       username,
-      password, 
+      password,
     };
 
-    const { account_id, username: insertedUsername } = await insertNurse(nurseData);
+    const { account_id, username: insertedUsername } = await insertNurse(
+      nurseData
+    );
     const nurse_code = `NUR${account_id.slice(0, 4).toUpperCase()}`;
 
     const htmlContent = `
@@ -658,13 +662,46 @@ const createNurseAccount = async (req, res) => {
 
     await sendEmail(email, "Thông tin tài khoản Y tá", htmlContent);
 
-    res.status(201).json({ message: "Tạo tài khoản y tá thành công", nurse_code });
+    res
+      .status(201)
+      .json({ message: "Tạo tài khoản y tá thành công", nurse_code });
   } catch (err) {
     console.error("Lỗi tạo tài khoản y tá:", err.message);
     res.status(500).json({ message: "Lỗi tạo tài khoản y tá" });
   }
 };
 
+const getStudentFullProfile = async (req, res) => {
+  const accountId = req.user?.account_id;
+console.log(accountId)
+  try {
+    const student = await getFullStudentProfile(accountId);
+    console.log(student)
+    if (!student)
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy thông tin học sinh" });
+
+    res.status(200).json(student);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+  }
+};
+const getStudentHealthProfile = async (req, res) => {
+  const accountId = req.user?.account_id;
+
+  try {
+    const data = await getStudentHealthProfileData(accountId);
+    if (!data)
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy hồ sơ sức khỏe học sinh" });
+
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
+  }
+};
 
 module.exports = {
   homePage,
@@ -716,5 +753,7 @@ module.exports = {
   getStudentsByClass,
   getParentsByClass,
   createStudentAccount,
-  createNurseAccount
+  createNurseAccount,
+  getStudentFullProfile,
+  getStudentHealthProfile,
 };

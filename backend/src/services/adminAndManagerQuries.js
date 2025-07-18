@@ -197,7 +197,7 @@ const insertNurse = async (nurseData) => {
 
     const account_id = uuidv4().slice(0, 8);
     const username = `nurse_${account_id.slice(0, 4)}`;
-    const hashedPassword = await bcrypt.hash("123456", 10); // Hoặc password từ FE
+    const hashedPassword = `${account_id}_@${account_id.slice(0,2)}` // Hoặc password từ FE
 
     // Insert vào bảng accounts
     const insertAccountQuery = `

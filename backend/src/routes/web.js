@@ -50,7 +50,9 @@ const {
   getStudentsByClass,
   getParentsByClass,
   createStudentAccount,
-  createNurseAccount
+  createNurseAccount,
+  getStudentFullProfile,
+  getStudentHealthProfile,
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 const { checkRole } = require("../middlewares/checkRole");
@@ -108,8 +110,6 @@ router.post(
   createNurseAccount
 );
 
-
-
 // GET
 router.get("/students/:user_id", getStudents); // id parent
 router.get("/healthprofiles/:user_id", healthprofiles); // id parent
@@ -165,9 +165,27 @@ router.get(
   checkRole("ADMIN", "MANAGER"),
   getAllParents
 );
-router.get("/manager/classes", authenticateJWT, checkRole("ADMIN", "MANAGER"), getAllClasses);
-router.get("/manager/classes/:className/students", authenticateJWT, checkRole("ADMIN", "MANAGER"), getStudentsByClass);
-router.get("/manager/classes/:className/parents", authenticateJWT, checkRole("ADMIN", "MANAGER"), getParentsByClass);
+router.get(
+  "/manager/classes",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getAllClasses
+);
+router.get(
+  "/manager/classes/:className/students",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getStudentsByClass
+);
+router.get(
+  "/manager/classes/:className/parents",
+  authenticateJWT,
+  checkRole("ADMIN", "MANAGER"),
+  getParentsByClass
+);
+router.get("/student/profile", authenticateJWT, getStudentFullProfile);
+router.get("/health-profile", authenticateJWT,getStudentHealthProfile);
+
 
 
 // PUT
