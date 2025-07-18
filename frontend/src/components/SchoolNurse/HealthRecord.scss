@@ -1,11 +1,10 @@
 .record-container {
-  /* max-height: 100vh; */
+  width:1200px;
+  max-height: 180vh;
   height: 100%;
   background-color: #f0f8ff;
   box-sizing: border-box;
-
 }
-
 
 .filter-buttons {
   display: flex;
@@ -31,7 +30,6 @@
   background-color: #54de7d;
 }
 
-
 .table-wrapper {
   overflow-x: auto;
   background-color: white;
@@ -40,17 +38,12 @@
   width: 100%;
 }
 
-
-
 .record-table {
-  width: 1310px;
+  width: 1200px;
   table-layout: fixed;
   border-collapse: collapse;
   border: 1px solid #ddd;
 }
-
-
-
 
 .record-table th,
 .record-table td {
@@ -89,7 +82,6 @@
 .record-table th:nth-child(5),
 .record-table td:nth-child(5) {
   width: 50px;
-
 }
 
 /* Medication */
@@ -112,8 +104,6 @@
 .record-table td:nth-child(8) {
   width: 80px;
 }
-
-
 
 /* .description-cell {
   max-width: 200px;

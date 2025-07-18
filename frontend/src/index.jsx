@@ -43,6 +43,8 @@ import Profile from "./components/SchoolNurse/Profile";
 
 import Manager from "./components/Manager/Manager";
 import Notificated from "./components/Parent/Notificated";
+import StudentProfile from "./components/Student/StudentProfile";
+import StudentHealthProfile from "./components/Student/StudentHealth";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -53,7 +55,7 @@ root.render(
           <Route path="/" element={<HomePage />} />
           <Route path="service" element={<Service />} />
           <Route path="blog" element={<Blog />} />
-          
+
           <Route path="admin" element={<Admin />}>
             <Route index element={<Navigate to="profile" replace />} />
             <Route path="profile" element={<AdminProfile />} />
@@ -68,11 +70,13 @@ root.render(
             <Route path="health" element={<StudentHealthRecordDeclaration />} />
             <Route path="medicine" element={<RegisterMedicine />} />
             <Route path="history" element={<HealthHistory />} />
-            <Route path="notifications" element={<Notificated/>} />
-
+            <Route path="notifications" element={<Notificated />} />
           </Route>
 
-          <Route path="student" element={<Student />} />
+          <Route path="student" element={<Student />}>
+            <Route path="profile" element={<StudentProfile/>} />
+            <Route path="health" element={<StudentHealthProfile/>} />
+          </Route>
 
           <Route path="nurse" element={<SchoolNurse />}>
             <Route path="dashboard" element={<DashBoard />} />

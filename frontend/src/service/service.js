@@ -603,3 +603,20 @@ export const createVaccinationSchedule = async ({
   }
 };
 
+export const fetchStudentProfile = async () => {
+  try {
+    const response = await axios.get("/student/profile");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy thông tin học sinh" };
+  }
+};
+
+export const fetchStudentHealthProfile = async () => {
+  try {
+    const response = await axios.get("/student/health-profile");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy hồ sơ sức khỏe" };
+  }
+};

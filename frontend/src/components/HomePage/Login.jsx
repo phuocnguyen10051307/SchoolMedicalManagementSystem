@@ -28,15 +28,10 @@ const Login = () => {
 
       switch (account.role_id) {
         case "ADMIN":
-          navigate("/");
-          break;
         case "MANAGER":
-          navigate("/");
-          break;
         case "PARENT":
-          navigate("/");
-          break;
         case "NURSE":
+        case "STUDENT":
           navigate("/");
           break;
         default:
@@ -52,7 +47,7 @@ const Login = () => {
   return (
     <>
       <div className="login-page">
-         <div className="diamond-shape left"></div>
+        <div className="diamond-shape left"></div>
         <div className="login-container">
           <h2 className="title">Login </h2>
           <form onSubmit={handleSubmit}>
@@ -84,7 +79,7 @@ const Login = () => {
             <p style={{ color: "red", marginTop: 10 }}>{toast.error}</p>
           )}
         </div>{" "}
-         <div className="diamond-shape left"></div>
+        <div className="diamond-shape left"></div>
       </div>
     </>
   );

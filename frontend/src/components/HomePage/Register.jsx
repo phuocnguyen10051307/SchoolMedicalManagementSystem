@@ -90,7 +90,7 @@ const Register = () => {
             <option value="Father">Father</option>
             <option value="Guardian">Guardian</option>
           </select>
-          <button type="submit">Đăng ký</button>
+          <button type="submit">register</button>
         </form>
 
         {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}

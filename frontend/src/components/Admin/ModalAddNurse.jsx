@@ -19,7 +19,7 @@ const ModalAddNurse = ({ show, onClose }) => {
     e.preventDefault();
     try {
       await createNurseAccount(formData);
-      onClose(); // đóng modal nếu tạo thành công
+      onClose(); 
     } catch (err) {
       console.error("Lỗi khi tạo tài khoản y tá:", err.message);
     }

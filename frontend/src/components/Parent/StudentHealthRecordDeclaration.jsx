@@ -89,13 +89,13 @@ const StudentHealthRecordDeclaration = () => {
 
           <ListGroup variant="flush">
             <ListGroup.Item style={{ padding: "16px" }}>
-              <strong>Height:</strong> {data.height_cm} cm
+              <strong>Height:</strong> {data?.height_cm?data.height_cm:"chưa nhập"} cm
             </ListGroup.Item>
             <ListGroup.Item style={{ padding: "16px" }}>
-              <strong>Weight:</strong> {data.weight_kg} kg
+              <strong>Weight:</strong> {data?.weight_kg?data.weight_kg:" chưa nhập"} kg
             </ListGroup.Item>
             <ListGroup.Item style={{ padding: "16px" }}>
-              <strong>Blood Type:</strong> {data.blood_type}
+              <strong>Blood Type:</strong> {data?.blood_type?data.blood_type:"chưa nhập"}
             </ListGroup.Item>
             <ListGroup.Item style={{ padding: "16px" }}>
               <strong>Chronic Conditions:</strong> {data?.chronic_conditions?data.chronic_conditions:"Không"}
@@ -104,7 +104,7 @@ const StudentHealthRecordDeclaration = () => {
               <strong>Allergies:</strong> {data?.allergies?data.allergies:"Không"}
             </ListGroup.Item>
             <ListGroup.Item style={{ padding: "16px" }}>
-              <strong>Regular Medications:</strong> {data.regular_medications}
+              <strong>Regular Medications:</strong> {data?.regular_medications?data.regular_medications:"Không"}
             </ListGroup.Item>
             <ListGroup.Item style={{ padding: "16px" }}>
               <strong>Additional Notes:</strong> {data.additional_notes}

@@ -3,7 +3,6 @@ import "./Navbar.scss";
 import { AuthContext } from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
 
-
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   return (
@@ -33,12 +32,17 @@ const Navbar = () => {
         )}
         {!!user && user.role_id === "MANAGER" && (
           <li>
-            <Link to="/admin/profilec">Manager</Link>
+            <Link to="/admin/profile">Manager</Link>
           </li>
         )}
         {!!user && user.role_id === "NURSE" && (
           <li>
             <Link to="/nurse/dashboard">Nurse</Link>
+          </li>
+        )}
+        {!!user && user.role_id === "STUDENT" && (
+          <li>
+            <Link to="/student/profile">Student</Link>
           </li>
         )}
       </ul>
