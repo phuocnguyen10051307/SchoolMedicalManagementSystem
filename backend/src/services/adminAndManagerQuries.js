@@ -197,7 +197,7 @@ const insertNurse = async (nurseData) => {
 
     const account_id = uuidv4().slice(0, 8);
     const username = `nurse_${account_id.slice(0, 4)}`;
-    const hashedPassword = `${account_id}_@${account_id.slice(0,2)}` // Hoặc password từ FE
+    const hashedPassword = `${account_id}_@${account_id.slice(0, 2)}`; // Hoặc password từ FE
 
     // Insert vào bảng accounts
     const insertAccountQuery = `
@@ -213,7 +213,7 @@ const insertNurse = async (nurseData) => {
       hashedPassword,
       nurseData.email,
       nurseData.phone_number,
-      nurseData.full_name
+      nurseData.full_name,
     ];
     await client.query(insertAccountQuery, accountValues);
 
@@ -225,7 +225,11 @@ const insertNurse = async (nurseData) => {
           assignment_id, nurse_account_id, class_name
         ) VALUES ($1, $2, $3)
       `;
-      await client.query(insertClassQuery, [assignment_id, account_id, nurseData.assigned_class]);
+      await client.query(insertClassQuery, [
+        assignment_id,
+        account_id,
+        nurseData.assigned_class,
+      ]);
     }
 
     await client.query("COMMIT");
@@ -237,6 +241,147 @@ const insertNurse = async (nurseData) => {
     client.release();
   }
 };
+const updateProfileQuery = async (accountId, data) => {
+  const {
+    full_name,
+    email,
+    phone_number,
+    date_of_birth,
+    address,
+    avatar_url,
+  } = data;
+
+  const query = `
+    UPDATE accounts SET
+      full_name = $1,
+      email = $2,
+      phone_number = $3,
+      date_of_birth = $4,
+      address = $5,
+      avatar_url = $6,
+      updated_at = NOW()
+    WHERE account_id = $7
+  `;
+
+  try {
+    await connection.query(query, [
+      full_name,
+      email,
+      phone_number,
+      date_of_birth ? new Date(date_of_birth) : null, // ép kiểu ngày
+      address,
+      avatar_url,
+      accountId,
+    ]);
+  } catch (err) {
+    console.error(" Error in updateProfileQuery:", err);
+    throw err;
+  }
+};
+
+
+const getLogsQuery = async (limit, offset) => {
+  const query = `
+    SELECT * FROM logs
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2
+  `;
+  const { rows } = await connection.query(query, [limit, offset]);
+  return rows;
+};
+
+const createBlogQuery = async (data) => {
+  const { nurse_account_id, title, content, tags, visibility_status } = data;
+
+  const blogId = uuidv4();
+
+  const query = `
+    INSERT INTO blogs (
+      blog_id, nurse_account_id, title, content, tags,
+      visibility_status, created_at, updated_at, published_at
+    )
+    VALUES (
+      $1, $2, $3, $4, $5, $6,
+      NOW(), NOW(),
+      CASE WHEN $6 = 'PUBLIC' THEN NOW() ELSE NULL END
+    )
+  `;
+
+  await connection.query(query, [
+    blogId,
+    nurse_account_id,
+    title,
+    content,
+    tags,
+    visibility_status,
+  ]);
+
+  return blogId;
+};
+const SCHOOL_YEAR_CONDITION = `
+  checkup_date >= DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '8 months' AND
+  checkup_date < DATE_TRUNC('year', CURRENT_DATE + INTERVAL '1 year') + INTERVAL '5 months'
+`;
+
+const fetchManagerDashboardSummary = async () => {
+  const client = await connection.connect();
+  try {
+    const studentCountQuery = `
+      SELECT COUNT(*) FROM students
+    `;
+    const checkupCountQuery = `
+      SELECT COUNT(*) FROM health_checkups
+      WHERE checkup_date BETWEEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '8 months'
+                            AND DATE_TRUNC('year', CURRENT_DATE + INTERVAL '1 year') + INTERVAL '5 months'
+    `;
+    const medicalEventQuery = `
+      SELECT COUNT(*) FROM medical_events
+      WHERE event_datetime BETWEEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '8 months'
+                          AND DATE_TRUNC('year', CURRENT_DATE + INTERVAL '1 year') + INTERVAL '5 months'
+    `;
+    const vaccinationQuery = `
+      SELECT COUNT(*) FROM student_vaccination
+      WHERE status = 'COMPLETED'
+    `;
+    const medicineRequestQuery = `
+      SELECT COUNT(*) FROM parent_medication_requests
+    `;
+
+    const [
+      studentCount,
+      checkupCount,
+      medicalEventCount,
+      vaccinationCount,
+      medicineCount,
+    ] = await Promise.all([
+      client.query(studentCountQuery),
+      client.query(checkupCountQuery),
+      client.query(medicalEventQuery),
+      client.query(vaccinationQuery),
+      client.query(medicineRequestQuery),
+    ]);
+
+    return {
+      total_students: parseInt(studentCount.rows[0].count, 10),
+      total_checkups: parseInt(checkupCount.rows[0].count, 10),
+      total_medical_events: parseInt(medicalEventCount.rows[0].count, 10),
+      total_vaccinations_completed: parseInt(vaccinationCount.rows[0].count, 10),
+      total_medicine_requests: parseInt(medicineCount.rows[0].count, 10),
+    };
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+
+const findAccountById = async (accountId) => {
+  const query = "SELECT * FROM accounts WHERE account_id = $1";
+  const values = [accountId];
+  const result = await connection.query(query, values);
+  return result.rows[0];
+};
 
 module.exports = {
   createVaccinationScheduleServiceByManager,
@@ -247,5 +392,10 @@ module.exports = {
   fetchStudentsByClass,
   fetchParentsByClass,
   insertStudent,
-   insertNurse
+  insertNurse,
+  updateProfileQuery,
+  getLogsQuery,
+  createBlogQuery,
+  fetchManagerDashboardSummary ,
+  findAccountById
 };

@@ -24,6 +24,11 @@ const {
   fetchParentsByClass,
   insertStudent,
   insertNurse,
+  updateProfileQuery,
+  getLogsQuery,
+  createBlogQuery,
+  fetchManagerDashboardSummary,
+  findAccountById
 } = require("../services/adminAndManagerQuries");
 
 const {
@@ -66,6 +71,9 @@ const {
   getReportsByNurseService,
   getHealthCheckupsByNurseService,
   getVaccinationReportsByNurseService,
+  queryGetFilteredSupplies,
+  getNurseCheckupList,
+  fetchClassStatusByCheckupId,
 } = require("../services/nurseQueries");
 
 const homePage = (req, res) => {
@@ -673,10 +681,10 @@ const createNurseAccount = async (req, res) => {
 
 const getStudentFullProfile = async (req, res) => {
   const accountId = req.user?.account_id;
-console.log(accountId)
+  console.log(accountId);
   try {
     const student = await getFullStudentProfile(accountId);
-    console.log(student)
+    console.log(student);
     if (!student)
       return res
         .status(404)
@@ -702,7 +710,140 @@ const getStudentHealthProfile = async (req, res) => {
     res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
+const getFilteredSuppliesForNurse = async (req, res) => {
+  try {
+    const { filter, keyword } = req.query;
+    const supplies = await queryGetFilteredSupplies(filter, keyword);
+    res.status(200).json(supplies);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const getCheckupsForParent = async (req, res) => {
+  try {
+    const { parent_id } = req.params;
+    const checkups = await getHealthCheckupsForParent(parent_id);
+    res.status(200).json(checkups);
+  } catch (err) {
+    console.error("Error fetching checkups for parent:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
+const nurseCheckupListController = async (req, res) => {
+  const { nurse_id } = req.params;
+  try {
+    const result = await getNurseCheckupList(nurse_id);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Error fetching nurse checkups:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getClassNotificationStatusByCheckupId = async (req, res) => {
+  const { checkupId } = req.params;
+
+  try {
+    const rows = await fetchClassStatusByCheckupId(checkupId);
+
+    const classMap = {};
+
+    for (const row of rows) {
+      const { class_name, student_id, student_name, notification_status } = row;
+
+      if (!classMap[class_name]) {
+        classMap[class_name] = {
+          class_name,
+          students: [],
+          statistics: {
+            APPROVED: 0,
+            PENDING: 0,
+            REJECT: 0,
+          },
+        };
+      }
+
+      const status = notification_status || "PENDING";
+
+      classMap[class_name].students.push({
+        student_id,
+        student_name,
+        notification_status: status,
+      });
+
+      classMap[class_name].statistics[status]++;
+    }
+
+    const result = Object.values(classMap);
+    res.json(result);
+  } catch (err) {
+    console.error("Error fetching class checkup status:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  const { accountId } = req.params;
+  const data = req.body;
+  console.log(data)
+  try {
+    await updateProfileQuery(accountId, data);
+    res.json({ message: "Profile updated successfully." });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update profile." });
+  }
+};
+
+const getSystemLogs = async (req, res) => {
+  const { limit = 20, offset = 0 } = req.query;
+
+  try {
+    const logs = await getLogsQuery(limit, offset);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load logs." });
+  }
+};
+
+const createBlog = async (req, res) => {
+  const data = req.body;
+  try {
+    const blogId = await createBlogQuery(data);
+    res
+      .status(201)
+      .json({ message: "Blog created successfully", blog_id: blogId });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create blog." });
+  }
+};
+const getManagerDashboardSummary = async (req, res) => {
+  const { managerId } = req.params;
+
+  try {
+    const summary = await fetchManagerDashboardSummary();
+    console.log(summary)
+    res.json(summary);
+  } catch (err) {
+    console.error("Error in getManagerDashboardSummary:", err);
+    res.status(500).json({ error: "Lỗi server khi lấy thống kê tổng quan" });
+  }
+};
+
+
+const getAccountProfile = async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const account = await findAccountById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: "Không tìm thấy tài khoản" });
+    }
+    res.status(200).json(account);
+  } catch (err) {
+    console.error("Lỗi lấy thông tin hồ sơ:", err);
+    res.status(500).json({ message: "Lỗi máy chủ khi lấy hồ sơ" });
+  }
+};
 module.exports = {
   homePage,
   sendConfirmInfor,
@@ -756,4 +897,13 @@ module.exports = {
   createNurseAccount,
   getStudentFullProfile,
   getStudentHealthProfile,
+  getFilteredSuppliesForNurse,
+  getCheckupsForParent,
+  nurseCheckupListController,
+  getClassNotificationStatusByCheckupId,
+  updateProfile,
+  getSystemLogs,
+  createBlog,
+  getManagerDashboardSummary ,
+  getAccountProfile
 };

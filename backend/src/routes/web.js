@@ -53,6 +53,15 @@ const {
   createNurseAccount,
   getStudentFullProfile,
   getStudentHealthProfile,
+  getFilteredSuppliesForNurse,
+  getCheckupsForParent,
+  nurseCheckupListController,
+  getClassNotificationStatusByCheckupId,
+  updateProfile,
+  getSystemLogs,
+  createBlog,
+  getManagerDashboardSummary ,
+  getAccountProfile
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 const { checkRole } = require("../middlewares/checkRole");
@@ -72,7 +81,12 @@ router.post("/account", account); // optional: maybe deprecated?
 router.post("/account/login", account); // login
 router.post("/token/refresh", refreshAccessToken);
 router.post("/checkups/class", createClassHealthCheckup);
-router.post("/events/create", createMedicalEventController);
+router.post(
+  "/events/create",
+  authenticateJWT,
+  checkRole("NURSE"),
+  createMedicalEventController
+);
 router.post("/medications/parent-request", createParentMedicationRequest);
 router.post(
   "/medications/confirm-receipt",
@@ -109,11 +123,19 @@ router.post(
   checkRole("ADMIN", "MANAGER"),
   createNurseAccount
 );
+router.post('/blogs', createBlog);
+
+
 
 // GET
 router.get("/students/:user_id", getStudents); // id parent
 router.get("/healthprofiles/:user_id", healthprofiles); // id parent
-router.get("/parents/:student_id", authenticateJWT, parentByStudent); // get parent by student id
+router.get(
+  "/parents/:student_id",
+  authenticateJWT,
+  checkRole("PARENT"),
+  parentByStudent
+); // get parent by student id
 router.get("/events/nurse/:nurse_id", getMedicalEventsByNurse);
 router.get("/notifications/:user_id", getNotifications); // id parent 1
 router.get("/periodic-notifications/:user_id", periodicNotifications); // 2 checkup notification
@@ -184,8 +206,20 @@ router.get(
   getParentsByClass
 );
 router.get("/student/profile", authenticateJWT, getStudentFullProfile);
-router.get("/health-profile", authenticateJWT,getStudentHealthProfile);
-
+router.get("/health-profile", authenticateJWT, getStudentHealthProfile);
+router.get("/supplies", getFilteredSuppliesForNurse);
+router.get("/checkups/parent/:parent_id", getCheckupsForParent);
+router.get(
+  "/nurse/checkups-with-notifications/:nurse_id",
+  nurseCheckupListController
+);
+router.get(
+  "/checkups/:checkupId/classes",
+  getClassNotificationStatusByCheckupId
+);
+router.get('/dashboard/logs', getSystemLogs);
+router.get("/summary/:managerId", getManagerDashboardSummary);
+router.get("/accounts/:accountId/profile", getAccountProfile);
 
 
 // PUT
@@ -193,6 +227,9 @@ router.put("/account/updateProfile/:user_id", updateProfileHeath); // id parent
 router.put("/parents/updateProfileParent/:user_id", putUpdateProfileParent); // id parent
 router.put("/nurse/updateNurseProfile/:nurse_id", updateInformationNurse);
 router.put("/events/update", updateMedicalEventController);
+router.put('/accounts/:accountId/profile', updateProfile);
+
+
 
 //PATCH
 router.patch(

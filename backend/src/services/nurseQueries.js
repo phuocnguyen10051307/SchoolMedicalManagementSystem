@@ -33,9 +33,14 @@ const getInforNurse = async (account_id) => {
     client.release();
   }
 };
-const updateNurseInfo = async (account_id,  full_name, phone_number, email, avatar_url, date_of_birth) => {
- 
-
+const updateNurseInfo = async (
+  account_id,
+  full_name,
+  phone_number,
+  email,
+  avatar_url,
+  date_of_birth
+) => {
   const client = await connection.connect();
   try {
     await client.query(
@@ -51,7 +56,9 @@ const updateNurseInfo = async (account_id,  full_name, phone_number, email, avat
       `,
       [full_name, phone_number, email, avatar_url, date_of_birth, account_id]
     );
-    return { message: 'Nurse info updated successfully (excluding class assignment).' };
+    return {
+      message: "Nurse info updated successfully (excluding class assignment).",
+    };
   } catch (err) {
     throw err;
   } finally {
@@ -59,14 +66,13 @@ const updateNurseInfo = async (account_id,  full_name, phone_number, email, avat
   }
 };
 
-
 const confirmParentMedicationReceiptService = async ({
   request_id,
   nurse_account_id,
   received_quantity,
 }) => {
   const client = await connection.connect();
-  console.log(request_id,  nurse_account_id,)
+  console.log(request_id, nurse_account_id);
   try {
     await client.query("BEGIN");
     const { rows: requests } = await client.query(
@@ -239,32 +245,42 @@ const getNurseDashboardStats = async (nurse_id) => {
   const client = await connection.connect();
   try {
     // Thống kê loại sự kiện
-    const eventTypeResult = await client.query(`
+    const eventTypeResult = await client.query(
+      `
       SELECT event_type, COUNT(*) AS total
       FROM medical_events
       WHERE nurse_account_id = $1
       GROUP BY event_type
-    `, [nurse_id]);
+    `,
+      [nurse_id]
+    );
 
     //Thống kê mức độ nghiêm trọng
-    const severityResult = await client.query(`
+    const severityResult = await client.query(
+      `
       SELECT severity_level, COUNT(*) AS total
       FROM medical_events
       WHERE nurse_account_id = $1
       GROUP BY severity_level
-    `, [nurse_id]);
+    `,
+      [nurse_id]
+    );
 
     // Thống kê số sự kiện theo tháng
-    const monthlyEventResult = await client.query(`
+    const monthlyEventResult = await client.query(
+      `
       SELECT DATE_TRUNC('month', event_datetime) AS month, COUNT(*) AS total
       FROM medical_events
       WHERE nurse_account_id = $1
       GROUP BY month
       ORDER BY month
-    `, [nurse_id]);
+    `,
+      [nurse_id]
+    );
 
     // Thống kê trạng thái yêu cầu thuốc của học sinh do y tá phụ trách
-    const medicationStatusResult = await client.query(`
+    const medicationStatusResult = await client.query(
+      `
       SELECT request_status, COUNT(*) AS count
       FROM parent_medication_requests
       WHERE student_id IN (
@@ -277,10 +293,13 @@ const getNurseDashboardStats = async (nurse_id) => {
         )
       )
       GROUP BY request_status
-    `, [nurse_id]);
+    `,
+      [nurse_id]
+    );
 
     //  Trạng thái xét duyệt hồ sơ sức khỏe
-    const healthReviewStatusResult = await client.query(`
+    const healthReviewStatusResult = await client.query(
+      `
       SELECT review_status, COUNT(*) AS count
       FROM health_profiles
       WHERE student_id IN (
@@ -293,14 +312,16 @@ const getNurseDashboardStats = async (nurse_id) => {
         )
       )
       GROUP BY review_status
-    `, [nurse_id]);
+    `,
+      [nurse_id]
+    );
 
     return {
       eventTypeStats: eventTypeResult.rows,
       severityStats: severityResult.rows,
       monthlyEventStats: monthlyEventResult.rows,
       medicationRequestStats: medicationStatusResult.rows,
-      healthProfileReviewStats: healthReviewStatusResult.rows
+      healthProfileReviewStats: healthReviewStatusResult.rows,
     };
   } catch (err) {
     throw err;
@@ -395,9 +416,163 @@ const getVaccinationReportsByNurseService = async (nurse_account_id) => {
     client.release();
   }
 };
+const queryGetFilteredSupplies = async (filter, keyword) => {
+  const client = await connection.connect();
+  try {
+    let whereClauses = [];
+    let values = [];
+    let idx = 1;
 
+    // ----- Lọc theo trạng thái -----
+    if (filter === "expiring") {
+      whereClauses.push(
+        `s.expiration_date BETWEEN NOW() AND NOW() + INTERVAL '4 months'`
+      );
+    } else if (filter === "expired") {
+      whereClauses.push(`s.expiration_date < NOW()`);
+    } else if (filter === "out_of_stock") {
+      whereClauses.push(`COALESCE(i.quantity, 0) = 0`);
+    }
 
+    // ----- Lọc theo tên -----
+    if (keyword) {
+      whereClauses.push(`LOWER(s.name) LIKE LOWER($${idx++})`);
+      values.push(`%${keyword}%`);
+    }
 
+    const whereSQL =
+      whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+    const query = `
+      SELECT 
+        s.supply_id,
+        s.name,
+        s.supply_type,
+        s.unit,
+        s.description,
+        s.expiration_date,
+        s.status,
+        i.quantity,
+        i.location,
+        i.last_restocked_at
+      FROM medical_supplies s
+      LEFT JOIN supply_inventory i ON s.supply_id = i.supply_id
+      ${whereSQL}
+      ORDER BY s.name
+    `;
+
+    const { rows } = await client.query(query, values);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
+const getHealthCheckupsForParent = async (parentId) => {
+  const client = await connection.connect();
+  try {
+    const query = `
+      SELECT hc.checkup_id, hc.student_id, s.full_name AS student_name,
+             hc.nurse_account_id, hc.checkup_type, hc.result, hc.checkup_date
+      FROM health_checkups hc
+      JOIN students s ON hc.student_id = s.student_id
+      JOIN accounts a ON s.father_email = a.email OR s.mother_email = a.email
+      WHERE a.account_id = $1
+      ORDER BY hc.checkup_date DESC
+    `;
+    const { rows } = await client.query(query, [parentId]);
+    return rows;
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const getNurseCheckupList = async (nurseId) => {
+  const client = await connection.connect();
+  try {
+    // 1. Lấy danh sách checkup như cũ
+    const listQuery = `
+      SELECT
+        hc.checkup_id,
+        s.full_name AS student_name,
+        s.class_name,
+        hc.checkup_date,
+        hc.checkup_type,
+        COALESCE(n.notification_status, 'PENDING') AS notification_status
+      FROM health_checkups hc
+      JOIN students s ON hc.student_id = s.student_id
+      JOIN nurse_classes nc ON s.class_name = nc.class_name
+      LEFT JOIN checkup_notifications n ON hc.checkup_id = n.checkup_id
+      WHERE nc.nurse_account_id = $1
+      ORDER BY hc.checkup_date DESC
+    `;
+    const { rows: checkupList } = await client.query(listQuery, [nurseId]);
+
+    // 2. Lấy thống kê status theo từng lớp
+    const countQuery = `
+      SELECT
+        s.class_name,
+        COUNT(*) FILTER (WHERE COALESCE(n.notification_status, 'PENDING') IN ('PENDING', 'SENT', 'SEEN')) AS pending_count,
+        COUNT(*) FILTER (WHERE n.notification_status = 'APPROVED') AS approved_count,
+        COUNT(*) FILTER (WHERE n.notification_status = 'REJECT') AS rejected_count
+      FROM health_checkups hc
+      JOIN students s ON hc.student_id = s.student_id
+      JOIN nurse_classes nc ON s.class_name = nc.class_name
+      LEFT JOIN checkup_notifications n ON hc.checkup_id = n.checkup_id
+      WHERE nc.nurse_account_id = $1
+      GROUP BY s.class_name
+      ORDER BY s.class_name
+    `;
+    const { rows: statusCountByClass } = await client.query(countQuery, [
+      nurseId,
+    ]);
+
+    // 3. Lấy danh sách kiểm tra sức khỏe định kỳ
+    const periodicQuery = `
+  SELECT
+    hc.checkup_id,
+    hc.checkup_date,
+    ct.display_name AS checkup_type_name
+  FROM health_checkups hc
+  JOIN checkup_types ct ON hc.checkup_type = ct.checkup_type
+  JOIN students s ON hc.student_id = s.student_id
+  JOIN nurse_classes nc ON s.class_name = nc.class_name
+  WHERE nc.nurse_account_id = $1
+  ORDER BY hc.checkup_date DESC
+`;
+    const { rows: periodicCheckups } = await client.query(periodicQuery, [
+      nurseId,
+    ]);
+
+    return {
+      checkupList,
+      statusCountByClass,
+      periodicCheckups,
+    };
+  } catch (err) {
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
+const fetchClassStatusByCheckupId = async (checkupId) => {
+  const query = `
+    SELECT
+      s.class_name,
+      s.student_id,
+      s.full_name AS student_name,
+      n.notification_status
+    FROM health_checkups hc
+    JOIN students s ON hc.student_id = s.student_id
+    LEFT JOIN checkup_notifications n ON hc.checkup_id = n.checkup_id AND n.parent_account_id IS NOT NULL
+    WHERE hc.checkup_id = $1
+  `;
+  const { rows } = await connection.query(query, [checkupId]);
+  return rows;
+};
 
 module.exports = {
   confirmParentMedicationReceiptService,
@@ -409,8 +584,11 @@ module.exports = {
   getStudentName,
   getMedicalEventsByNurseId,
   getNurseDashboardStats,
-   getReportsByNurseService,
-   getHealthCheckupsByNurseService,
-   getVaccinationReportsByNurseService,
-
+  getReportsByNurseService,
+  getHealthCheckupsByNurseService,
+  getVaccinationReportsByNurseService,
+  queryGetFilteredSupplies,
+  getHealthCheckupsForParent,
+  getNurseCheckupList,
+  fetchClassStatusByCheckupId
 };

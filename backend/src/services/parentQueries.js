@@ -375,7 +375,7 @@ const approveCheckupNotification = async (notification_id, notes = null) => {
   try {
     await client.query(
       `UPDATE checkup_notifications
-       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       SET notification_status = 'APPROVED', acknowledged_at = NOW(), notes = $2
        WHERE notification_id = $1`,
       [notification_id, notes]
     );
@@ -399,7 +399,7 @@ const approveVaccinationNotification = async (notification_id, notes = null) => 
 
     await client.query(
       `UPDATE vaccination_notifications
-       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       SET notification_status = 'APPROVED', acknowledged_at = NOW(), notes = $2
        WHERE notification_id = $1`,
       [notification_id, notes]
     );
@@ -425,7 +425,7 @@ const rejectCheckupNotification = async (notification_id, notes = null) => {
   try {
     await client.query(
       `UPDATE checkup_notifications
-       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), notes = $2
+       SET notification_status = 'REJECTED', acknowledged_at = NOW(), notes = $2
        WHERE notification_id = $1`,
       [notification_id, notes]
     );
@@ -448,7 +448,7 @@ const rejectVaccinationNotification = async (notification_id, rejection_reason =
 
     await client.query(
       `UPDATE vaccination_notifications
-       SET notification_status = 'ACKNOWLEDGED', acknowledged_at = NOW(), rejection_reason = $2
+       SET notification_status = 'REJECTED', acknowledged_at = NOW(), rejection_reason = $2
        WHERE notification_id = $1`,
       [notification_id, rejection_reason]
     );
