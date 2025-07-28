@@ -620,3 +620,58 @@ export const fetchStudentHealthProfile = async () => {
     throw error.response?.data || { message: "Không thể lấy hồ sơ sức khỏe" };
   }
 };
+
+
+export const fetchNurseCheckupsWithNotifications = async (nurseId) => {
+  try {
+    const response = await axios.get(`/nurse/checkups-with-notifications/${nurseId}`);
+    return response.data; // => { checkupList, statusCountByClass }
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể lấy dữ liệu kiểm tra sức khỏe" };
+  }
+};
+
+
+export const fetchClassStatusByCheckupId = async (checkupId) => {
+  try {
+    const res = await axios.get(`/checkups/${checkupId}/classes`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể tải danh sách lớp" };
+  }
+};
+
+export const updateProfile = async (accountId, updatedInfo) => {
+  try {
+    const res = await axios.put(`/accounts/${accountId}/profile`, updatedInfo);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Cập nhật hồ sơ thất bại" };
+  }
+};
+
+export const getDashboardSummary = async (managerId) => {
+  try {
+    const res = await axios.get(`/summary/${managerId}`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Lấy dữ liệu thống kê thất bại" };
+  }
+};
+export const createBlog = async (blogData) => {
+  try {
+    const res = await axios.post(`/blogs`, blogData);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Tạo blog thất bại" };
+  }
+};
+
+export const getAccountProfile = async (accountId) => {
+  try {
+    const res = await axios.get(`/accounts/${accountId}/profile`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Lấy hồ sơ thất bại" };
+  }
+};

@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    window.location.href = "/";
   };
 
   return (

@@ -1,0 +1,14 @@
+.class-section {
+  margin-bottom: 2rem;
+
+  .status-summary {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h5 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+}

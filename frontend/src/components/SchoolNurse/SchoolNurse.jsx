@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./SchoolNurse.scss";
 import {
   FaClipboardList,
@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
 import { useNurseData } from "../../hooks/useNurseData";
+import { AuthContext } from "../../context/AuthContext";
 
 const menuItems = [
   {
@@ -58,6 +59,7 @@ const menuItems = [
 ];
 
 const SchoolNurse = () => {
+  const { user, logout } = useContext(AuthContext);
   const { data, loading, error, refetch } = useNurseData();
   if (loading) return <div>Loading nurse data...</div>;
   if (error) return <div>Error loading nurse data: {error}</div>;
@@ -84,6 +86,15 @@ const SchoolNurse = () => {
               </NavLink>
             </li>
           ))}
+          <li>
+            <button className="menu-item logout-button" onClick={logout}>
+              <span className="icon">
+                <i className="fas fa-sign-out-alt" />{" "}
+                {/* Font Awesome fallback */}
+              </span>
+              <span className="label">Logout</span>
+            </button>
+          </li>
         </ul>
       </div>
 

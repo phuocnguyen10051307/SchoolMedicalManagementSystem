@@ -3,23 +3,42 @@ import { Modal, Button, Form, Image, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const UpdateModal = ({
-  showModal,
-  handleClose,
-  handleSave,
-  form,
-  setForm,
-  handleChange,
-}) => {
-  const [localImagePreview, setLocalImagePreview] = useState(form.avatar_url);
+const ModalUpdateProfile = ({ show, onHide, user = {}, onSubmit }) => {
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone_number: "",
+    address: "",
+    date_of_birth: "",
+    avatar_url: "",
+  });
+
+  const [localImagePreview, setLocalImagePreview] = useState("");
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // Reset preview và file khi mở modal mới
   useEffect(() => {
-    setLocalImagePreview(form.avatar_url);
-    setSelectedImageFile(null);
-  }, [form.avatar_url, showModal]);
+    if (user) {
+      setFormData({
+        full_name: user.full_name || "",
+        email: user.email || "",
+        phone_number: user.phone_number || "",
+        address: user.address || "",
+        date_of_birth: user.date_of_birth ? user.date_of_birth.slice(0, 10) : "",
+        avatar_url: user.avatar_url || "",
+      });
+      setLocalImagePreview(user.avatar_url || "");
+      setSelectedImageFile(null);
+    }
+  }, [user, show]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -27,46 +46,53 @@ const UpdateModal = ({
 
     const localURL = URL.createObjectURL(file);
     setLocalImagePreview(localURL);
-    setSelectedImageFile(file); // Chưa upload vội
+    setSelectedImageFile(file);
   };
 
-  const handleModalSave = async () => {
-    let updatedAvatarUrl = form.avatar_url;
+  const handleSubmit = async () => {
+    let updatedAvatarUrl = formData.avatar_url;
 
     if (selectedImageFile) {
-      const formData = new FormData();
-      formData.append("file", selectedImageFile);
-      formData.append("upload_preset", "images"); // Cloudinary preset
+      const uploadData = new FormData();
+      uploadData.append("file", selectedImageFile);
+      uploadData.append("upload_preset", "images"); // Cloudinary preset
 
       try {
         setUploading(true);
         const res = await axios.post(
           "https://api.cloudinary.com/v1_1/dg1v9rju0/image/upload",
-          formData
+          uploadData
         );
         updatedAvatarUrl = res.data.secure_url;
-      } catch (error) {
-        console.error("Upload ảnh thất bại:", error);
-        toast.error("Upload ảnh thất bại");
-        setUploading(false);
+      } catch (err) {
+        toast.error("Image upload failed");
+        console.error(err);
         return;
       } finally {
         setUploading(false);
       }
     }
 
-    setForm((prev) => ({ ...prev, avatar_url: updatedAvatarUrl }));
-    handleSave(); // Gọi hàm lưu từ component cha
+    if (onSubmit) {
+      onSubmit({ ...formData, avatar_url: updatedAvatarUrl });
+    }
+
+    onHide();
   };
 
-  return (
-    <Modal show={showModal} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Update Parent Profile</Modal.Title>
-      </Modal.Header>
+  const isFormValid = () =>
+    formData.full_name.trim() &&
+    formData.email.trim() &&
+    formData.phone_number.trim();
 
+  return (
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Update Profile</Modal.Title>
+      </Modal.Header>
       <Modal.Body>
         <Form>
+          {/* Avatar */}
           <div className="text-center mb-3">
             <Image
               src={localImagePreview}
@@ -81,22 +107,22 @@ const UpdateModal = ({
               }}
             />
             <Form.Label
-              htmlFor="avatar-upload-modal"
+              htmlFor="avatar-upload"
               className="btn btn-outline-primary btn-sm d-block mt-2"
               style={{ cursor: "pointer" }}
             >
               {uploading ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
-                  Đang upload...
+                  Uploading...
                 </>
               ) : (
-                "Chọn ảnh mới"
+                "Choose Image"
               )}
             </Form.Label>
             <Form.Control
               type="file"
-              id="avatar-upload-modal"
+              id="avatar-upload"
               accept="image/*"
               onChange={handleImageChange}
               style={{ display: "none" }}
@@ -104,26 +130,15 @@ const UpdateModal = ({
             />
           </div>
 
-          {/* Các field thông tin cá nhân */}
+          {/* Form Fields */}
           <Form.Group className="mb-3">
             <Form.Label>Full Name</Form.Label>
             <Form.Control
               type="text"
               name="full_name"
-              value={form.full_name || ""}
+              value={formData.full_name}
               onChange={handleChange}
               placeholder="Enter full name"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="text"
-              name="phone_number"
-              value={form.phone_number || ""}
-              onChange={handleChange}
-              placeholder="Enter phone number"
             />
           </Form.Group>
 
@@ -132,9 +147,20 @@ const UpdateModal = ({
             <Form.Control
               type="email"
               name="email"
-              value={form.email || ""}
+              value={formData.email}
               onChange={handleChange}
               placeholder="Enter email"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Phone Number</Form.Label>
+            <Form.Control
+              type="text"
+              name="phone_number"
+              value={formData.phone_number}
+              onChange={handleChange}
+              placeholder="Enter phone number"
             />
           </Form.Group>
 
@@ -143,19 +169,8 @@ const UpdateModal = ({
             <Form.Control
               type="date"
               name="date_of_birth"
-              value={form.date_of_birth?.substring(0, 10) || ""}
+              value={formData.date_of_birth}
               onChange={handleChange}
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Occupation</Form.Label>
-            <Form.Control
-              type="text"
-              name="occupation"
-              value={form.occupation || ""}
-              onChange={handleChange}
-              placeholder="Enter occupation"
             />
           </Form.Group>
 
@@ -164,35 +179,27 @@ const UpdateModal = ({
             <Form.Control
               type="text"
               name="address"
-              value={form.address || ""}
+              value={formData.address}
               onChange={handleChange}
               placeholder="Enter address"
             />
           </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>CCCD</Form.Label>
-            <Form.Control
-              type="text"
-              name="identity_number"
-              value={form.identity_number || ""}
-              onChange={handleChange}
-              placeholder="Enter identity number"
-            />
-          </Form.Group>
         </Form>
       </Modal.Body>
-
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose} disabled={uploading}>
+        <Button variant="secondary" onClick={onHide} disabled={uploading}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleModalSave} disabled={uploading}>
-          {uploading ? "Đang lưu..." : "Save Changes"}
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={!isFormValid() || uploading}
+        >
+          {uploading ? "Saving..." : "Save Changes"}
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default UpdateModal;
+export default ModalUpdateProfile;

@@ -8,6 +8,7 @@ import {
 } from "../../service/service";
 import { useOutletContext } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const HealthRecord = () => {
   const { user } = useContext(AuthContext);
@@ -60,9 +61,11 @@ const HealthRecord = () => {
         received_quantity: selectedRequest?.dosage || "Không rõ",
       });
 
+
       setMedications((prev) => prev.filter((item) => item.request_id !== requestId));
+      toast.success("confirm success")
     } catch (error) {
-      alert("Xác nhận thất bại: " + (error.message || "Lỗi không xác định"));
+      toast.error("Xác nhận thất bại: " + (error.message || "Lỗi không xác định"));
     } finally {
       setConfirmingId(null);
     }

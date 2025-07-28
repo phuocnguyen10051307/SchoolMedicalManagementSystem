@@ -1,16 +1,60 @@
 .admin-profile {
-  margin-left: 250px;
   padding: 40px;
-  background-color: #ffffff;
+  background-color: #f5f9fa;
   min-height: 100vh;
-  width: calc(100% - 250px);
+  width: calc(100% - 8px);
   box-sizing: border-box;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    .admin-profile__buttons {
+      display: flex;
+      gap: 10px;
+
+      button {
+        font-size: 14px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: white;
+
+        &.btn-update {
+          background-color: #007bff;
+
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+
+        &.btn-dashboard {
+          background-color: #28a745;
+
+          &:hover {
+            background-color: #1e7e34;
+          }
+        }
+      }
+    }
+  }
 
   &__title {
     font-size: 28px;
     font-weight: 700;
-    margin-bottom: 30px;
     color: #0d3b66;
+  }
+
+  &__card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
   }
 
   &__avatar {
@@ -19,7 +63,7 @@
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
-    border: 2px solid #e0f7fa;
+    border: 3px solid #cfe9fc;
   }
 
   &__info {
@@ -31,6 +75,16 @@
       strong {
         color: #0d3b66;
       }
+    }
+  }
+
+  &__action {
+    margin-top: 20px;
+    text-align: right;
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
     }
   }
 }

@@ -23,7 +23,6 @@ import "./components/Parent/Parent.scss";
 import ParentProfile from "./components/Parent/ParentProfile";
 import StudentHealthRecordDeclaration from "./components/Parent/StudentHealthRecordDeclaration";
 import RegisterMedicine from "./components/Parent/RegisterMedicine";
-import HealthHistory from "./components/Parent/HealthHistory";
 
 import Student from "./components/Student/Student";
 import HomePage from "./components/HomePage/Home/HomePage";
@@ -69,7 +68,6 @@ root.render(
             <Route path="profile" element={<ParentProfile />} />
             <Route path="health" element={<StudentHealthRecordDeclaration />} />
             <Route path="medicine" element={<RegisterMedicine />} />
-            <Route path="history" element={<HealthHistory />} />
             <Route path="notifications" element={<Notificated />} />
           </Route>
 

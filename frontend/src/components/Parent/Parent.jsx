@@ -1,9 +1,14 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import "./Parent.scss";
 import { useParentData } from "../../hooks/useParentData";
+import { useEffect } from "react";
+import { getInforAccount } from "../../service/service";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const Parent = () => {
-  const { data, loading, error } = useParentData();
+  const { user, logout } = useContext(AuthContext);
+  const { data, loading, error } = useParentData(getInforAccount, "PARENT");
   const location = useLocation();
 
   const isActive = (path) => location.pathname.endsWith(path);
@@ -40,14 +45,19 @@ const Parent = () => {
           >
             Notifications
           </Link>
-          <div className="parent-tab blank"></div>
+        </div>
+        <div className="btn-logout">
+          <button className="logout-tab" onClick={logout}>
+            Logout
+          </button>
         </div>
       </div>
+
       <div className="parent-content">
         {loading ? (
-          <div>Loading...</div>
+         <div className="status-text">Loading...</div>
         ) : error ? (
-          <div style={{ color: "red" }}>Error: {error}</div>
+          <div className="status-text error">Error: {error}</div>
         ) : (
           <Outlet context={{ data }} />
         )}

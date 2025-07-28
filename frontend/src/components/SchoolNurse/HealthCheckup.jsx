@@ -1,53 +1,58 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   getCheckupTypes,
-  getNurseClassListService,
   createClassHealthCheckupService,
+  fetchNurseCheckupsWithNotifications,
+  fetchClassStatusByCheckupId,
 } from "../../service/service";
 import { useOutletContext } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import { Button, Modal } from "react-bootstrap";
+import CheckupViewModal from "./CheckupViewModal";
 import "./HealthCheckup.scss";
 
 const HealthCheckup = () => {
   const { user } = useContext(AuthContext);
   const { nurseData } = useOutletContext();
-  const [checkupTypes, setCheckupTypes] = useState([]);
-  const [classList, setClassList] = useState([]);
-  const [selectedCheckupType, setSelectedCheckupType] = useState("");
-  const [checkupDate, setCheckupDate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
-  // Lấy ngày hiện tại theo định dạng yyyy-mm-dd
+  const [checkupTypes, setCheckupTypes] = useState([]);
+  const [checkupDate, setCheckupDate] = useState("");
+  const [selectedCheckupType, setSelectedCheckupType] = useState("");
+  const [notes, setNotes] = useState("");
+  const [periodicCheckups, setPeriodicCheckups] = useState([]);
+  const [selectedCheckup, setSelectedCheckup] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    const fetchTypesAndClasses = async () => {
+    const fetchData = async () => {
       try {
-        const [types, classes] = await Promise.all([
+        const [types, checkups] = await Promise.all([
           getCheckupTypes(),
-          getNurseClassListService(user.account_id),
+          fetchNurseCheckupsWithNotifications(user.account_id),
         ]);
         setCheckupTypes(types);
-        setClassList(classes);
+        setPeriodicCheckups(checkups.periodicCheckups || []);
       } catch (err) {
-        console.error("Failed to fetch data:", err);
+        console.error("Error loading:", err);
       }
     };
 
-    fetchTypesAndClasses();
+    fetchData();
   }, [user.account_id]);
+  console.log(periodicCheckups)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!checkupDate || !selectedCheckupType) {
-      alert("Vui lòng điền đầy đủ thông tin");
+      toast.warning("Vui lòng điền đầy đủ thông tin");
       return;
     }
 
-    // Không cho chọn ngày quá khứ (phòng khi bypass HTML)
     if (new Date(checkupDate) < new Date(today)) {
-      alert("Ngày kiểm tra không được là ngày trong quá khứ");
+      toast.error("Ngày kiểm tra không được là ngày trong quá khứ");
       return;
     }
 
@@ -58,22 +63,39 @@ const HealthCheckup = () => {
         checkup_type: selectedCheckupType,
         notes,
       });
-      setSuccessMessage("Tạo sự kiện kiểm tra sức khỏe thành công!");
+
+      toast.success("Tạo sự kiện kiểm tra sức khỏe thành công!");
+
+      setCheckupDate("");
+      setSelectedCheckupType("");
+      setNotes("");
+
+      const refreshed = await fetchNurseCheckupsWithNotifications(
+        user.account_id
+      );
+      setPeriodicCheckups(refreshed.periodicCheckups || []);
     } catch (err) {
       console.error(err);
-      alert("Tạo sự kiện thất bại");
+      toast.error("Tạo sự kiện thất bại");
     }
   };
 
-  const selectedType = checkupTypes.find(
-    (type) => type.checkup_type === selectedCheckupType
-  );
+  const handleViewClick = async (checkupId) => {
+    try {
+      const data = await fetchClassStatusByCheckupId(checkupId);
+      setSelectedCheckup({ checkupId, data });
+      setShowModal(true);
+    } catch (err) {
+      toast.error("Không thể tải dữ liệu lớp.");
+    }
+  };
 
   return (
     <div className="health-checkup-container">
-      <div className="form-wrapper">
-        <h2>Health Checkup Form</h2>
+      <div className="left-panel">
         <form onSubmit={handleSubmit}>
+          <h2>Tạo kiểm tra sức khỏe</h2>
+
           <div className="form-group">
             <label>Ngày kiểm tra:</label>
             <input
@@ -101,12 +123,6 @@ const HealthCheckup = () => {
             </select>
           </div>
 
-          {selectedType?.description && (
-            <div className="checkup-description">
-              {selectedType.description}
-            </div>
-          )}
-
           <div className="form-group">
             <label>Ghi chú:</label>
             <textarea
@@ -116,17 +132,65 @@ const HealthCheckup = () => {
             />
           </div>
 
-          <div className="form-actions">
-            <button type="submit">Tạo sự kiện kiểm tra</button>
-          </div>
-
-          {successMessage && (
-            <p style={{ color: "green", marginTop: "1rem" }}>
-              {successMessage}
-            </p>
-          )}
+          <button type="submit">Tạo sự kiện</button>
         </form>
       </div>
+
+      <div className="right-panel">
+        <h3>Kiểm tra đã tạo</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ngày</th>
+              <th>Loại kiểm tra</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan="3" style={{ padding: 0, border: "none" }}>
+                <div className="tbody-scroll-container">
+                  <table className="inner-table" style={{width:"300px"}}>
+                    <tbody>
+                      {periodicCheckups.length === 0 ? (
+                        <tr>
+                          <td colSpan="3">Chưa có kiểm tra nào</td>
+                        </tr>
+                      ) : (
+                        periodicCheckups.map((item, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              {new Date(item.checkup_date).toLocaleDateString(
+                                "vi-VN"
+                              )}
+                            </td>
+                            <td>{item.checkup_type_name}</td>
+                            <td>
+                              <Button
+                                size="sm"
+                                variant="primary"
+                                onClick={() => handleViewClick(item.checkup_id)}
+                              >
+                                Xem
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <CheckupViewModal
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+        checkupData={selectedCheckup}
+      />
     </div>
   );
 };

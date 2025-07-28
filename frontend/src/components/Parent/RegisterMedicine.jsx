@@ -3,6 +3,7 @@ import "./RegisterMedicine.scss";
 import { createParentMedicationRequest } from "../../service/service";
 import { useOutletContext } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 const RegisterMedicine = () => {
   const { user } = useContext(AuthContext);
@@ -16,12 +17,10 @@ const RegisterMedicine = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: undefined });
-    setSuccess(false);
   };
 
   const handleSubmit = async (e) => {
@@ -44,17 +43,16 @@ const RegisterMedicine = () => {
         notes: form.note,
         requested_by_id: user.account_id,
       });
-
-      setSuccess(true);
       setForm({
         medicineName: "",
         dosage: "",
         instructions: "",
         note: "",
       });
+      toast.success("parent sent medicane success");
     } catch (err) {
       console.error(err);
-      alert(err.message || "Đã có lỗi xảy ra khi gửi yêu cầu");
+      toast.error(err.message || "Đã có lỗi xảy ra khi gửi yêu cầu");
     }
   };
 
@@ -117,15 +115,6 @@ const RegisterMedicine = () => {
             <button type="submit" className="medicine-submit-btn">
               SUBMIT
             </button>
-
-            {success && (
-              <div
-                className="success-text"
-                style={{ color: "green", marginTop: 12 }}
-              >
-                Medicine registered!
-              </div>
-            )}
           </form>
         </div>
       </div>

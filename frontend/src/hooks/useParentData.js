@@ -1,30 +1,46 @@
-// src/hooks/useParentData.js
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { getInforAccount } from "../service/service";
 
-export const useParentData = () => {
+export const useParentData = (fetchFn, role) => {
   const { user } = useContext(AuthContext);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user?.account_id || user.role_id !== "PARENT") return;
+    if (!user?.account_id || user.role_id !== role) {
+      setLoading(false);
+      return;
+    }
 
-    const fetchParentInfo = async () => {
+    const fetchData = async () => {
       try {
-        const res = await getInforAccount(user.account_id);
+        const res = await fetchFn(user.account_id);
         setData(res);
       } catch (err) {
-        setError(err.message || "Lỗi khi tải dữ liệu phụ huynh");
+        const message =
+          err?.response?.data?.message || err.message || "Lỗi khi tải dữ liệu";
+
+        if (
+          err?.response?.status === 401 ||
+          err?.response?.status === 403 ||
+          message === "Bạn chưa đăng nhập (không có token)"
+        ) {
+          localStorage.clear();
+          window.location.href = "/";
+          return;
+        }
+
+        setError(message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchParentInfo();
+    fetchData();
   }, [user]);
 
   return { data, loading, error };
 };
+

@@ -6,6 +6,7 @@ import {
 import "./Vaccination.scss";
 import { AuthContext } from "../../context/AuthContext";
 import { Button, Modal, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const Vaccination = () => {
   const { user } = useContext(AuthContext);
@@ -58,7 +59,7 @@ const Vaccination = () => {
 
   const handleSendNotification = async () => {
     if (!message.notes || !selectedSchedule) {
-      return alert("Vui lòng nhập ghi chú và chọn lịch tiêm");
+      return toast("Vui lòng nhập ghi chú và chọn lịch tiêm");
     }
 
     const payload = {
@@ -69,14 +70,14 @@ const Vaccination = () => {
 
     try {
       const result = await activateVaccinationScheduleService(payload);
-      alert(" Gửi thông báo thành công!");
+      toast.success(" Gửi thông báo thành công!");
       setShowModal(false);
       setMessage({ notes: "" });
       setSelectedSchedule(null);
       fetchSchedules();
     } catch (error) {
       console.error("❌ Lỗi khi gửi:", error.message);
-      alert(error.message || "Không thể gửi thông báo");
+      toast.error(error.message || "Không thể gửi thông báo");
     }
   };
 

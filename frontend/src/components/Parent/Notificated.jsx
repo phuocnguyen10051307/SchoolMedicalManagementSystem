@@ -22,6 +22,12 @@ const Notificated = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("vaccination");
   const [modalData, setModalData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [user.account_id]);
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -31,7 +37,6 @@ const Notificated = () => {
         getCheckupNotifications(user.account_id),
         getEventNotifications(user.account_id),
       ]);
-      console.log("Vaccination data:", vaccineRes.data);
       setVaccinations(vaccineRes.data);
       setCheckups(checkupRes);
       setEvents(eventRes);
@@ -41,10 +46,6 @@ const Notificated = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [user.account_id]);
 
   const openModal = async (item, type) => {
     setModalData({ ...item, type });
@@ -56,18 +57,18 @@ const Notificated = () => {
   };
 
   const handleApprove = async () => {
-    let res;
+    if (!modalData) return;
     if (modalData.type === "vaccination") {
-      res = await approveVaccinationNotification(modalData.notification_id);
+      await approveVaccinationNotification(modalData.notification_id);
     } else if (modalData.type === "checkup") {
-      res = await approveCheckupNotification(modalData.notification_id);
+      await approveCheckupNotification(modalData.notification_id);
     }
-    console.log("Kết quả từ API sau khi đồng ý:", res);
     fetchNotifications();
     setModalData(null);
   };
 
   const handleReject = async () => {
+    if (!modalData) return;
     if (modalData.type === "vaccination") {
       await rejectVaccinationNotification(modalData.notification_id);
     } else if (modalData.type === "checkup") {
@@ -77,150 +78,143 @@ const Notificated = () => {
     setModalData(null);
   };
 
-  if (loading) {
-    return <div className="notificated-container">Đang tải thông báo...</div>;
-  }
+  const getPaginatedData = (data) => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return data.slice(start, start + itemsPerPage);
+  };
+
+  const renderPagination = (data) => {
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+    if (totalPages <= 1) return null;
+    return (
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            className={currentPage === i + 1 ? "active" : ""}
+            onClick={() => setCurrentPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const renderTable = (type, data, columns) => (
+    <section>
+      <h3>{type} Notifications</h3>
+      <div className="table-scroll">
+        <table className="notificated-table">
+          <thead>
+            <tr>{columns.map((col) => <th key={col}>{col}</th>)}</tr>
+          </thead>
+          <tbody>
+            {getPaginatedData(data).length === 0 ? (
+              <tr>
+                <td colSpan={columns.length}>No {type.toLowerCase()} notifications.</td>
+              </tr>
+            ) : (
+              getPaginatedData(data).map((item, idx) => (
+                <tr key={idx} className={item.seen_at ? "seen-row" : "unseen-row"}>
+                  {type === "Vaccination" && (
+                    <>
+                      <td>{new Date(item.sent_at).toLocaleDateString()}</td>
+                      <td>{item.student_name}</td>
+                      <td>{item.vaccine_name}</td>
+                      <td>{item.student_vaccine_status}</td>
+                      <td>
+                        <button onClick={() => openModal(item, "vaccination")}>👁 View</button>
+                      </td>
+                    </>
+                  )}
+                  {type === "Checkup" && (
+                    <>
+                      <td>{new Date(item.sent_at).toLocaleDateString()}</td>
+                      <td>{item.student_name}</td>
+                      <td>{item.checkup_type}</td>
+                      <td>{item.result_details || "Đang chờ kết quả"}</td>
+                      <td>
+                        <button onClick={() => openModal(item, "checkup")}>👁 View</button>
+                      </td>
+                    </>
+                  )}
+                  {type === "Event" && (
+                    <>
+                      <td>{new Date(item.event_datetime).toLocaleDateString()}</td>
+                      <td>{item.student_name}</td>
+                      <td>{item.event_title}</td>
+                      <td>{item.event_description}</td>
+                    </>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      {renderPagination(data)}
+    </section>
+  );
+
+  if (loading) return <div className="notificated-container">Đang tải thông báo...</div>;
 
   return (
-    <>
+    <div className="notificated-wrapper">
       <div className="notificated-container">
-        <h2>Health Notifications</h2>
         <div className="notificated-tabs">
           <button
             className={activeTab === "vaccination" ? "active" : ""}
-            onClick={() => setActiveTab("vaccination")}
+            onClick={() => {
+              setActiveTab("vaccination");
+              setCurrentPage(1);
+            }}
           >
             💉 Vaccinations
           </button>
           <button
             className={activeTab === "checkup" ? "active" : ""}
-            onClick={() => setActiveTab("checkup")}
+            onClick={() => {
+              setActiveTab("checkup");
+              setCurrentPage(1);
+            }}
           >
             🩺 Checkups
           </button>
           <button
             className={activeTab === "event" ? "active" : ""}
-            onClick={() => setActiveTab("event")}
+            onClick={() => {
+              setActiveTab("event");
+              setCurrentPage(1);
+            }}
           >
             📅 Events
           </button>
         </div>
-      </div>
 
-      <div className="notificated-table-wrapper">
-        <div className="notificated-container">
-          {activeTab === "vaccination" && (
-            <section>
-              <h3>Vaccination Notifications</h3>
-              <table className="notificated-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Student</th>
-                    <th>Vaccine</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {vaccinations.length === 0 ? (
-                    <tr>
-                      <td colSpan={5}>No vaccination notifications.</td>
-                    </tr>
-                  ) : (
-                    vaccinations.map((item, idx) => (
-                      <tr key={idx} className={item.seen_at !== null ? "seen-row" : "unseen-row"}>
-                        <td>{new Date(item.sent_at).toLocaleDateString()}</td>
-                        <td>{item.student_name}</td>
-                        <td>{item.vaccine_name}</td>
-                        <td>{item.student_vaccine_status}</td>
-                        <td>
-                          <button
-                            onClick={() => openModal(item, "vaccination")}
-                          >
-                            👁 View
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </section>
-          )}
-
-          {activeTab === "checkup" && (
-            <section>
-              <h3>Checkup Notifications</h3>
-              <table className="notificated-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Student</th>
-                    <th>Checkup Type</th>
-                    <th>Result</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {checkups.length === 0 ? (
-                    <tr>
-                      <td colSpan={5}>No checkup notifications.</td>
-                    </tr>
-                  ) : (
-                    checkups.map((item, idx) => (
-                      <tr key={idx} className={item.seen_at !== null ? "seen-row" : "unseen-row"}>
-                        <td>{new Date(item.sent_at).toLocaleDateString()}</td>
-                        <td>{item.student_name}</td>
-                        <td>{item.checkup_type}</td>
-                        <td>{item.result_details || "Đang chờ kết quả"}</td>
-                        <td>
-                          <button onClick={() => openModal(item, "checkup")}>
-                            👁 View
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </section>
-          )}
-
-          {activeTab === "event" && (
-            <section>
-              <h3>Event Notifications</h3>
-              <table className="notificated-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Student</th>
-                    <th>Event</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {events.length === 0 ? (
-                    <tr>
-                      <td colSpan={4}>No event notifications.</td>
-                    </tr>
-                  ) : (
-                    events.map((item, idx) => (
-                      <tr key={idx} className={item.seen_at !== null ? "seen-row" : "unseen-row"}>
-                        <td>
-                          {new Date(item.event_datetime).toLocaleDateString()}
-                        </td>
-                        <td>{item.student_name}</td>
-                        <td>{item.event_title}</td>
-                        <td>{item.event_description}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </section>
-          )}
-        </div>
+        {activeTab === "vaccination" &&
+          renderTable("Vaccination", vaccinations, [
+            "Date",
+            "Student",
+            "Vaccine",
+            "Status",
+            "Action",
+          ])}
+        {activeTab === "checkup" &&
+          renderTable("Checkup", checkups, [
+            "Date",
+            "Student",
+            "Checkup Type",
+            "Result",
+            "Action",
+          ])}
+        {activeTab === "event" &&
+          renderTable("Event", events, [
+            "Date",
+            "Student",
+            "Event",
+            "Description",
+          ])}
       </div>
 
       <ModalNotification
@@ -229,7 +223,7 @@ const Notificated = () => {
         onReject={handleReject}
         onClose={() => setModalData(null)}
       />
-    </>
+    </div>
   );
 };
 

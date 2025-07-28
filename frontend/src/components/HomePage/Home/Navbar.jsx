@@ -13,14 +13,11 @@ const Navbar = () => {
       <ul className="navbar_links">
         <li>
           <Link to={""}>Home</Link>
-        </li>
-        <li>
-          <Link to="/service">Services</Link>
-        </li>
+        </li> 
         <li>
           <Link to="/blog">Blogs</Link>
         </li>
-        {!!user && user.role_id === "ADMIN" && (
+        {(!!user && user.role_id === "ADMIN") && (
           <li>
             <Link to="/admin/profile">Admin</Link>
           </li>
