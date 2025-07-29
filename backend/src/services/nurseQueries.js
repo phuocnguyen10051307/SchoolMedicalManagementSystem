@@ -573,6 +573,40 @@ const fetchClassStatusByCheckupId = async (checkupId) => {
   const { rows } = await connection.query(query, [checkupId]);
   return rows;
 };
+const getPublicBlogsQuery = async (page = 1, limit = 5) => {
+  const offset = (page - 1) * limit;
+
+  const query = `
+    SELECT
+      blog_id,
+      nurse_account_id,
+      title,
+      content,
+      tags,
+      visibility_status,
+      published_at,
+      created_at
+    FROM blogs
+    WHERE visibility_status = 'PUBLIC'
+    ORDER BY published_at DESC
+    LIMIT $1 OFFSET $2
+  `;
+
+  const result = await connection.query(query, [limit, offset]);
+
+  const countResult = await connection.query(`
+    SELECT COUNT(*) FROM blogs WHERE visibility_status = 'PUBLIC'
+  `);
+
+  const total = parseInt(countResult.rows[0].count);
+
+  return {
+    blogs: result.rows,
+    total,
+    totalPages: Math.ceil(total / limit),
+    currentPage: page,
+  };
+};
 
 module.exports = {
   confirmParentMedicationReceiptService,
@@ -590,5 +624,6 @@ module.exports = {
   queryGetFilteredSupplies,
   getHealthCheckupsForParent,
   getNurseCheckupList,
-  fetchClassStatusByCheckupId
+  fetchClassStatusByCheckupId,
+  getPublicBlogsQuery
 };

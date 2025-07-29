@@ -242,14 +242,8 @@ const insertNurse = async (nurseData) => {
   }
 };
 const updateProfileQuery = async (accountId, data) => {
-  const {
-    full_name,
-    email,
-    phone_number,
-    date_of_birth,
-    address,
-    avatar_url,
-  } = data;
+  const { full_name, email, phone_number, date_of_birth, address, avatar_url } =
+    data;
 
   const query = `
     UPDATE accounts SET
@@ -279,7 +273,6 @@ const updateProfileQuery = async (accountId, data) => {
   }
 };
 
-
 const getLogsQuery = async (limit, offset) => {
   const query = `
     SELECT * FROM logs
@@ -291,9 +284,10 @@ const getLogsQuery = async (limit, offset) => {
 };
 
 const createBlogQuery = async (data) => {
-  const { nurse_account_id, title, content, tags, visibility_status } = data;
+   const { nurse_account_id, title, content, tags, visibility_status } = data;
 
-  const blogId = uuidv4();
+  const randomId = Math.floor(1000 + Math.random() * 9000);
+  const blogId = `bg_${randomId}`;
 
   const query = `
     INSERT INTO blogs (
@@ -303,7 +297,7 @@ const createBlogQuery = async (data) => {
     VALUES (
       $1, $2, $3, $4, $5, $6,
       NOW(), NOW(),
-      CASE WHEN $6 = 'PUBLIC' THEN NOW() ELSE NULL END
+      CASE WHEN $6::VARCHAR = 'PUBLIC' THEN NOW() ELSE NULL END
     )
   `;
 
@@ -318,6 +312,7 @@ const createBlogQuery = async (data) => {
 
   return blogId;
 };
+
 const SCHOOL_YEAR_CONDITION = `
   checkup_date >= DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '8 months' AND
   checkup_date < DATE_TRUNC('year', CURRENT_DATE + INTERVAL '1 year') + INTERVAL '5 months'
@@ -365,7 +360,10 @@ const fetchManagerDashboardSummary = async () => {
       total_students: parseInt(studentCount.rows[0].count, 10),
       total_checkups: parseInt(checkupCount.rows[0].count, 10),
       total_medical_events: parseInt(medicalEventCount.rows[0].count, 10),
-      total_vaccinations_completed: parseInt(vaccinationCount.rows[0].count, 10),
+      total_vaccinations_completed: parseInt(
+        vaccinationCount.rows[0].count,
+        10
+      ),
       total_medicine_requests: parseInt(medicineCount.rows[0].count, 10),
     };
   } catch (err) {
@@ -374,7 +372,6 @@ const fetchManagerDashboardSummary = async () => {
     client.release();
   }
 };
-
 
 const findAccountById = async (accountId) => {
   const query = "SELECT * FROM accounts WHERE account_id = $1";
@@ -396,6 +393,6 @@ module.exports = {
   updateProfileQuery,
   getLogsQuery,
   createBlogQuery,
-  fetchManagerDashboardSummary ,
-  findAccountById
+  fetchManagerDashboardSummary,
+  findAccountById,
 };

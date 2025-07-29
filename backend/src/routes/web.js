@@ -61,7 +61,8 @@ const {
   getSystemLogs,
   createBlog,
   getManagerDashboardSummary ,
-  getAccountProfile
+  getAccountProfile,
+  getBlogs
 } = require("../controllers/homeControllers");
 const { authenticateJWT } = require("../middlewares/auth");
 const { checkRole } = require("../middlewares/checkRole");
@@ -123,7 +124,7 @@ router.post(
   checkRole("ADMIN", "MANAGER"),
   createNurseAccount
 );
-router.post('/blogs', createBlog);
+router.post('/blogs/create', createBlog);
 
 
 
@@ -220,6 +221,7 @@ router.get(
 router.get('/dashboard/logs', getSystemLogs);
 router.get("/summary/:managerId", getManagerDashboardSummary);
 router.get("/accounts/:accountId/profile", getAccountProfile);
+router.get("/blogs/get", getBlogs);
 
 
 // PUT

@@ -28,7 +28,7 @@ const {
   getLogsQuery,
   createBlogQuery,
   fetchManagerDashboardSummary,
-  findAccountById
+  findAccountById,
 } = require("../services/adminAndManagerQuries");
 
 const {
@@ -74,6 +74,7 @@ const {
   queryGetFilteredSupplies,
   getNurseCheckupList,
   fetchClassStatusByCheckupId,
+  getPublicBlogsQuery,
 } = require("../services/nurseQueries");
 
 const homePage = (req, res) => {
@@ -786,7 +787,7 @@ const getClassNotificationStatusByCheckupId = async (req, res) => {
 const updateProfile = async (req, res) => {
   const { accountId } = req.params;
   const data = req.body;
-  console.log(data)
+  console.log(data);
   try {
     await updateProfileQuery(accountId, data);
     res.json({ message: "Profile updated successfully." });
@@ -806,30 +807,18 @@ const getSystemLogs = async (req, res) => {
   }
 };
 
-const createBlog = async (req, res) => {
-  const data = req.body;
-  try {
-    const blogId = await createBlogQuery(data);
-    res
-      .status(201)
-      .json({ message: "Blog created successfully", blog_id: blogId });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create blog." });
-  }
-};
 const getManagerDashboardSummary = async (req, res) => {
   const { managerId } = req.params;
 
   try {
     const summary = await fetchManagerDashboardSummary();
-    console.log(summary)
+    console.log(summary);
     res.json(summary);
   } catch (err) {
     console.error("Error in getManagerDashboardSummary:", err);
     res.status(500).json({ error: "Lỗi server khi lấy thống kê tổng quan" });
   }
 };
-
 
 const getAccountProfile = async (req, res) => {
   const { accountId } = req.params;
@@ -842,6 +831,48 @@ const getAccountProfile = async (req, res) => {
   } catch (err) {
     console.error("Lỗi lấy thông tin hồ sơ:", err);
     res.status(500).json({ message: "Lỗi máy chủ khi lấy hồ sơ" });
+  }
+};
+
+ getBlogs = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const result = await getPublicBlogsQuery(page, limit);
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    res.status(500).json({ error: "Failed to fetch blogs." });
+  }
+};
+
+const createBlog = async (req, res) => {
+  try {
+    const { nurse_account_id, title, content, tags, visibility_status } =
+      req.body;
+
+    if (!nurse_account_id || !title || !content || !visibility_status) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const blogId = await createBlogQuery({
+      nurse_account_id,
+      title,
+      content,
+      tags,
+      visibility_status,
+    });
+    console.log(blogId)
+
+    res.status(201).json({
+      message: "Blog created successfully",
+      blog_id: blogId,
+    });
+  } catch (error) {
+    console.error("Error creating blog:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 module.exports = {
@@ -904,6 +935,7 @@ module.exports = {
   updateProfile,
   getSystemLogs,
   createBlog,
-  getManagerDashboardSummary ,
-  getAccountProfile
+  getManagerDashboardSummary,
+  getAccountProfile,
+  getBlogs,
 };
