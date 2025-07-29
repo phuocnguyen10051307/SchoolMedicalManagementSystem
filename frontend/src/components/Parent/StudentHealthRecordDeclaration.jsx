@@ -35,7 +35,6 @@ const StudentHealthRecordDeclaration = () => {
 
   const handleUpdate = (updatedForm) => {
     setData({ ...updatedForm });
-    toast.success("Cập nhật hồ sơ sức khỏe thành công!");
   };
 
   const getStatusBadge = (status) => {

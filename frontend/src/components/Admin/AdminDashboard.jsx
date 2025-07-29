@@ -5,7 +5,7 @@ import avatarImg from "../../images/user.png";
 import "./AdminDashBoard.scss";
 
 const AdminDashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <div className="admin-sidebar">
@@ -16,18 +16,43 @@ const AdminDashboard = () => {
 
       <ul className="admin-sidebar__menu">
         <li>
-          <NavLink to="/admin/profile" className={({ isActive }) => isActive ? "active" : ""}>Admin Profile</NavLink>
+          <NavLink
+            to="/admin/profile"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Admin Profile
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/admin/nurse" className={({ isActive }) => isActive ? "active" : ""}>Manager School Nurse</NavLink>
+          <NavLink
+            to="/admin/nurse"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Manager School Nurse
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/admin/parent" className={({ isActive }) => isActive ? "active" : ""}>Manager Parent</NavLink>
+          <NavLink
+            to="/admin/parent"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Manager Parent
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/admin/student" className={({ isActive }) => isActive ? "active" : ""}>Manager Student</NavLink>
+          <NavLink
+            to="/admin/student"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Manager Student
+          </NavLink>
         </li>
       </ul>
+      <div className="btn-logout">
+        <button className="logout-tab" onClick={logout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };

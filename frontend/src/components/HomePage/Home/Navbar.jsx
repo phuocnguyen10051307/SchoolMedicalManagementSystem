@@ -12,7 +12,7 @@ const Navbar = () => {
       </div>
       <ul className="navbar_links">
         <li>
-          <Link to={""}>Home</Link>
+          <Link to={"/"}>Home</Link>
         </li> 
         <li>
           <Link to="/blog">Blogs</Link>
@@ -46,8 +46,8 @@ const Navbar = () => {
       <div className="navbar_auth">
         {!user ? (
           <div>
-            <Link to="login">Sign in</Link>
-            <Link to="register">Sign Up</Link>
+            <Link to="/login">Sign in</Link>
+            <Link to="/register">Sign Up</Link>
           </div>
         ) : (
           <button onClick={logout}>Logout</button>

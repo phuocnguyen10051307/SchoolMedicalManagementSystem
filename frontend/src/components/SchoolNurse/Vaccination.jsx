@@ -16,7 +16,7 @@ const Vaccination = () => {
   const [message, setMessage] = useState({ notes: "" });
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
-  // 🔹 Phân trang
+  // 🔹 Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -41,7 +41,7 @@ const Vaccination = () => {
 
       setSchedules(sortedData);
     } catch (error) {
-      console.error("Lỗi khi tải lịch tiêm:", error.message);
+      console.error("Error loading vaccination schedules:", error.message);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ const Vaccination = () => {
 
   const handleSendNotification = async () => {
     if (!message.notes || !selectedSchedule) {
-      return toast("Vui lòng nhập ghi chú và chọn lịch tiêm");
+      return toast("Please enter a note and select a vaccination schedule.");
     }
 
     const payload = {
@@ -70,35 +70,35 @@ const Vaccination = () => {
 
     try {
       const result = await activateVaccinationScheduleService(payload);
-      toast.success(" Gửi thông báo thành công!");
+      toast.success("Notification sent successfully!");
       setShowModal(false);
       setMessage({ notes: "" });
       setSelectedSchedule(null);
       fetchSchedules();
     } catch (error) {
-      console.error("❌ Lỗi khi gửi:", error.message);
-      toast.error(error.message || "Không thể gửi thông báo");
+      console.error("❌ Error sending notification:", error.message);
+      toast.error(error.message || "Unable to send notification.");
     }
   };
 
   return (
     <div className="vaccination-container">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Lịch Tiêm Chủng Có Sẵn</h2>
+        <h2>Available Vaccination Schedules</h2>
       </div>
 
       {loading ? (
-        <p>Đang tải danh sách lịch tiêm...</p>
+        <p>Loading vaccination schedules...</p>
       ) : (
         <div className="schedule-list">
           <table>
             <thead>
               <tr>
-                <th>Tên Vắc Xin</th>
-                <th>Ngày Tiêm</th>
-                <th>Nhóm Tuổi</th>
-                <th>Trạng Thái</th>
-                <th>Hành Động</th>
+                <th>Vaccine Name</th>
+                <th>Vaccination Date</th>
+                <th>Age Group</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -115,16 +115,16 @@ const Vaccination = () => {
                     <td>{schedule.status}</td>
                     <td>
                       {isPast ? (
-                        <span className="text-muted">Đã quá hạn</span>
+                        <span className="text-muted">Expired</span>
                       ) : schedule.status === "ACTIVE" ? (
-                        <span className="text-muted">Đã gửi</span>
+                        <span className="text-muted">Already Sent</span>
                       ) : (
                         <Button
                           size="sm"
                           variant="success"
                           onClick={() => handleOpenModal(schedule)}
                         >
-                          Gửi Thông Báo
+                          Send Notification
                         </Button>
                       )}
                     </td>
@@ -134,7 +134,7 @@ const Vaccination = () => {
             </tbody>
           </table>
 
-          {/* 🔹 Nút phân trang */}
+          {/* 🔹 Pagination buttons */}
           {totalPages > 1 && (
             <div className="pagination d-flex justify-content-center mt-3">
               {[...Array(totalPages)].map((_, index) => (
@@ -154,15 +154,15 @@ const Vaccination = () => {
         </div>
       )}
 
-      {/* Modal tạo thông báo */}
+      {/* Modal for creating notification */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Tạo Thông Báo và Lịch Tiêm Chủng</Modal.Title>
+          <Modal.Title>Create Notification and Vaccination Schedule</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="formVaccineName" className="mb-3">
-              <Form.Label>Tên vắc xin</Form.Label>
+              <Form.Label>Vaccine Name</Form.Label>
               <Form.Control
                 type="text"
                 value={selectedSchedule?.vaccine_name || ""}
@@ -171,7 +171,7 @@ const Vaccination = () => {
             </Form.Group>
 
             <Form.Group controlId="formVaccinationDate" className="mb-3">
-              <Form.Label>Ngày tiêm</Form.Label>
+              <Form.Label>Vaccination Date</Form.Label>
               <Form.Control
                 type="date"
                 value={
@@ -186,7 +186,7 @@ const Vaccination = () => {
             </Form.Group>
 
             <Form.Group controlId="formTargetAgeGroup" className="mb-3">
-              <Form.Label>Nhóm tuổi</Form.Label>
+              <Form.Label>Age Group</Form.Label>
               <Form.Control
                 type="text"
                 value={selectedSchedule?.target_age_group || ""}
@@ -195,11 +195,11 @@ const Vaccination = () => {
             </Form.Group>
 
             <Form.Group controlId="formNotes" className="mb-3">
-              <Form.Label>Ghi chú</Form.Label>
+              <Form.Label>Notes</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
-                placeholder="Nhập ghi chú thêm (tuỳ chọn)..."
+                placeholder="Enter additional notes (optional)..."
                 value={message.notes}
                 onChange={(e) =>
                   setMessage({ ...message, notes: e.target.value })
@@ -210,10 +210,10 @@ const Vaccination = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Đóng
+            Close
           </Button>
           <Button variant="success" onClick={handleSendNotification}>
-            Gửi thông báo
+            Send Notification
           </Button>
         </Modal.Footer>
       </Modal>

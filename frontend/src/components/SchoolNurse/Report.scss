@@ -26,3 +26,27 @@ button {
   gap: 10px;
   margin-bottom: 20px;
 }
+
+
+.report-content-scroll {
+  max-height: 65vh; // hoặc 70vh tùy ý
+  overflow-y: auto;
+  padding-right: 6px;
+
+  /* Ẩn thanh cuộn mặc định và thêm thanh cuộn đẹp */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

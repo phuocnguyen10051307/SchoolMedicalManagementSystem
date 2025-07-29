@@ -15,7 +15,6 @@ const UpdateModal = ({
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // Reset preview và file khi mở modal mới
   useEffect(() => {
     setLocalImagePreview(form.avatar_url);
     setSelectedImageFile(null);
@@ -27,16 +26,29 @@ const UpdateModal = ({
 
     const localURL = URL.createObjectURL(file);
     setLocalImagePreview(localURL);
-    setSelectedImageFile(file); // Chưa upload vội
+    setSelectedImageFile(file);
+  };
+
+  const validateForm = (formData) => {
+    if (!formData.full_name?.trim()) return "Full name is required";
+    if (!/^\d{10}$/.test(formData.phone_number)) return "Phone number must be 10 digits";
+    if (!/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) return "Invalid email format";
+    return null;
   };
 
   const handleModalSave = async () => {
+    const validationError = validateForm(form);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
     let updatedAvatarUrl = form.avatar_url;
 
     if (selectedImageFile) {
       const formData = new FormData();
       formData.append("file", selectedImageFile);
-      formData.append("upload_preset", "images"); // Cloudinary preset
+      formData.append("upload_preset", "images");
 
       try {
         setUploading(true);
@@ -56,7 +68,7 @@ const UpdateModal = ({
     }
 
     setForm((prev) => ({ ...prev, avatar_url: updatedAvatarUrl }));
-    handleSave(); // Gọi hàm lưu từ component cha
+    handleSave();
   };
 
   return (
@@ -104,7 +116,6 @@ const UpdateModal = ({
             />
           </div>
 
-          {/* Các field thông tin cá nhân */}
           <Form.Group className="mb-3">
             <Form.Label>Full Name</Form.Label>
             <Form.Control

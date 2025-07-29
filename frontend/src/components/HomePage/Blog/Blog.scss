@@ -1,0 +1,44 @@
+.blog-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .blog-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    span {
+      font-weight: bold;
+    }
+  }
+}

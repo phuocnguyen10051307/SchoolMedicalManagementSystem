@@ -25,6 +25,7 @@ const Login = () => {
       const rows = await loginAccount(username, password);
       const account = rows.account;
       setUser(account);
+      console.log(account)
 
       switch (account.role_id) {
         case "ADMIN":

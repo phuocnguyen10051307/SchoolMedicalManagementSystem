@@ -42,17 +42,16 @@ const HealthCheckup = () => {
 
     fetchData();
   }, [user.account_id]);
-  console.log(periodicCheckups)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!checkupDate || !selectedCheckupType) {
-      toast.warning("Vui lòng điền đầy đủ thông tin");
+      toast.warning("Please fill in all required information.");
       return;
     }
 
     if (new Date(checkupDate) < new Date(today)) {
-      toast.error("Ngày kiểm tra không được là ngày trong quá khứ");
+      toast.error("Checkup date cannot be in the past.");
       return;
     }
 
@@ -64,19 +63,17 @@ const HealthCheckup = () => {
         notes,
       });
 
-      toast.success("Tạo sự kiện kiểm tra sức khỏe thành công!");
+      toast.success("Health checkup event created successfully!");
 
       setCheckupDate("");
       setSelectedCheckupType("");
       setNotes("");
 
-      const refreshed = await fetchNurseCheckupsWithNotifications(
-        user.account_id
-      );
+      const refreshed = await fetchNurseCheckupsWithNotifications(user.account_id);
       setPeriodicCheckups(refreshed.periodicCheckups || []);
     } catch (err) {
       console.error(err);
-      toast.error("Tạo sự kiện thất bại");
+      toast.error("Failed to create health checkup event.");
     }
   };
 
@@ -86,7 +83,7 @@ const HealthCheckup = () => {
       setSelectedCheckup({ checkupId, data });
       setShowModal(true);
     } catch (err) {
-      toast.error("Không thể tải dữ liệu lớp.");
+      toast.error("Unable to load class data.");
     }
   };
 
@@ -94,10 +91,10 @@ const HealthCheckup = () => {
     <div className="health-checkup-container">
       <div className="left-panel">
         <form onSubmit={handleSubmit}>
-          <h2>Tạo kiểm tra sức khỏe</h2>
+          <h2>Create Health Checkup</h2>
 
           <div className="form-group">
-            <label>Ngày kiểm tra:</label>
+            <label>Checkup Date:</label>
             <input
               type="date"
               value={checkupDate}
@@ -108,13 +105,13 @@ const HealthCheckup = () => {
           </div>
 
           <div className="form-group">
-            <label>Loại kiểm tra:</label>
+            <label>Checkup Type:</label>
             <select
               value={selectedCheckupType}
               onChange={(e) => setSelectedCheckupType(e.target.value)}
               required
             >
-              <option value="">-- Chọn loại kiểm tra --</option>
+              <option value="">-- Select checkup type --</option>
               {checkupTypes.map((type) => (
                 <option key={type.checkup_type} value={type.checkup_type}>
                   {type.display_name}
@@ -124,45 +121,43 @@ const HealthCheckup = () => {
           </div>
 
           <div className="form-group">
-            <label>Ghi chú:</label>
+            <label>Notes:</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ghi chú thêm (nếu có)"
+              placeholder="Additional notes (if any)"
             />
           </div>
 
-          <button type="submit">Tạo sự kiện</button>
+          <button type="submit">Create Event</button>
         </form>
       </div>
 
       <div className="right-panel">
-        <h3>Kiểm tra đã tạo</h3>
+        <h3>Created Checkups</h3>
         <table>
           <thead>
             <tr>
-              <th>Ngày</th>
-              <th>Loại kiểm tra</th>
-              <th>Thao tác</th>
+              <th>Date</th>
+              <th>Checkup Type</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td colSpan="3" style={{ padding: 0, border: "none" }}>
                 <div className="tbody-scroll-container">
-                  <table className="inner-table" style={{width:"300px"}}>
+                  <table className="inner-table" style={{ width: "300px" }}>
                     <tbody>
                       {periodicCheckups.length === 0 ? (
                         <tr>
-                          <td colSpan="3">Chưa có kiểm tra nào</td>
+                          <td colSpan="3">No checkups available</td>
                         </tr>
                       ) : (
                         periodicCheckups.map((item, idx) => (
                           <tr key={idx}>
                             <td>
-                              {new Date(item.checkup_date).toLocaleDateString(
-                                "vi-VN"
-                              )}
+                              {new Date(item.checkup_date).toLocaleDateString("en-GB")}
                             </td>
                             <td>{item.checkup_type_name}</td>
                             <td>
@@ -171,7 +166,7 @@ const HealthCheckup = () => {
                                 variant="primary"
                                 onClick={() => handleViewClick(item.checkup_id)}
                               >
-                                Xem
+                                View
                               </Button>
                             </td>
                           </tr>

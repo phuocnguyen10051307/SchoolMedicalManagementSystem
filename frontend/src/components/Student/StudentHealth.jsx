@@ -12,7 +12,6 @@ const StudentHealthProfile = () => {
       <p><strong>Medical Conditions:</strong> {data?.medical_conditions || "None"}</p>
       <p><strong>Height:</strong> {data?.height} cm</p>
       <p><strong>Weight:</strong> {data?.weight} kg</p>
-      {/* Tùy chỉnh hiển thị theo schema của bạn */}
     </div>
   );
 };

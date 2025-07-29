@@ -97,13 +97,13 @@
     .scrollable-table-wrapper {
       max-height: 400px;
       overflow-y: auto;
+      overflow-x: hidden;
       border: 1px solid #ddd;
       border-radius: 0.5rem;
 
       table {
-            width: 320px;
         border-collapse: collapse;
-        min-width: 600px;
+        min-width: 100%;
 
         thead {
           background-color: #f7fafa;
@@ -151,7 +151,6 @@
     }
   }
 }
-
 
 .tbody-scroll-container {
   max-height: 500px;

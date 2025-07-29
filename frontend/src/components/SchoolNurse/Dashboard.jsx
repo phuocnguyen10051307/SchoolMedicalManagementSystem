@@ -15,6 +15,8 @@ import { useOutletContext } from "react-router-dom";
 import "chartjs-adapter-date-fns";
 import { AuthContext } from "../../context/AuthContext";
 import "./Dashboard.scss";
+import { Button } from "react-bootstrap";
+import ModalCreateBlog from "./ModalCreateBlog";
 
 Chart.register(
   CategoryScale,
@@ -30,6 +32,7 @@ const DashBoard = () => {
   const { nurseData } = useOutletContext();
   const { user } = useContext(AuthContext);
   const [dashboardData, setDashboardData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -46,7 +49,8 @@ const DashBoard = () => {
     }
   }, [user]);
 
-  if (!dashboardData) return <div className="loading">Đang tải thống kê...</div>;
+  if (!dashboardData)
+    return <div className="loading">Loading statistics...</div>;
 
   const {
     eventTypeStats,
@@ -59,15 +63,18 @@ const DashBoard = () => {
   return (
     <div className="dashboard-wrapper">
       <h2 className="dashboard-title">📊 Nurse Dashboard</h2>
+      <Button variant="success" onClick={() => setShowModal(true)}>
+        ✍️ Viết Blog
+      </Button>
       <div className="dashboard-grid">
         <div className="chart-container">
-          <h4>Sự kiện theo loại</h4>
+          <h4>Events by Type</h4>
           <Bar
             data={{
               labels: eventTypeStats.map((e) => e.event_type),
               datasets: [
                 {
-                  label: "Số lượng",
+                  label: "Quantity",
                   data: eventTypeStats.map((e) => e.total),
                   backgroundColor: "#57c2b0",
                 },
@@ -77,7 +84,7 @@ const DashBoard = () => {
         </div>
 
         <div className="chart-container">
-          <h4>Mức độ nghiêm trọng</h4>
+          <h4>Severity Levels</h4>
           <Doughnut
             data={{
               labels: severityStats.map((e) => e.severity_level),
@@ -92,36 +99,51 @@ const DashBoard = () => {
         </div>
 
         <div className="chart-container">
-          <h4>Sự kiện theo tháng</h4>
-          <Line
+          <h4>Events by Month</h4>
+          <Bar
             data={{
               labels: monthlyEventStats.map((e) =>
-                new Date(e.month).toLocaleDateString("vi-VN", {
+                new Date(e.month).toLocaleDateString("en-US", {
                   month: "short",
                   year: "numeric",
                 })
               ),
               datasets: [
                 {
-                  label: "Số sự kiện",
+                  label: "Number of Events",
                   data: monthlyEventStats.map((e) => e.total),
-                  fill: false,
-                  borderColor: "#3b82f6",
-                  tension: 0.3,
+                  backgroundColor: "#60a5fa",
                 },
               ],
+            }}
+            options={{
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: "Month",
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: "Events",
+                  },
+                },
+              },
             }}
           />
         </div>
 
         <div className="chart-container">
-          <h4>Trạng thái gửi thuốc</h4>
+          <h4>Medication Request Status</h4>
           <Bar
             data={{
               labels: medicationRequestStats.map((e) => e.request_status),
               datasets: [
                 {
-                  label: "Số yêu cầu",
+                  label: "Number of Requests",
                   data: medicationRequestStats.map((e) => e.count),
                   backgroundColor: "#a78bfa",
                 },
@@ -131,7 +153,7 @@ const DashBoard = () => {
         </div>
 
         <div className="chart-container">
-          <h4>Hồ sơ sức khỏe học sinh</h4>
+          <h4>Student Health Profiles</h4>
           <Doughnut
             data={{
               labels: healthProfileReviewStats.map((e) => e.review_status),
@@ -145,6 +167,10 @@ const DashBoard = () => {
           />
         </div>
       </div>
+      <ModalCreateBlog
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+      />
     </div>
   );
 };

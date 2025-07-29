@@ -32,7 +32,7 @@ const Report = () => {
       }
       setData(res);
     } catch (err) {
-      console.error("Lỗi khi tải dữ liệu báo cáo:", err.message);
+      console.error("Error fetching report data:", err.message);
     } finally {
       setLoading(false);
     }
@@ -44,87 +44,117 @@ const Report = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Báo cáo của Y tá</h2>
+      <h2>Nurse Report</h2>
       <div className="report-tab-buttons">
         <button
           onClick={() => setActiveTab("events")}
           className={activeTab === "events" ? "active-button" : ""}
         >
-          Sự kiện y tế
+          Medical Events
         </button>
         <button
           onClick={() => setActiveTab("checkups")}
           className={activeTab === "checkups" ? "active-button" : ""}
         >
-          Kiểm tra sức khỏe
+          Health Checkups
         </button>
         <button
           onClick={() => setActiveTab("vaccinations")}
           className={activeTab === "vaccinations" ? "active-button" : ""}
         >
-          Tiêm chủng
+          Vaccinations
         </button>
       </div>
 
       {loading ? (
-        <p>Đang tải dữ liệu...</p>
+        <p>Loading data...</p>
       ) : (
         <div>
           {data.length === 0 ? (
-            <p>Không có dữ liệu</p>
+            <p>No data available</p>
           ) : (
-            <ListGroup>
-              {data.map((item, index) => (
-                <ListGroup.Item
-                  key={index}
-                  className="d-flex justify-content-between align-items-center"
-                  style={{
-                    borderLeft: "5px solid #0d6efd", // Bootstrap blue
-                    marginBottom: "10px",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-                  }}
-                >
-                  <div>
-                    {activeTab === "events" && (
-                      <>
-                        <strong>{item.event_title}</strong>{" "}
-                        <Badge bg="primary" className="ms-2">
-                          {item.event_type}
-                        </Badge>
-                        <div className="text-muted small">
-                          {new Date(item.event_datetime).toLocaleString()}
-                        </div>
-                      </>
-                    )}
-                    {activeTab === "checkups" && (
-                      <>
-                        <strong>{item.checkup_type}</strong>{" "}
-                        <Badge bg="success" className="ms-2">
-                          Sức khỏe
-                        </Badge>
-                        <div className="text-muted small">
-                          Ngày kiểm tra:{" "}
-                          {new Date(item.checkup_date).toLocaleDateString()}
-                        </div>
-                      </>
-                    )}
-                    {activeTab === "vaccinations" && (
-                      <>
-                        <strong>{item.vaccine_name}</strong>{" "}
-                        <Badge bg="warning" text="dark" className="ms-2">
-                          Tiêm chủng
-                        </Badge>
-                        <div className="text-muted small">
-                          Tiêm vào:{" "}
-                          {new Date(item.vaccination_date).toLocaleDateString()}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+            <div className="report-content-scroll">
+              <ListGroup>
+                {[...data]
+                  .sort((a, b) => {
+                    const now = new Date();
+
+                    const dateA =
+                      activeTab === "events"
+                        ? new Date(a.event_datetime)
+                        : activeTab === "checkups"
+                        ? new Date(a.checkup_date)
+                        : new Date(a.vaccination_date);
+
+                    const dateB =
+                      activeTab === "events"
+                        ? new Date(b.event_datetime)
+                        : activeTab === "checkups"
+                        ? new Date(b.checkup_date)
+                        : new Date(b.vaccination_date);
+
+                    const isFutureA = dateA > now;
+                    const isFutureB = dateB > now;
+
+                    if (isFutureA && !isFutureB) return -1;
+                    if (!isFutureA && isFutureB) return 1;
+
+                    return dateB - dateA;
+                  })
+                  .map((item, index) => (
+                    <ListGroup.Item
+                      key={index}
+                      className="d-flex justify-content-between align-items-center"
+                      style={{
+                        borderLeft: "5px solid #0d6efd",
+                        marginBottom: "10px",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      <div>
+                        {activeTab === "events" && (
+                          <>
+                            <strong>{item.event_title}</strong>{" "}
+                            <Badge bg="primary" className="ms-2">
+                              {item.event_type}
+                            </Badge>
+                            <div className="text-muted small">
+                              {new Date(item.event_datetime).toLocaleString()}
+                            </div>
+                          </>
+                        )}
+                        {activeTab === "checkups" && (
+                          <>
+                            <strong>{item.checkup_type}</strong>{" "}
+                            <Badge bg="success" className="ms-2">
+                              Health
+                            </Badge>
+                            <div className="text-muted small">
+                              Date:{" "}
+                              {new Date(item.checkup_date).toLocaleDateString()}
+                            </div>
+                          </>
+                        )}
+                        {activeTab === "vaccinations" && (
+                          <>
+                            <strong>{item.vaccine_name}</strong>{" "}
+                            <Badge bg="warning" text="dark" className="ms-2">
+                              Vaccination
+                            </Badge>
+                            <div className="text-muted small">
+                              Date:{" "}
+                              {new Date(
+                                item.vaccination_date
+                              ).toLocaleDateString()}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </ListGroup.Item>
+                  ))}
+              </ListGroup>
+            </div>
           )}
         </div>
       )}

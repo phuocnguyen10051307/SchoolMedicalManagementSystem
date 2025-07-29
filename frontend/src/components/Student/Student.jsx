@@ -1,10 +1,13 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import "./Student.scss"; // Tùy chỉnh style riêng nếu muốn
+import "./Student.scss"; 
 import useStudentData from "../../hooks/useStudentData"; 
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 
 const Student = () => {
   const { data, loading, error } = useStudentData();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
 
   const isActive = (path) => location.pathname.endsWith(path);
 

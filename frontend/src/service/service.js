@@ -675,3 +675,23 @@ export const getAccountProfile = async (accountId) => {
     throw err.response?.data || { message: "Lấy hồ sơ thất bại" };
   }
 };
+
+
+export const createBlogs = async (blogData) => {
+  try {
+    const res = await axios.post("/blogs/create", blogData);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Tạo blog thất bại" };
+  }
+};
+
+
+export const getBlogs = async () => {
+  try {
+    const response = await axios.get("/blogs/get");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Không thể tải danh sách blog" };
+  }
+};

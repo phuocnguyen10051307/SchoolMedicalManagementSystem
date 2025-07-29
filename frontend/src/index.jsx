@@ -26,7 +26,6 @@ import RegisterMedicine from "./components/Parent/RegisterMedicine";
 
 import Student from "./components/Student/Student";
 import HomePage from "./components/HomePage/Home/HomePage";
-import Service from "./components/HomePage/Service/Service";
 import Blog from "./components/HomePage/Blog/Blog";
 import Login from "./components/HomePage/Login";
 import Register from "./components/HomePage/Register";
@@ -52,7 +51,6 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="service" element={<Service />} />
           <Route path="blog" element={<Blog />} />
 
           <Route path="admin" element={<Admin />}>

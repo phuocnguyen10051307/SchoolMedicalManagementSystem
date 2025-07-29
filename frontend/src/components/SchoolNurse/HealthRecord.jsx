@@ -33,7 +33,7 @@ const HealthRecord = () => {
         }
         setMedications(data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách thuốc:", error?.message || "Không xác định");
+        console.error("Error fetching medication list:", error?.message || "Unknown error");
       } finally {
         setLoading(false);
       }
@@ -58,14 +58,13 @@ const HealthRecord = () => {
       await confirmMedicationReceiptService({
         request_id: requestId,
         nurse_account_id: user.account_id,
-        received_quantity: selectedRequest?.dosage || "Không rõ",
+        received_quantity: selectedRequest?.dosage || "Unknown",
       });
 
-
       setMedications((prev) => prev.filter((item) => item.request_id !== requestId));
-      toast.success("confirm success")
+      toast.success("Confirmation successful");
     } catch (error) {
-      toast.error("Xác nhận thất bại: " + (error.message || "Lỗi không xác định"));
+      toast.error("Confirmation failed: " + (error.message || "Unknown error"));
     } finally {
       setConfirmingId(null);
     }
@@ -73,7 +72,7 @@ const HealthRecord = () => {
 
   return (
     <div className="record-container">
-      <h3 className="mb-3">Danh sách thuốc phụ huynh gửi</h3>
+      <h3 className="mb-3">List of Medications Sent by Parents</h3>
 
       <div className="mb-3 d-flex">
         <Button
@@ -81,13 +80,13 @@ const HealthRecord = () => {
           className="me-2"
           onClick={() => setViewMode("PENDING")}
         >
-          Đang chờ xác nhận
+          Pending Confirmation
         </Button>
         <Button
           variant={viewMode === "APPROVED" ? "success" : "outline-success"}
           onClick={() => setViewMode("APPROVED")}
         >
-          Đã xác nhận
+          Confirmed
         </Button>
       </div>
 
@@ -101,13 +100,13 @@ const HealthRecord = () => {
             <thead>
               <tr>
                 <th>No.</th>
-                <th>Học sinh</th>
-                <th>Lớp</th>
-                <th>Tên thuốc</th>
-                <th>Liều lượng</th>
-                <th>Hướng dẫn</th>
-                <th>{viewMode === "PENDING" ? "Gửi lúc" : "Xác nhận lúc"}</th>
-                <th>Xác nhận</th>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Medication Name</th>
+                <th>Dosage</th>
+                <th>Instructions</th>
+                <th>{viewMode === "PENDING" ? "Sent At" : "Confirmed At"}</th>
+                <th>Confirm</th>
               </tr>
             </thead>
             <tbody>
@@ -136,11 +135,11 @@ const HealthRecord = () => {
                           {confirmingId === med.request_id ? (
                             <Spinner animation="border" size="sm" />
                           ) : (
-                            "Xác nhận"
+                            "Confirm"
                           )}
                         </Button>
                       ) : (
-                        <span className="text-muted">✓ Đã xác nhận</span>
+                        <span className="text-muted">✓ Confirmed</span>
                       )}
                     </td>
                   </tr>
@@ -148,7 +147,7 @@ const HealthRecord = () => {
               ) : (
                 <tr>
                   <td colSpan="8" className="no-data text-center">
-                    Không có yêu cầu gửi thuốc nào.
+                    No medication requests found.
                   </td>
                 </tr>
               )}
@@ -169,9 +168,7 @@ const HealthRecord = () => {
           {Array.from({ length: totalPages }, (_, index) => (
             <span
               key={index}
-              className={`page-number ${
-                currentPage === index + 1 ? "active" : ""
-              }`}
+              className={`page-number ${currentPage === index + 1 ? "active" : ""}`}
               onClick={() => paginate(index + 1)}
             >
               {index + 1}
@@ -180,9 +177,7 @@ const HealthRecord = () => {
 
           <span
             className={`arrow ${currentPage === totalPages ? "disabled" : ""}`}
-            onClick={() =>
-              currentPage < totalPages && paginate(currentPage + 1)
-            }
+            onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
           >
             →
           </span>
