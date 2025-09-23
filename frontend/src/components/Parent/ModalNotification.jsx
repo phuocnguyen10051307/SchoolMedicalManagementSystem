@@ -11,31 +11,44 @@ const ModalNotification = ({ data, onApprove, onReject, onClose }) => {
       dialogClassName="modal-notification-custom"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Chi tiết thông báo y tế</Modal.Title>
+        <Modal.Title>Notification Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {data && (
           <div className="modal-notification-body">
-            <p><strong>Học sinh:</strong> {data.student_name}</p>
-            <p><strong>Loại:</strong> {data.type}</p>
+            <p><strong>Student:</strong> {data.student_name}</p>
+            <p><strong>Type:</strong> {data.type}</p>
             <div className="notification-details">
               <ul>
-                <li><strong>ID Thông báo:</strong> {data.notification_id}</li>
-                <li><strong>Vắc xin:</strong> {data.vaccine_name || "—"}</li>
-                <li><strong>Trạng thái vắc xin:</strong> {data.student_vaccine_status || "—"}</li>
-                <li><strong>Thời gian gửi:</strong> {new Date(data.sent_at).toLocaleString()}</li>
-                <li><strong>Đã xem lúc:</strong> {data.seen_at ? new Date(data.seen_at).toLocaleString() : "Chưa xem"}</li>
-                <li><strong>Đã duyệt lúc:</strong> {data.acknowledged_at ? new Date(data.acknowledged_at).toLocaleString() : "Chưa duyệt"}</li>
-                <li><strong>Ghi chú:</strong> {data.notes || "Không có"}</li>
+                {data.type === "vaccination" && (
+                  <>
+                    <li><strong>Vaccine:</strong> {data.vaccine_name || "—"}</li>
+                    <li><strong>Vaccination Status:</strong> {data.student_vaccine_status || "—"}</li>
+                  </>
+                )}
+
+                {data.type === "checkup" && (
+                  <>
+                    <li><strong>Checkup Type:</strong> {data.checkup_type}</li>
+                    <li><strong>Result:</strong> {data.result_details || "Pending"}</li>
+                  </>
+                )}
+
+                <li><strong>Acknowledged at:</strong> {data.acknowledged_at ? new Date(data.acknowledged_at).toLocaleString() : "Not acknowledged yet"}</li>
+                <li><strong>Notes:</strong> {data.notes || "None"}</li>
               </ul>
             </div>
           </div>
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="success" onClick={onApprove}>✅ Đồng ý</Button>
-        <Button variant="danger" onClick={onReject}>❌ Từ chối</Button>
-        <Button variant="secondary" onClick={onClose}>Đóng</Button>
+        {(data?.type === "vaccination" || data?.type === "checkup") && (
+          <>
+            <Button variant="success" onClick={onApprove}>✅ Approve</Button>
+            <Button variant="danger" onClick={onReject}>❌ Reject</Button>
+          </>
+        )}
+        <Button variant="secondary" onClick={onClose}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

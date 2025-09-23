@@ -107,16 +107,25 @@ const Notificated = () => {
       <div className="table-scroll">
         <table className="notificated-table">
           <thead>
-            <tr>{columns.map((col) => <th key={col}>{col}</th>)}</tr>
+            <tr>
+              {columns.map((col) => (
+                <th key={col}>{col}</th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {getPaginatedData(data).length === 0 ? (
               <tr>
-                <td colSpan={columns.length}>No {type.toLowerCase()} notifications.</td>
+                <td colSpan={columns.length}>
+                  No {type.toLowerCase()} notifications.
+                </td>
               </tr>
             ) : (
               getPaginatedData(data).map((item, idx) => (
-                <tr key={idx} className={item.seen_at ? "seen-row" : "unseen-row"}>
+                <tr
+                  key={idx}
+                  className={item.seen_at ? "seen-row" : "unseen-row"}
+                >
                   {type === "Vaccination" && (
                     <>
                       <td>{new Date(item.sent_at).toLocaleDateString()}</td>
@@ -124,7 +133,9 @@ const Notificated = () => {
                       <td>{item.vaccine_name}</td>
                       <td>{item.student_vaccine_status}</td>
                       <td>
-                        <button onClick={() => openModal(item, "vaccination")}>👁 View</button>
+                        <button onClick={() => openModal(item, "vaccination")}>
+                          👁 View
+                        </button>
                       </td>
                     </>
                   )}
@@ -135,13 +146,17 @@ const Notificated = () => {
                       <td>{item.checkup_type}</td>
                       <td>{item.result_details || "Đang chờ kết quả"}</td>
                       <td>
-                        <button onClick={() => openModal(item, "checkup")}>👁 View</button>
+                        <button onClick={() => openModal(item, "checkup")}>
+                          👁 View
+                        </button>
                       </td>
                     </>
                   )}
                   {type === "Event" && (
                     <>
-                      <td>{new Date(item.event_datetime).toLocaleDateString()}</td>
+                      <td>
+                        {new Date(item.event_datetime).toLocaleDateString()}
+                      </td>
                       <td>{item.student_name}</td>
                       <td>{item.event_title}</td>
                       <td>{item.event_description}</td>
@@ -157,7 +172,8 @@ const Notificated = () => {
     </section>
   );
 
-  if (loading) return <div className="notificated-container">Đang tải thông báo...</div>;
+  if (loading)
+    return <div className="notificated-container">Đang tải thông báo...</div>;
 
   return (
     <div className="notificated-wrapper">

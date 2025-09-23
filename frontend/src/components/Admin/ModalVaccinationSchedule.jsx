@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { createVaccinationSchedule } from "../../service/service";
+import { toast } from "react-toastify";
+
 
 const ModalVaccinationSchedule = ({ show, onClose, accountId, onSuccess }) => {
   const [vaccineName, setVaccineName] = useState("");
@@ -16,11 +18,11 @@ const ModalVaccinationSchedule = ({ show, onClose, accountId, onSuccess }) => {
         vaccination_date: vaccinationDate,
         target_age_group: targetAgeGroup,
       });
-      alert("Tạo lịch tiêm chủng thành công!");
+      toast.success("create schedule success!");
       onClose();
       onSuccess && onSuccess(); // optional refresh
     } catch (err) {
-      alert(err.message || "Tạo lịch thất bại");
+      toast.error(err.message || "create schedule failded ");
     }
   };
 
